@@ -717,9 +717,9 @@ public class AlbumAndArtisDetailsActivity extends ActionBarActivity implements V
 
     private void updateProgress(SongDetail mSongDetail) {
         if (audio_progress != null && mSongDetail != null) {
-            // When SeekBar Draging Don't Show Progress
+            // When SeekBar Dragging Don't Show Progress
             if (!isDragingStart) {
-                // Progress Value comming in point it range 0 to 1
+                // Progress Value coming in point it range 0 to 1
                 audio_progress.setValue((int) (mSongDetail.audioProgress * 100));
             }
             String timeString = String.format("%d:%02d", mSongDetail.audioProgressSec / 60, mSongDetail.audioProgressSec % 60);

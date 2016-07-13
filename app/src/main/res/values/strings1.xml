@@ -10,12 +10,12 @@
     <string-array name="draware_menuitems">
         <item>All Songs</item>
         <item>My Library</item>
-        <item>Fevorite</item>
-
+        <item>Favorite</item>
+        <item>Stream</item>
         <!-- after divider -->
         <item>Settings</item>
         <item>Equilizer</item>
-        <item>Send feedback</item>
+
     </string-array>
 
     <!-- Music Player -->

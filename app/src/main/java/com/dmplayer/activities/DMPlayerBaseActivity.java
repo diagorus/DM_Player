@@ -1,12 +1,10 @@
 package com.dmplayer.activities;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.content.res.TypedArray;
 import android.graphics.Bitmap;
-import android.graphics.Color;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -23,27 +21,22 @@ import android.text.TextUtils;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.util.TypedValue;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.FrameLayout;
-import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
-import android.widget.ScrollView;
-import android.widget.SeekBar;
 import android.widget.TextView;
 
 import com.dmplayer.R;
 import com.dmplayer.adapter.DrawerAdapter;
 import com.dmplayer.fragments.FragmentAllSongs;
 import com.dmplayer.fragments.FragmentEqualizer;
-import com.dmplayer.fragments.FragmentFeedBack;
-import com.dmplayer.fragments.FragmentFevorite;
+import com.dmplayer.fragments.FragmentFavorite;
+import com.dmplayer.fragments.FragmentStream;
 import com.dmplayer.fragments.FragmentLibrary;
 import com.dmplayer.fragments.FragmentSettings;
 import com.dmplayer.manager.MediaController;
@@ -64,7 +57,6 @@ import com.nostra13.universalimageloader.core.display.FadeInBitmapDisplayer;
 import com.nostra13.universalimageloader.core.listener.ImageLoadingListener;
 import com.nostra13.universalimageloader.core.listener.SimpleImageLoadingListener;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedList;
@@ -537,13 +529,21 @@ public class DMPlayerBaseActivity extends ActionBarActivity implements View.OnCl
                 break;
             case 2:
                 sharedPreferences.edit().putInt("FRAGMENT", position).apply();
-                FragmentFevorite fragmentfevorite = new FragmentFevorite();
-                fragmentTransaction.replace(R.id.fragment, fragmentfevorite);
+                FragmentFavorite fragmentfavorite = new FragmentFavorite();
+                fragmentTransaction.replace(R.id.fragment, fragmentfavorite);
                 fragmentTransaction.commit();
                 toolbar.setTitle("Favorite");
                 break;
 
             case 3:
+                sharedPreferences.edit().putInt("FRAGMENT", position).apply();
+                FragmentStream fragmentStream = new FragmentStream();
+                fragmentTransaction.replace(R.id.fragment, fragmentStream);
+                fragmentTransaction.commit();
+                toolbar.setTitle("Stream");
+                break;
+
+            case 4:
                 sharedPreferences.edit().putInt("FRAGMENT", position).apply();
                 FragmentSettings fragmentsettings = new FragmentSettings();
                 fragmentTransaction.replace(R.id.fragment, fragmentsettings);
@@ -551,20 +551,12 @@ public class DMPlayerBaseActivity extends ActionBarActivity implements View.OnCl
                 toolbar.setTitle("Settings");
                 break;
 
-            case 4:
+            case 5:
                 sharedPreferences.edit().putInt("FRAGMENT", position).apply();
                 FragmentEqualizer fragmentequalizer = new FragmentEqualizer();
                 fragmentTransaction.replace(R.id.fragment, fragmentequalizer);
                 fragmentTransaction.commit();
                 toolbar.setTitle("Equilizer");
-                break;
-
-            case 5:
-                sharedPreferences.edit().putInt("FRAGMENT", position).apply();
-                FragmentFeedBack fragmentfeedback = new FragmentFeedBack();
-                fragmentTransaction.replace(R.id.fragment, fragmentfeedback);
-                fragmentTransaction.commit();
-                toolbar.setTitle("Send feedback");
                 break;
         }
     }
@@ -659,7 +651,6 @@ public class DMPlayerBaseActivity extends ActionBarActivity implements View.OnCl
         MediaController.getInstance().checkIsFavorite(context, (SongDetail) args[0], img_Favorite);
     }
 
-
     private void updateTitle(boolean shutdown) {
         SongDetail mSongDetail = MediaController.getInstance().getPlayingSongDetail();
         if (mSongDetail == null && shutdown) {
@@ -709,7 +700,6 @@ public class DMPlayerBaseActivity extends ActionBarActivity implements View.OnCl
     public void onValueChanged(int value) {
         MediaController.getInstance().seekToProgress(MediaController.getInstance().getPlayingSongDetail(), (float) value / 100);
     }
-
 
     private void systembartiteniam() {
         try {
