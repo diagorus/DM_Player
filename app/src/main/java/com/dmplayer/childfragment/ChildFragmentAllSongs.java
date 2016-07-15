@@ -3,7 +3,7 @@
  * You should have received a copy of the license in this archive (see LICENSE).
  * Copyright @Dibakar_Mistry, 2015.
  */
-package com.dmplayer.fragments;
+package com.dmplayer.childfragment;
 
 import java.util.ArrayList;
 
@@ -35,11 +35,17 @@ import com.dmplayer.phonemidea.PhoneMediaControl.PhoneMediaControlINterface;
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.ImageLoader;
 
-public class FragmentAllSongs extends Fragment {
+public class ChildFragmentAllSongs extends Fragment {
 
-    private ListView recycler_songslist;
     private AllSongsListAdapter mAllSongsListAdapter;
-    private ArrayList<SongDetail> songList = new ArrayList<SongDetail>();
+    private ArrayList<SongDetail> songList = new ArrayList<>();
+    private static Context context;
+
+    public static ChildFragmentAllSongs newInstance(int position, Context mContext) {
+        ChildFragmentAllSongs f = new ChildFragmentAllSongs();
+        context = mContext;
+        return f;
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -56,9 +62,9 @@ public class FragmentAllSongs extends Fragment {
     }
 
     private void setupInitialViews(View inflatreView) {
-        recycler_songslist = (ListView) inflatreView.findViewById(R.id.recycler_allSongs);
+        ListView recyclerSongsList = (ListView) inflatreView.findViewById(R.id.recycler_allSongs);
         mAllSongsListAdapter = new AllSongsListAdapter(getActivity());
-        recycler_songslist.setAdapter(mAllSongsListAdapter);
+        recyclerSongsList.setAdapter(mAllSongsListAdapter);
     }
 
     private void loadAllSongs() {

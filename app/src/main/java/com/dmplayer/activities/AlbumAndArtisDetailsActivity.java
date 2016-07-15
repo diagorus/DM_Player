@@ -67,7 +67,9 @@ import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
-public class AlbumAndArtisDetailsActivity extends ActionBarActivity implements View.OnClickListener, ObservableScrollViewCallbacks, Slider.OnValueChangedListener,
+public class AlbumAndArtisDetailsActivity extends ActionBarActivity implements View.OnClickListener,
+        ObservableScrollViewCallbacks,
+        Slider.OnValueChangedListener,
         NotificationManager.NotificationCenterDelegate {
 
     private View mToolbarView;
@@ -143,9 +145,6 @@ public class AlbumAndArtisDetailsActivity extends ActionBarActivity implements V
 
         switch (v.getId()) {
             case R.id.bottombar_play:
-                if (MediaController.getInstance().getPlayingSongDetail() != null)
-                    PlayPauseEvent(v);
-                break;
 
             case R.id.btn_play:
                 if (MediaController.getInstance().getPlayingSongDetail() != null)
@@ -173,9 +172,9 @@ public class AlbumAndArtisDetailsActivity extends ActionBarActivity implements V
             case R.id.bottombar_img_Favorite:
                 if (MediaController.getInstance().getPlayingSongDetail() != null) {
                     MediaController.getInstance().storeFavoritePlay(context, MediaController.getInstance().getPlayingSongDetail(), v.isSelected() ? 0 : 1);
-                    v.setSelected(v.isSelected() ? false : true);
+                    v.setSelected(!v.isSelected());
                     DMPlayerUtility.animateHeartButton(v);
-                    findViewById(R.id.ivLike).setSelected(v.isSelected() ? true : false);
+                    findViewById(R.id.ivLike).setSelected(!v.isSelected());
                     DMPlayerUtility.animatePhotoLike(findViewById(R.id.vBgLike), findViewById(R.id.ivLike));
                 }
                 break;
@@ -275,7 +274,6 @@ public class AlbumAndArtisDetailsActivity extends ActionBarActivity implements V
             loadAlbumSongs(id);
         } else if (tagFor == PhoneMediaControl.SonLoadFor.Artis.ordinal()) {
             loadArtisSongs(id);
-        } else {
         }
 
         tv_albumname.setText(albumname);

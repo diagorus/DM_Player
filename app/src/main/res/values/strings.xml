@@ -30,7 +30,6 @@
     <string name="title_activity_news_detail">NewsDetail</string>
 
     <string-array name="drawer">
-        <item>All Songs</item>
         <item>My Library</item>
         <item>Favorite</item>
         <item>Stream</item>
@@ -43,7 +42,6 @@
     <string name="develop">Develop</string>
 
     <array name="drawerIcons">
-        <item>@drawable/ic_allsongs</item>
         <item>@drawable/ic_library_music</item>
         <item>@drawable/ic_favorite</item>
         <item>@drawable/ic_content_send</item>

@@ -33,7 +33,7 @@ import android.widget.TextView;
 
 import com.dmplayer.R;
 import com.dmplayer.adapter.DrawerAdapter;
-import com.dmplayer.fragments.FragmentAllSongs;
+import com.dmplayer.childfragment.ChildFragmentAllSongs;
 import com.dmplayer.fragments.FragmentEqualizer;
 import com.dmplayer.fragments.FragmentFavorite;
 import com.dmplayer.fragments.FragmentStream;
@@ -168,9 +168,6 @@ public class DMPlayerBaseActivity extends ActionBarActivity implements View.OnCl
 
         switch (v.getId()) {
             case R.id.bottombar_play:
-                if (MediaController.getInstance().getPlayingSongDetail() != null)
-                    PlayPauseEvent(v);
-                break;
 
             case R.id.btn_play:
                 if (MediaController.getInstance().getPlayingSongDetail() != null)
@@ -515,19 +512,13 @@ public class DMPlayerBaseActivity extends ActionBarActivity implements View.OnCl
         switch (position) {
             case 0:
                 sharedPreferences.edit().putInt("FRAGMENT", position).apply();
-                FragmentAllSongs fragmentallsongs = new FragmentAllSongs();
-                fragmentTransaction.replace(R.id.fragment, fragmentallsongs);
-                fragmentTransaction.commit();
-                toolbar.setTitle("All Songs");
-                break;
-            case 1:
-                sharedPreferences.edit().putInt("FRAGMENT", position).apply();
                 FragmentLibrary fragmentlibrary = new FragmentLibrary();
                 fragmentTransaction.replace(R.id.fragment, fragmentlibrary);
                 fragmentTransaction.commit();
                 toolbar.setTitle("My Library");
                 break;
-            case 2:
+
+            case 1:
                 sharedPreferences.edit().putInt("FRAGMENT", position).apply();
                 FragmentFavorite fragmentfavorite = new FragmentFavorite();
                 fragmentTransaction.replace(R.id.fragment, fragmentfavorite);
@@ -535,7 +526,7 @@ public class DMPlayerBaseActivity extends ActionBarActivity implements View.OnCl
                 toolbar.setTitle("Favorite");
                 break;
 
-            case 3:
+            case 2:
                 sharedPreferences.edit().putInt("FRAGMENT", position).apply();
                 FragmentStream fragmentStream = new FragmentStream();
                 fragmentTransaction.replace(R.id.fragment, fragmentStream);
@@ -543,7 +534,7 @@ public class DMPlayerBaseActivity extends ActionBarActivity implements View.OnCl
                 toolbar.setTitle("Stream");
                 break;
 
-            case 4:
+            case 3:
                 sharedPreferences.edit().putInt("FRAGMENT", position).apply();
                 FragmentSettings fragmentsettings = new FragmentSettings();
                 fragmentTransaction.replace(R.id.fragment, fragmentsettings);
@@ -551,7 +542,7 @@ public class DMPlayerBaseActivity extends ActionBarActivity implements View.OnCl
                 toolbar.setTitle("Settings");
                 break;
 
-            case 5:
+            case 4:
                 sharedPreferences.edit().putInt("FRAGMENT", position).apply();
                 FragmentEqualizer fragmentequalizer = new FragmentEqualizer();
                 fragmentTransaction.replace(R.id.fragment, fragmentequalizer);
