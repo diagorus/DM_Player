@@ -113,6 +113,8 @@ public class DMPlayerBaseActivity extends ActionBarActivity implements View.OnCl
         context = DMPlayerBaseActivity.this;
         theme();
 
+
+
         //Set your Layout view
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_dmplayerbase);
@@ -124,7 +126,10 @@ public class DMPlayerBaseActivity extends ActionBarActivity implements View.OnCl
 
         toolbarStatusBar();
         navigationDrawer();
+
         initiSlidingUpPanel();
+        header();
+
         setFragment(0);
 
         getIntentData();
@@ -536,18 +541,18 @@ public class DMPlayerBaseActivity extends ActionBarActivity implements View.OnCl
 
             case 3:
                 sharedPreferences.edit().putInt("FRAGMENT", position).apply();
-                FragmentSettings fragmentsettings = new FragmentSettings();
-                fragmentTransaction.replace(R.id.fragment, fragmentsettings);
-                fragmentTransaction.commit();
-                toolbar.setTitle("Settings");
-                break;
-
-            case 4:
-                sharedPreferences.edit().putInt("FRAGMENT", position).apply();
                 FragmentEqualizer fragmentequalizer = new FragmentEqualizer();
                 fragmentTransaction.replace(R.id.fragment, fragmentequalizer);
                 fragmentTransaction.commit();
                 toolbar.setTitle("Equilizer");
+                break;
+
+            case 4:
+                sharedPreferences.edit().putInt("FRAGMENT", position).apply();
+                FragmentSettings fragmentsettings = new FragmentSettings();
+                fragmentTransaction.replace(R.id.fragment, fragmentsettings);
+                fragmentTransaction.commit();
+                toolbar.setTitle("Settings");
                 break;
         }
     }
@@ -557,6 +562,17 @@ public class DMPlayerBaseActivity extends ActionBarActivity implements View.OnCl
         sharedPreferences = getSharedPreferences("VALUES", Context.MODE_PRIVATE);
         theme = sharedPreferences.getInt("THEME", 0);
         DMPlayerUtility.settingTheme(context, theme);
+    }
+
+    public void header() {
+        ImageView headerImage = (ImageView) findViewById(R.id.imageViewCover);
+
+        sharedPreferences = getSharedPreferences("VALUES", Context.MODE_PRIVATE);
+        String header = sharedPreferences.getString(FragmentSettings.HEADER_PICTURE, "");
+
+        Uri headerUri = Uri.parse(header);
+        if (headerUri != null)
+            DMPlayerUtility.settingPicture(headerImage, headerUri);
     }
 
     private void loadImageLoaderOption() {

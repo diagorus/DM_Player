@@ -51,7 +51,7 @@ public class DrawerAdapter extends RecyclerView.Adapter<DrawerAdapter.ViewHolder
         ImageView icon = (ImageView) holder.itemView.findViewById(R.id.imageViewDrawerIcon);
 
         FrameLayout item_divider = (FrameLayout) holder.itemView.findViewById(R.id.item_divider);
-        item_divider.setVisibility((position == 4) ? View.VISIBLE : View.GONE);
+        item_divider.setVisibility((position == 3) ? View.VISIBLE : View.GONE);
 
         title.setText(drawerItems.get(position).getTitle());
         icon.setImageDrawable(drawerItems.get(position).getIcon());

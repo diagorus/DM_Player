@@ -10,7 +10,7 @@
         android:layout_height="match_parent"
         android:scaleType="centerCrop"
         android:src="@drawable/drawer_header"
-        android:visibility="invisible"></ImageView>
+        android:visibility="invisible" />
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -52,7 +52,7 @@
                     android:layout_height="match_parent"
                     android:scaleType="centerCrop"
                     android:src="@drawable/drawer_header"
-                    android:visibility="visible"></ImageView>
+                    android:visibility="visible" />
 
                 <View
                     android:id="@+id/vBgLike"
@@ -70,7 +70,6 @@
                     android:visibility="invisible" />
 
             </RelativeLayout>
-
 
             <include
                 android:id="@+id/bottom_palyLayout"

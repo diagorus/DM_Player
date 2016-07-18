@@ -7,17 +7,6 @@
     <string name="optionmenu_search">Search</string>
     <string name="optionmenu_moreoption">More Option</string>
 
-    <string-array name="draware_menuitems">
-        <item>All Songs</item>
-        <item>My Library</item>
-        <item>Favorite</item>
-        <item>Stream</item>
-        <!-- after divider -->
-        <item>Settings</item>
-        <item>Equilizer</item>
-
-    </string-array>
-
     <!-- Music Player -->
     <string name="albumsongseparator">\n</string>
     <!-- used in various places to indicate there is one song for a given artist or album -->

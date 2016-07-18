@@ -20,6 +20,7 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.Color;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
@@ -40,6 +41,7 @@ import android.widget.SeekBar;
 import android.widget.TextView;
 
 import com.dmplayer.R;
+import com.dmplayer.fragments.FragmentSettings;
 import com.dmplayer.manager.MediaController;
 import com.dmplayer.manager.NotificationManager;
 import com.dmplayer.models.SongDetail;
@@ -90,7 +92,7 @@ public class AlbumAndArtisDetailsActivity extends ActionBarActivity implements V
     private TextView tv_albumname, tv_title_fst, tv_title_sec;
     private ExpandableHeightListView recycler_songslist;
     private AllSongsListAdapter mAllSongsListAdapter;
-    private ArrayList<SongDetail> songList = new ArrayList<SongDetail>();
+    private ArrayList<SongDetail> songList = new ArrayList<>();
 
     private DisplayImageOptions options;
     private ImageLoader imageLoader = ImageLoader.getInstance();
@@ -100,6 +102,7 @@ public class AlbumAndArtisDetailsActivity extends ActionBarActivity implements V
         //Set your theme first
         context = AlbumAndArtisDetailsActivity.this;
         theme();
+
         //Set your Layout view
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_albumandartisdetails);
@@ -107,7 +110,6 @@ public class AlbumAndArtisDetailsActivity extends ActionBarActivity implements V
         initialize();
         getBundleValuse();
 
-        initiSlidingUpPanel();
         loadAlreadyPaing();
         addObserver();
         fabanim();
@@ -211,6 +213,17 @@ public class AlbumAndArtisDetailsActivity extends ActionBarActivity implements V
         sharedPreferences = getSharedPreferences("VALUES", Context.MODE_PRIVATE);
         int theme = sharedPreferences.getInt("THEME", 0);
         DMPlayerUtility.settingTheme(context, theme);
+    }
+
+    public void header() {
+        ImageView headerImage = (ImageView) findViewById(R.id.imageViewCover);
+
+        sharedPreferences = getSharedPreferences("VALUES", Context.MODE_PRIVATE);
+        String header = sharedPreferences.getString(FragmentSettings.HEADER_PICTURE, "");
+
+        Uri headerUri = Uri.parse(header);
+        if (headerUri != null)
+            DMPlayerUtility.settingPicture(headerImage, headerUri);
     }
 
     private void initialize() {
@@ -493,7 +506,7 @@ public class AlbumAndArtisDetailsActivity extends ActionBarActivity implements V
     private Slider audio_progress;
     private boolean isDragingStart = false;
     private int TAG_Observer;
-
+//imp
     private void initiSlidingUpPanel() {
         mLayout = (SlidingUpPanelLayout) findViewById(R.id.sliding_layout);
         // songAlbumbg = (ImageView) findViewById(R.id.image_songAlbumbg);

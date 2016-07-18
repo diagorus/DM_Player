@@ -34,8 +34,8 @@
         <item>Favorite</item>
         <item>Stream</item>
         <!-- after divider -->
-        <item>Settings</item>
         <item>Equilizer</item>
+        <item>Settings</item>
     </string-array>
 
     <string name="design">Design</string>
@@ -46,8 +46,8 @@
         <item>@drawable/ic_favorite</item>
         <item>@drawable/ic_content_send</item>
         <!-- after divider -->
-        <item>@drawable/ic_settings</item>
         <item>@drawable/ic_equalizer</item>
+        <item>@drawable/ic_settings</item>
     </array>
 
 </resources>

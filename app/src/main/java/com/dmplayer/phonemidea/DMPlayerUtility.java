@@ -5,6 +5,7 @@
  */
 package com.dmplayer.phonemidea;
 
+import java.io.IOException;
 import java.util.Formatter;
 import java.util.Locale;
 
@@ -22,6 +23,7 @@ import android.view.View;
 import android.view.animation.AccelerateInterpolator;
 import android.view.animation.DecelerateInterpolator;
 import android.view.animation.OvershootInterpolator;
+import android.widget.ImageView;
 
 import com.dmplayer.ApplicationDMPlayer;
 import com.dmplayer.R;
@@ -205,6 +207,10 @@ public class DMPlayerUtility {
         return duration;
     }
 
+    public static void settingPicture(ImageView imageView, Uri imageUri) {
+            imageView.setImageURI(null);
+            imageView.setImageURI(imageUri);
+    }
 
     //Theme set
     public static void settingTheme(Context context, int theme) {
