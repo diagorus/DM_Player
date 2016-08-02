@@ -19,7 +19,7 @@
             android:layout_width="?attr/actionBarSize"
             android:layout_height="?attr/actionBarSize"
             android:scaleType="centerCrop"
-            android:src="@drawable/bg_default_album_art"></ImageView>
+            android:src="@drawable/bg_default_album_art" />
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -85,8 +85,8 @@
             android:layout_centerVertical="true"
             android:background="@drawable/bar_selector_white"
             android:clickable="true"
-            android:scaleType="centerInside"
-            android:src="@drawable/abc_ic_menu_moreoverflow_mtrl_alpha" />
+            android:scaleType="centerInside" />
+            <!--android:src="@drawable/abc_ic_menu_moreoverflow_mtrl_alpha" />-->
     </RelativeLayout>
 
 </RelativeLayout>

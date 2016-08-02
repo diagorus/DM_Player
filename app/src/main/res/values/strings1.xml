@@ -307,4 +307,8 @@
     <!-- Menu text for the item controlling the audio effects panel [CHAR LIMIT=15] -->
     <string name="effectspanel">Sound effects</string>
 
+    <string name="profile_name">Name</string>
+
+    <string name="profile_surname">Surname</string>
+
 </resources>

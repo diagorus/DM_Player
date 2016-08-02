@@ -215,17 +215,6 @@ public class AlbumAndArtisDetailsActivity extends ActionBarActivity implements V
         DMPlayerUtility.settingTheme(context, theme);
     }
 
-    public void header() {
-        ImageView headerImage = (ImageView) findViewById(R.id.imageViewCover);
-
-        sharedPreferences = getSharedPreferences("VALUES", Context.MODE_PRIVATE);
-        String header = sharedPreferences.getString(FragmentSettings.HEADER_PICTURE, "");
-
-        Uri headerUri = Uri.parse(header);
-        if (headerUri != null)
-            DMPlayerUtility.settingPicture(headerImage, headerUri);
-    }
-
     private void initialize() {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);

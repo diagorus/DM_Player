@@ -7,38 +7,40 @@ package com.dmplayer.fragments;
 
 import com.dmplayer.R;
 import com.dmplayer.activities.DMPlayerBaseActivity;
-import com.dmplayer.utility.ColorChooserDialog;
+import com.dmplayer.phonemidea.DMPlayerUtility;
+import com.dmplayer.utility.ProfileDialog;
+import com.dmplayer.utility.ThemeDialog;
 
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
-import android.provider.MediaStore;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
-import android.support.v4.app.NotificationCompat;
 import android.app.Activity;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 import android.widget.RelativeLayout;
+
+import java.io.File;
+import java.io.IOException;
 
 public class FragmentSettings extends Fragment implements View.OnClickListener {
 
-    final static int GALLERY_REQUEST = 1;
+    public final static int GALLERY_REQUEST = 1;
+    public final static int CAMERA_REQUEST = 2;
 
-    public final static String HEADER_PICTURE = "HEADER_PICTURE";
+    public final static String HEADER_BACKGROUND = "HEADER_BACKGROUND";
+    public final static String AVATAR = "AVATAR";
+    public final static String NAME = "NAME";
 
     private SharedPreferences sharedPreferences;
     private SharedPreferences.Editor editor;
 
-    public FragmentSettings() {
-
-    }
+    private String TAG = "FragmentSettings";
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -57,7 +59,9 @@ public class FragmentSettings extends Fragment implements View.OnClickListener {
         sharedPreferences = getActivity().getSharedPreferences("VALUES", Context.MODE_PRIVATE);
 
         ((RelativeLayout) rootview.findViewById(R.id.relativeLayoutChooseTheme)).setOnClickListener(this);
+        ((RelativeLayout) rootview.findViewById(R.id.relativeLayoutCustomizeProfile)).setOnClickListener(this);
         ((RelativeLayout) rootview.findViewById(R.id.relativeLayoutChangeHeaderBackground)).setOnClickListener(this);
+
     }
 
     @Override
@@ -68,13 +72,13 @@ public class FragmentSettings extends Fragment implements View.OnClickListener {
                 break;
 
             case R.id.relativeLayoutCustomizeProfile:
-
+                showColorProfileDialog();
                 break;
 
             case R.id.relativeLayoutChangeHeaderBackground:
-                Intent picturePickerIntent = new Intent(Intent.ACTION_PICK);
-                picturePickerIntent.setType("image/*");
-                startActivityForResult(picturePickerIntent, GALLERY_REQUEST);
+                Intent toGallery = new Intent(Intent.ACTION_PICK);
+                toGallery.setType("image/*");
+                startActivityForResult(toGallery, GALLERY_REQUEST);
                 break;
         }
     }
@@ -87,7 +91,8 @@ public class FragmentSettings extends Fragment implements View.OnClickListener {
                 if (resultCode == Activity.RESULT_OK) {
                     Uri selectedImage = returnedIntent.getData();
 
-                    setHeaderPicture(selectedImage);
+                    String pathToBackground = copyBackgroundToStorage(selectedImage);
+                    setHeaderBackground(pathToBackground);
 
                     startActivity(new Intent(getActivity(), DMPlayerBaseActivity.class));
                     getActivity().finish();
@@ -102,15 +107,15 @@ public class FragmentSettings extends Fragment implements View.OnClickListener {
         editor.putInt("THEME", theme).apply();
     }
 
-    public void setHeaderPicture(Uri picture) {
+    public void setHeaderBackground(String picture) {
         editor = sharedPreferences.edit();
-        editor.putString(HEADER_PICTURE, picture.toString()).apply();
+        editor.putString(HEADER_BACKGROUND, picture.toString()).apply();
     }
 
     private void showColorChooseDialog() {
         FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
-        ColorChooserDialog dialog = new ColorChooserDialog();
-        dialog.setOnItemChoose(new ColorChooserDialog.OnItemChoose() {
+        ThemeDialog dialog = new ThemeDialog();
+        dialog.setOnItemChoose(new ThemeDialog.OnItemChoose() {
             @Override
             public void onClick(int position) {
                 setThemeFragment(position);
@@ -124,5 +129,27 @@ public class FragmentSettings extends Fragment implements View.OnClickListener {
             }
         });
         dialog.show(fragmentManager, "fragment_color_chooser");
+    }
+
+    private void showColorProfileDialog() {
+        FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
+        ProfileDialog dialog = new ProfileDialog();
+        dialog.show(fragmentManager, "fragment_profile");
+    }
+
+    private String copyBackgroundToStorage(Uri picture) {
+        File backgroundSource = new File (DMPlayerUtility.getRealPathFromURI(getActivity(), picture));
+        File backgroundDest = new File(ProfileDialog.checkPhotoDirectory() + "/" + "header_background" +
+                backgroundSource
+                        .getPath()
+                        .substring(backgroundSource
+                                .getPath()
+                                .lastIndexOf(".")));
+        try{
+            DMPlayerUtility.copyFile(backgroundSource, backgroundDest);
+        } catch (IOException ioex) {
+            Log.e(TAG, "Error occurred while coping background");
+        }
+        return backgroundDest.toURI().toString();
     }
 }

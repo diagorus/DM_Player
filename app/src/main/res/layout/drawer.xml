@@ -4,19 +4,12 @@
     android:layout_height="match_parent"
     android:background="@color/md_white_1000"
     android:orientation="vertical">
-//!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
 
-        <ImageView
-            android:id="@+id/imageViewCover"
-            android:layout_width="match_parent"
-            android:layout_height="172dp"
-            android:scaleType="centerCrop"
-            android:src="@drawable/drawer_header" />
 
-    </RelativeLayout>
+<include
+    layout="@layout/include_slidepanel_profile" />
+
+
 
     <!-- Set visibility to visible to edit -->
 
