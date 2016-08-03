@@ -30,7 +30,7 @@ import android.widget.ImageView.ScaleType;
 import android.widget.TextView;
 
 import com.dmplayer.R;
-import com.dmplayer.activities.AlbumAndArtisDetailsActivity;
+import com.dmplayer.activities.AlbumAndArtistDetailsActivity;
 import com.dmplayer.adapter.CursorRecyclerViewAdapter;
 import com.dmplayer.utility.LogWriter;
 import com.dmplayer.phonemidea.DMPlayerUtility;
@@ -232,7 +232,7 @@ public class ChildFragmentArtists extends Fragment {
             public void onClick(View view) {
                 try {
                     long artisID = getArtisID(getPosition());
-                    Intent mIntent = new Intent(context, AlbumAndArtisDetailsActivity.class);
+                    Intent mIntent = new Intent(context, AlbumAndArtistDetailsActivity.class);
                     Bundle mBundle = new Bundle();
                     mBundle.putLong("id", artisID);
                     mBundle.putLong("tagfor", PhoneMediaControl.SonLoadFor.Artis.ordinal());

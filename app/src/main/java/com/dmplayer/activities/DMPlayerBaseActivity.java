@@ -59,6 +59,7 @@ import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.display.FadeInBitmapDisplayer;
 import com.nostra13.universalimageloader.core.listener.ImageLoadingListener;
 import com.nostra13.universalimageloader.core.listener.SimpleImageLoadingListener;
+import com.vk.sdk.VKSdk;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -66,7 +67,7 @@ import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
-
+import retrofit2.Retrofit;
 
 
 public class DMPlayerBaseActivity extends ActionBarActivity implements View.OnClickListener, Slider.OnValueChangedListener,
@@ -119,13 +120,11 @@ public class DMPlayerBaseActivity extends ActionBarActivity implements View.OnCl
         context = DMPlayerBaseActivity.this;
         theme();
 
-
-
         //Set your Layout view
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_dmplayerbase);
 
-        //System bar color set
+        //System bar color set(HUYOUVO)
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
 //            setSystemBarTint();
         }
@@ -139,6 +138,7 @@ public class DMPlayerBaseActivity extends ActionBarActivity implements View.OnCl
         setFragment(0);
 
         getIntentData();
+
     }
 
     @Override
@@ -300,18 +300,6 @@ public class DMPlayerBaseActivity extends ActionBarActivity implements View.OnCl
         recyclerViewDrawer = (RecyclerView) findViewById(R.id.recyclerViewDrawer);
         recyclerViewDrawer.setHasFixedSize(true);
         recyclerViewDrawer.setLayoutManager(new LinearLayoutManager(DMPlayerBaseActivity.this));
-
-//        (view, motionEvent) -> {
-//            final boolean handled = super.onTouchEvent(motionEvent);
-//            final ClickItemTouchListener.ItemClickGestureListener mGestureListener;
-//
-//            final int action = motionEvent.getAction() & MotionEventCompat.ACTION_MASK;
-//            if (action == MotionEvent.ACTION_UP) {
-//                mGestureListener.dispatchSingleTapUpIfNeeded(motionEvent);
-//            }
-//
-//            return handled;
-//        }
 
         ArrayList<DrawerItem> drawerItems = new ArrayList<>();
         final String[] drawerTitles = getResources().getStringArray(R.array.drawer);

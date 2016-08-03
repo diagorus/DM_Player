@@ -106,6 +106,26 @@
         android:layout_marginRight="16dp"
         android:background="?attr/selectableItemBackground">
 
+        <ImageView
+            android:id="@+id/imageViewProfile1"
+            android:layout_width="24dp"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="8dp"
+            android:padding="-6dp"
+            android:src="@drawable/ic_settings_profile_1"
+            android:tint="?attr/colorAccent"/>
+
+        <ImageView
+            android:id="@+id/imageViewProfile2"
+            android:layout_width="24dp"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="8dp"
+            android:padding="-6dp"
+            android:src="@drawable/ic_settings_profile_2"
+            android:tint="?attr/colorPrimary" />
+
         <LinearLayout
             android:id="@+id/linLayoutProfileText"
             android:layout_width="match_parent"
@@ -155,6 +175,26 @@
         android:layout_marginLeft="16dp"
         android:layout_marginRight="16dp"
         android:background="?attr/selectableItemBackground">
+
+        <ImageView
+            android:id="@+id/imageViewBackground2"
+            android:layout_width="24dp"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="8dp"
+            android:padding="-6dp"
+            android:src="@drawable/ic_settings_background_2"
+            android:tint="?attr/colorPrimary"/>
+
+        <ImageView
+            android:id="@+id/imageViewBackground1"
+            android:layout_width="24dp"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="8dp"
+            android:padding="-6dp"
+            android:src="@drawable/ic_settings_background_1"
+            android:tint="?attr/colorAccent" />
 
         <LinearLayout
             android:id="@+id/linLayoutHeaderBackgroundText"

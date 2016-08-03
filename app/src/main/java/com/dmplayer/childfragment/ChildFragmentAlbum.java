@@ -31,7 +31,7 @@ import android.widget.ImageView.ScaleType;
 import android.widget.TextView;
 
 import com.dmplayer.R;
-import com.dmplayer.activities.AlbumAndArtisDetailsActivity;
+import com.dmplayer.activities.AlbumAndArtistDetailsActivity;
 import com.dmplayer.adapter.CursorRecyclerViewAdapter;
 import com.dmplayer.utility.LogWriter;
 import com.dmplayer.phonemidea.DMPlayerUtility;
@@ -255,7 +255,7 @@ public class ChildFragmentAlbum extends Fragment {
                 try {
                     long albumID = getAlbumID(getPosition());
 
-                    Intent mIntent = new Intent(context, AlbumAndArtisDetailsActivity.class);
+                    Intent mIntent = new Intent(context, AlbumAndArtistDetailsActivity.class);
                     Bundle mBundle = new Bundle();
                     mBundle.putLong("id", albumID);
                     mBundle.putLong("tagfor", PhoneMediaControl.SonLoadFor.Album.ordinal());

@@ -7,6 +7,8 @@
     <string name="DataBaseName_Version">1</string>
     <string name="DataBaseName">DMPlayer</string>
 
+    <integer name="com_vk_sdk_AppId">5573236</integer>
+
     <string name="drawer_open">open drawer</string>
     <string name="drawer_close">close drawer</string>
     <string name="about">Material Design App, is an app designed by Javier Segovia Córdoba</string>
@@ -49,5 +51,8 @@
         <item>@drawable/ic_equalizer</item>
         <item>@drawable/ic_settings</item>
     </array>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 
 </resources>

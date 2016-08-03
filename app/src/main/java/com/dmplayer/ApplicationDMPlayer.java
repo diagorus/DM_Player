@@ -21,6 +21,7 @@ import com.nostra13.universalimageloader.cache.disc.naming.Md5FileNameGenerator;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
 import com.nostra13.universalimageloader.core.assist.QueueProcessingType;
+import com.vk.sdk.VKSdk;
 
 public class ApplicationDMPlayer extends Application {
 
@@ -52,6 +53,8 @@ public class ApplicationDMPlayer extends Application {
          * Imageloader initialize
 		 */
         initImageLoader(applicationContext);
+
+        VKSdk.initialize(this);
     }
 
     @Override
