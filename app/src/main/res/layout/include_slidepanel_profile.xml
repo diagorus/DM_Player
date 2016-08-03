@@ -33,6 +33,8 @@
             android:layout_marginLeft="25dp"
             android:textSize="20sp"
             android:textColor="@color/md_text_white"
+            android:shadowColor="#000"
+            android:shadowRadius="2"
             android:text="Anonymous" />
     </RelativeLayout>
 </FrameLayout>
