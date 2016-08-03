@@ -20,7 +20,6 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.Color;
-import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
@@ -33,15 +32,12 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
-import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
-import android.widget.SeekBar;
 import android.widget.TextView;
 
 import com.dmplayer.R;
-import com.dmplayer.fragments.FragmentSettings;
 import com.dmplayer.manager.MediaController;
 import com.dmplayer.manager.NotificationManager;
 import com.dmplayer.models.SongDetail;
@@ -69,7 +65,7 @@ import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
-public class AlbumAndArtisDetailsActivity extends ActionBarActivity implements View.OnClickListener,
+public class AlbumAndArtistDetailsActivity extends ActionBarActivity implements View.OnClickListener,
         ObservableScrollViewCallbacks,
         Slider.OnValueChangedListener,
         NotificationManager.NotificationCenterDelegate {
@@ -100,7 +96,7 @@ public class AlbumAndArtisDetailsActivity extends ActionBarActivity implements V
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         //Set your theme first
-        context = AlbumAndArtisDetailsActivity.this;
+        context = AlbumAndArtistDetailsActivity.this;
         theme();
 
         //Set your Layout view

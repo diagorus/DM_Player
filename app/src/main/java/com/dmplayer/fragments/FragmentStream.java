@@ -16,10 +16,6 @@ import android.view.ViewGroup;
 
 public class FragmentStream extends Fragment {
 
-	public FragmentStream() {
-
-	}
-
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 		View rootview = inflater.inflate(R.layout.fragment_stream, null);
