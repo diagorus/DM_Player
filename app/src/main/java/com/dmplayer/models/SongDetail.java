@@ -126,8 +126,6 @@ public class SongDetail {
 				FileDescriptor fd = pfd.getFileDescriptor();
 				curThumb = BitmapFactory.decodeFileDescriptor(fd);
 			}
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}

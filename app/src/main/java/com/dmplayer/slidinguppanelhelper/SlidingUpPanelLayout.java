@@ -268,27 +268,6 @@ public class SlidingUpPanelLayout extends ViewGroup {
 	 * a subset of the listener methods you can extend this instead of implement
 	 * the full interface.
 	 */
-	public static class SimplePanelSlideListener implements PanelSlideListener {
-		@Override
-		public void onPanelSlide(View panel, float slideOffset) {
-		}
-
-		@Override
-		public void onPanelCollapsed(View panel) {
-		}
-
-		@Override
-		public void onPanelExpanded(View panel) {
-		}
-
-		@Override
-		public void onPanelAnchored(View panel) {
-		}
-
-		@Override
-		public void onPanelHidden(View panel) {
-		}
-	}
 
 	public SlidingUpPanelLayout(Context context) {
 		this(context, null);

@@ -15,7 +15,7 @@ import android.widget.Button;
 import com.dmplayer.R;
 
 
-public class ColorChooserDialog extends DialogFragment implements View.OnClickListener {
+public class ThemeDialog extends DialogFragment implements View.OnClickListener {
     private   CardView cardView1, cardView2, cardView3, cardView4, cardView5, cardView6, cardView7, cardView8, cardView9, cardView10;
     private    Button buttonDisagree, buttonAgree;
     private View view;
@@ -57,6 +57,7 @@ public class ColorChooserDialog extends DialogFragment implements View.OnClickLi
         cardView10 = (CardView) view.findViewById(R.id.card_view10);
         buttonDisagree = (Button) view.findViewById(R.id.buttonDisagree);
         buttonAgree = (Button) view.findViewById(R.id.buttonAgree);
+
 
         cardView1.setOnClickListener(this);
         cardView2.setOnClickListener(this);
@@ -151,7 +152,7 @@ public class ColorChooserDialog extends DialogFragment implements View.OnClickLi
     public OnItemChoose onItemChoose;
 
     public interface OnItemChoose {
-        public void onClick(int position);
-        public void onSaveChange();
+        void onClick(int position);
+        void onSaveChange();
     }
 }

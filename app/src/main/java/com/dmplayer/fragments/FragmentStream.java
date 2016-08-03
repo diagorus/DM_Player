@@ -7,21 +7,22 @@ package com.dmplayer.fragments;
 
 import com.dmplayer.R;
 
+import android.app.ProgressDialog;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-public class FragmentFeedBack extends Fragment {
+public class FragmentStream extends Fragment {
 
-	public FragmentFeedBack() {
+	public FragmentStream() {
 
 	}
 
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-		View rootview = inflater.inflate(R.layout.fragment_feedback, null);
+		View rootview = inflater.inflate(R.layout.fragment_stream, null);
 		setupInitialViews(rootview);
 		return rootview;
 	}

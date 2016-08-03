@@ -20,6 +20,7 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.Color;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
@@ -40,6 +41,7 @@ import android.widget.SeekBar;
 import android.widget.TextView;
 
 import com.dmplayer.R;
+import com.dmplayer.fragments.FragmentSettings;
 import com.dmplayer.manager.MediaController;
 import com.dmplayer.manager.NotificationManager;
 import com.dmplayer.models.SongDetail;
@@ -67,7 +69,9 @@ import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
-public class AlbumAndArtisDetailsActivity extends ActionBarActivity implements View.OnClickListener, ObservableScrollViewCallbacks, Slider.OnValueChangedListener,
+public class AlbumAndArtisDetailsActivity extends ActionBarActivity implements View.OnClickListener,
+        ObservableScrollViewCallbacks,
+        Slider.OnValueChangedListener,
         NotificationManager.NotificationCenterDelegate {
 
     private View mToolbarView;
@@ -88,7 +92,7 @@ public class AlbumAndArtisDetailsActivity extends ActionBarActivity implements V
     private TextView tv_albumname, tv_title_fst, tv_title_sec;
     private ExpandableHeightListView recycler_songslist;
     private AllSongsListAdapter mAllSongsListAdapter;
-    private ArrayList<SongDetail> songList = new ArrayList<SongDetail>();
+    private ArrayList<SongDetail> songList = new ArrayList<>();
 
     private DisplayImageOptions options;
     private ImageLoader imageLoader = ImageLoader.getInstance();
@@ -98,6 +102,7 @@ public class AlbumAndArtisDetailsActivity extends ActionBarActivity implements V
         //Set your theme first
         context = AlbumAndArtisDetailsActivity.this;
         theme();
+
         //Set your Layout view
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_albumandartisdetails);
@@ -105,7 +110,6 @@ public class AlbumAndArtisDetailsActivity extends ActionBarActivity implements V
         initialize();
         getBundleValuse();
 
-        initiSlidingUpPanel();
         loadAlreadyPaing();
         addObserver();
         fabanim();
@@ -143,9 +147,6 @@ public class AlbumAndArtisDetailsActivity extends ActionBarActivity implements V
 
         switch (v.getId()) {
             case R.id.bottombar_play:
-                if (MediaController.getInstance().getPlayingSongDetail() != null)
-                    PlayPauseEvent(v);
-                break;
 
             case R.id.btn_play:
                 if (MediaController.getInstance().getPlayingSongDetail() != null)
@@ -173,9 +174,9 @@ public class AlbumAndArtisDetailsActivity extends ActionBarActivity implements V
             case R.id.bottombar_img_Favorite:
                 if (MediaController.getInstance().getPlayingSongDetail() != null) {
                     MediaController.getInstance().storeFavoritePlay(context, MediaController.getInstance().getPlayingSongDetail(), v.isSelected() ? 0 : 1);
-                    v.setSelected(v.isSelected() ? false : true);
+                    v.setSelected(!v.isSelected());
                     DMPlayerUtility.animateHeartButton(v);
-                    findViewById(R.id.ivLike).setSelected(v.isSelected() ? true : false);
+                    findViewById(R.id.ivLike).setSelected(!v.isSelected());
                     DMPlayerUtility.animatePhotoLike(findViewById(R.id.vBgLike), findViewById(R.id.ivLike));
                 }
                 break;
@@ -275,7 +276,6 @@ public class AlbumAndArtisDetailsActivity extends ActionBarActivity implements V
             loadAlbumSongs(id);
         } else if (tagFor == PhoneMediaControl.SonLoadFor.Artis.ordinal()) {
             loadArtisSongs(id);
-        } else {
         }
 
         tv_albumname.setText(albumname);
@@ -495,7 +495,7 @@ public class AlbumAndArtisDetailsActivity extends ActionBarActivity implements V
     private Slider audio_progress;
     private boolean isDragingStart = false;
     private int TAG_Observer;
-
+//imp
     private void initiSlidingUpPanel() {
         mLayout = (SlidingUpPanelLayout) findViewById(R.id.sliding_layout);
         // songAlbumbg = (ImageView) findViewById(R.id.image_songAlbumbg);
@@ -717,9 +717,9 @@ public class AlbumAndArtisDetailsActivity extends ActionBarActivity implements V
 
     private void updateProgress(SongDetail mSongDetail) {
         if (audio_progress != null && mSongDetail != null) {
-            // When SeekBar Draging Don't Show Progress
+            // When SeekBar Dragging Don't Show Progress
             if (!isDragingStart) {
-                // Progress Value comming in point it range 0 to 1
+                // Progress Value coming in point it range 0 to 1
                 audio_progress.setValue((int) (mSongDetail.audioProgress * 100));
             }
             String timeString = String.format("%d:%02d", mSongDetail.audioProgressSec / 60, mSongDetail.audioProgressSec % 60);

@@ -18,6 +18,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.dmplayer.R;
+import com.dmplayer.fragments.FragmentSettings;
 import com.dmplayer.models.SongDetail;
 import com.dmplayer.phonemidea.DMPlayerUtility;
 import com.dmplayer.phonemidea.PhoneMediaControl;
@@ -41,6 +42,7 @@ public class MusicChooserActivity extends ActionBarActivity {
         //Set your theme first
         context = MusicChooserActivity.this;
         theme();
+
         //Set your Layout view
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_musicchooser);
@@ -66,6 +68,7 @@ public class MusicChooserActivity extends ActionBarActivity {
     public void theme() {
         sharedPreferences = getSharedPreferences("VALUES", Context.MODE_PRIVATE);
         int theme = sharedPreferences.getInt("THEME", 0);
+
         DMPlayerUtility.settingTheme(context, theme);
     }
 

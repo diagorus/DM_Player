@@ -56,7 +56,7 @@ public class DrawerAdapter extends RecyclerView.Adapter<DrawerAdapter.ViewHolder
         title.setText(drawerItems.get(position).getTitle());
         icon.setImageDrawable(drawerItems.get(position).getIcon());
 
-//        icon.setVisibility((position < 3) ? View.VISIBLE : View.GONE);
+//        icon.setVisibility((position < 4) ? View.VISIBLE : View.GONE);
     }
 
     // Return the size of your dataset (invoked by the layout manager)

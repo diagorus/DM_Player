@@ -19,6 +19,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.dmplayer.R;
+import com.dmplayer.childfragment.ChildFragmentAllSongs;
 import com.dmplayer.tablayout.SlidingTabLayout;
 import com.dmplayer.childfragment.ChildFragmentAlbum;
 import com.dmplayer.childfragment.ChildFragmentArtists;
@@ -27,16 +28,10 @@ import com.dmplayer.childfragment.ChildFragmentMostPlay;
 
 public class FragmentLibrary extends Fragment {
 
-    private final String[] TITLES = {"ALBUMS", "ARTISTS", "GENRES", "MOSTPLAY"};
+    private final String[] TITLES = {"ALL SONGS","ALBUMS", "ARTISTS", "GENRES", "MOST PLAYED"};
     private TypedValue typedValueToolbarHeight = new TypedValue();
-    private ChildFragmentGenres childFragmentGenres;
-    private ChildFragmentArtists childFragmentArtists;
-    private ChildFragmentAlbum childFragmentAlbum;
-    private ChildFragmentMostPlay childFragmentMostplay;
 
     private MyPagerAdapter pagerAdapter;
-    private ViewPager pager;
-    private SlidingTabLayout tabs;
     private int tabsPaddingTop;
 
     @Override
@@ -48,7 +43,7 @@ public class FragmentLibrary extends Fragment {
     public void onDestroy() {
         super.onDestroy();
     }
-
+//test
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
@@ -59,10 +54,10 @@ public class FragmentLibrary extends Fragment {
 
 
     private void setupView(View view) {
-        pager = (ViewPager) view.findViewById(R.id.pager);
+        ViewPager pager = (ViewPager) view.findViewById(R.id.pager);
         MyPagerAdapter pagerAdapter = new MyPagerAdapter(getFragmentManager());
         pager.setAdapter(pagerAdapter);
-        tabs = (SlidingTabLayout) view.findViewById(R.id.tabs);
+        SlidingTabLayout tabs = (SlidingTabLayout) view.findViewById(R.id.tabs);
         tabs.setDistributeEvenly(false);
         // Tab indicator color
         tabs.setCustomTabColorizer(new SlidingTabLayout.TabColorizer() {
@@ -104,17 +99,19 @@ public class FragmentLibrary extends Fragment {
         public Fragment getItem(int position) {
             switch (position) {
                 case 0:
-                    childFragmentAlbum = ChildFragmentAlbum.newInstance(position, getActivity());
-                    return childFragmentAlbum;
+                    return ChildFragmentAllSongs.newInstance(position, getActivity());
+
                 case 1:
-                    childFragmentArtists = ChildFragmentArtists.newInstance(position, getActivity());
-                    return childFragmentArtists;
+                    return ChildFragmentAlbum.newInstance(position, getActivity());
+
                 case 2:
-                    childFragmentGenres = ChildFragmentGenres.newInstance(position, getActivity());
-                    return childFragmentGenres;
+                    return ChildFragmentArtists.newInstance(position, getActivity());
+
                 case 3:
-                    childFragmentMostplay = ChildFragmentMostPlay.newInstance(position, getActivity());
-                    return childFragmentMostplay;
+                    return ChildFragmentGenres.newInstance(position, getActivity());
+
+                case 4:
+                    return ChildFragmentMostPlay.newInstance(position, getActivity());
             }
             return null;
         }

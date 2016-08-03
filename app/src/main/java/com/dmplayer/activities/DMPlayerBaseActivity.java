@@ -1,18 +1,18 @@
 package com.dmplayer.activities;
 
-import android.app.Activity;
+import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.content.res.TypedArray;
 import android.graphics.Bitmap;
-import android.graphics.Color;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v4.view.MotionEventCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -23,27 +23,22 @@ import android.text.TextUtils;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.util.TypedValue;
-import android.view.Menu;
-import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.FrameLayout;
-import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
-import android.widget.ScrollView;
-import android.widget.SeekBar;
 import android.widget.TextView;
 
 import com.dmplayer.R;
 import com.dmplayer.adapter.DrawerAdapter;
-import com.dmplayer.fragments.FragmentAllSongs;
 import com.dmplayer.fragments.FragmentEqualizer;
-import com.dmplayer.fragments.FragmentFeedBack;
-import com.dmplayer.fragments.FragmentFevorite;
+import com.dmplayer.fragments.FragmentFavorite;
+import com.dmplayer.fragments.FragmentStream;
 import com.dmplayer.fragments.FragmentLibrary;
 import com.dmplayer.fragments.FragmentSettings;
 import com.dmplayer.manager.MediaController;
@@ -54,6 +49,7 @@ import com.dmplayer.models.SongDetail;
 import com.dmplayer.phonemidea.DMPlayerUtility;
 import com.dmplayer.recyclerviewutils.ItemClickSupport;
 import com.dmplayer.slidinguppanelhelper.SlidingUpPanelLayout;
+import com.dmplayer.uicomponent.CircleImageView;
 import com.dmplayer.uicomponent.PlayPauseView;
 import com.dmplayer.uicomponent.Slider;
 import com.dmplayer.utility.LogWriter;
@@ -69,6 +65,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
+
+
 
 
 public class DMPlayerBaseActivity extends ActionBarActivity implements View.OnClickListener, Slider.OnValueChangedListener,
@@ -121,18 +119,23 @@ public class DMPlayerBaseActivity extends ActionBarActivity implements View.OnCl
         context = DMPlayerBaseActivity.this;
         theme();
 
+
+
         //Set your Layout view
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_dmplayerbase);
 
         //System bar color set
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-//            systembartiteniam();
+//            setSystemBarTint();
         }
 
         toolbarStatusBar();
         navigationDrawer();
-        initiSlidingUpPanel();
+
+        initSlidingUpPanel();
+        header();
+
         setFragment(0);
 
         getIntentData();
@@ -176,9 +179,6 @@ public class DMPlayerBaseActivity extends ActionBarActivity implements View.OnCl
 
         switch (v.getId()) {
             case R.id.bottombar_play:
-                if (MediaController.getInstance().getPlayingSongDetail() != null)
-                    PlayPauseEvent(v);
-                break;
 
             case R.id.btn_play:
                 if (MediaController.getInstance().getPlayingSongDetail() != null)
@@ -206,9 +206,9 @@ public class DMPlayerBaseActivity extends ActionBarActivity implements View.OnCl
             case R.id.bottombar_img_Favorite:
                 if (MediaController.getInstance().getPlayingSongDetail() != null) {
                     MediaController.getInstance().storeFavoritePlay(context, MediaController.getInstance().getPlayingSongDetail(), v.isSelected() ? 0 : 1);
-                    v.setSelected(v.isSelected() ? false : true);
+                    v.setSelected(!v.isSelected());
                     DMPlayerUtility.animateHeartButton(v);
-                    findViewById(R.id.ivLike).setSelected(v.isSelected() ? true : false);
+                    findViewById(R.id.ivLike).setSelected(!v.isSelected());
                     DMPlayerUtility.animatePhotoLike(findViewById(R.id.vBgLike), findViewById(R.id.ivLike));
                 }
                 break;
@@ -221,12 +221,12 @@ public class DMPlayerBaseActivity extends ActionBarActivity implements View.OnCl
     /**
      * Get intent data from music choose option
      */
-    private void getIntentData() {
+    void getIntentData() {
         try {
             Uri data = getIntent().getData();
             if (data != null) {
                 if (data.getScheme().equalsIgnoreCase("file")) {
-                    String path = data.getPath().toString();
+                    String path = data.getPath();
                     if (!TextUtils.isEmpty(path)) {
                         MediaController.getInstance().cleanupPlayer(context, true, true);
                         MusicPreferance.getPlaylist(context, path);
@@ -236,9 +236,9 @@ public class DMPlayerBaseActivity extends ActionBarActivity implements View.OnCl
                     }
                 }
                 if (data.getScheme().equalsIgnoreCase("http"))
-                    LogWriter.info(TAG, data.getPath().toString());
+                    LogWriter.info(TAG, data.getPath());
                 if (data.getScheme().equalsIgnoreCase("content"))
-                    LogWriter.info(TAG, data.getPath().toString());
+                    LogWriter.info(TAG, data.getPath());
 
             }
         } catch (Exception e) {
@@ -252,33 +252,45 @@ public class DMPlayerBaseActivity extends ActionBarActivity implements View.OnCl
         setSupportActionBar(toolbar);
     }
 
-    public void navigationDrawer() {
+    void setDrawersRightMargin() {
         // Cast drawer
         mDrawerLayout = (DrawerLayout) findViewById(R.id.drawerLayout);
 
-        // Fix right margin to 56dp (portrait)
         View drawer = findViewById(R.id.scrimInsetsFrameLayout);
         ViewGroup.LayoutParams layoutParams = drawer.getLayoutParams();
         DisplayMetrics displayMetrics = getResources().getDisplayMetrics();
+
         if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT) {
-            layoutParams.width = displayMetrics.widthPixels - (56 * Math.round(displayMetrics.density));
+            layoutParams.width = displayMetrics.widthPixels - (70 * Math.round(displayMetrics.density));
         }
         if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
-            layoutParams.width = displayMetrics.widthPixels + (20 * Math.round(displayMetrics.density)) - displayMetrics.widthPixels / 2;
+            layoutParams.width = displayMetrics.widthPixels + (25 * Math.round(displayMetrics.density)) - displayMetrics.widthPixels / 2;
         }
+    }
 
-        // Setup Drawer Icon
+    void setupDrawerIcon() {
         mDrawerToggle = new ActionBarDrawerToggle(this, mDrawerLayout, toolbar, R.string.drawer_open, R.string.drawer_close);
         mDrawerLayout.setDrawerListener(mDrawerToggle);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setHomeButtonEnabled(true);
         mDrawerToggle.syncState();
+    }
 
-        // statusBar color behind navigation drawer
+    void setStatusBarBehindDrawer() {
         TypedValue typedValueStatusBarColor = new TypedValue();
         getTheme().resolveAttribute(R.attr.colorPrimaryDark, typedValueStatusBarColor, true);
         final int colorStatusBar = typedValueStatusBarColor.data;
         mDrawerLayout.setStatusBarBackgroundColor(colorStatusBar);
+    }
+
+    public void navigationDrawer() {
+
+        setDrawersRightMargin();
+
+        setupDrawerIcon();
+
+        // statusBar color behind navigation drawer
+        setStatusBarBehindDrawer();
 
         // Setup RecyclerView inside drawer
         final TypedValue typedValue = new TypedValue();
@@ -288,6 +300,18 @@ public class DMPlayerBaseActivity extends ActionBarActivity implements View.OnCl
         recyclerViewDrawer = (RecyclerView) findViewById(R.id.recyclerViewDrawer);
         recyclerViewDrawer.setHasFixedSize(true);
         recyclerViewDrawer.setLayoutManager(new LinearLayoutManager(DMPlayerBaseActivity.this));
+
+//        (view, motionEvent) -> {
+//            final boolean handled = super.onTouchEvent(motionEvent);
+//            final ClickItemTouchListener.ItemClickGestureListener mGestureListener;
+//
+//            final int action = motionEvent.getAction() & MotionEventCompat.ACTION_MASK;
+//            if (action == MotionEvent.ACTION_UP) {
+//                mGestureListener.dispatchSingleTapUpIfNeeded(motionEvent);
+//            }
+//
+//            return handled;
+//        }
 
         ArrayList<DrawerItem> drawerItems = new ArrayList<>();
         final String[] drawerTitles = getResources().getStringArray(R.array.drawer);
@@ -300,6 +324,7 @@ public class DMPlayerBaseActivity extends ActionBarActivity implements View.OnCl
         recyclerViewDrawer.setAdapter(adapterDrawer);
 
         recyclerViewDrawer.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+            @TargetApi(Build.VERSION_CODES.JELLY_BEAN)
             @Override
             public void onGlobalLayout() {
 
@@ -308,11 +333,7 @@ public class DMPlayerBaseActivity extends ActionBarActivity implements View.OnCl
                         ImageView imageViewDrawerIcon = (ImageView) recyclerViewDrawer.getChildAt(i).findViewById(R.id.imageViewDrawerIcon);
                         TextView textViewDrawerTitle = (TextView) recyclerViewDrawer.getChildAt(i).findViewById(R.id.textViewDrawerItemTitle);
                         imageViewDrawerIcon.setColorFilter(color);
-                        if (Build.VERSION.SDK_INT > 15) {
-                            imageViewDrawerIcon.setImageAlpha(255);
-                        } else {
-                            imageViewDrawerIcon.setAlpha(255);
-                        }
+                        imageViewDrawerIcon.setImageAlpha(255);
                         textViewDrawerTitle.setTextColor(color);
                         RelativeLayout relativeLayoutDrawerItem = (RelativeLayout) recyclerViewDrawer.getChildAt(i).findViewById(R.id.relativeLayoutDrawerItem);
                         TypedValue typedValueDrawerSelected = new TypedValue();
@@ -320,16 +341,12 @@ public class DMPlayerBaseActivity extends ActionBarActivity implements View.OnCl
                         int colorDrawerItemSelected = typedValueDrawerSelected.data;
                         colorDrawerItemSelected = (colorDrawerItemSelected & 0x00FFFFFF) | 0x30000000;
                         relativeLayoutDrawerItem.setBackgroundColor(colorDrawerItemSelected);
-
                     } else {
                         ImageView imageViewDrawerIcon = (ImageView) recyclerViewDrawer.getChildAt(i).findViewById(R.id.imageViewDrawerIcon);
                         TextView textViewDrawerTitle = (TextView) recyclerViewDrawer.getChildAt(i).findViewById(R.id.textViewDrawerItemTitle);
                         imageViewDrawerIcon.setColorFilter(getResources().getColor(R.color.md_text));
-                        if (Build.VERSION.SDK_INT > 15) {
-                            imageViewDrawerIcon.setImageAlpha(138);
-                        } else {
-                            imageViewDrawerIcon.setAlpha(138);
-                        }
+                        imageViewDrawerIcon.setImageAlpha(138);
+
                         textViewDrawerTitle.setTextColor(getResources().getColor(R.color.md_text));
                         RelativeLayout relativeLayoutDrawerItem = (RelativeLayout) recyclerViewDrawer.getChildAt(i).findViewById(R.id.relativeLayoutDrawerItem);
                         relativeLayoutDrawerItem.setBackgroundColor(getResources().getColor(R.color.md_white_1000));
@@ -340,6 +357,8 @@ public class DMPlayerBaseActivity extends ActionBarActivity implements View.OnCl
                 recyclerViewDrawer.getViewTreeObserver().removeGlobalOnLayoutListener(this);
             }
         });
+
+
 
 
         // RecyclerView item listener.
@@ -397,8 +416,7 @@ public class DMPlayerBaseActivity extends ActionBarActivity implements View.OnCl
         });
     }
 
-
-    private void initiSlidingUpPanel() {
+    private void initSlidingUpPanel() {
         mLayout = (SlidingUpPanelLayout) findViewById(R.id.sliding_layout);
         songAlbumbg = (ImageView) findViewById(R.id.image_songAlbumbg_mid);
         img_bottom_slideone = (ImageView) findViewById(R.id.img_bottom_slideone);
@@ -523,35 +541,29 @@ public class DMPlayerBaseActivity extends ActionBarActivity implements View.OnCl
         switch (position) {
             case 0:
                 sharedPreferences.edit().putInt("FRAGMENT", position).apply();
-                FragmentAllSongs fragmentallsongs = new FragmentAllSongs();
-                fragmentTransaction.replace(R.id.fragment, fragmentallsongs);
-                fragmentTransaction.commit();
-                toolbar.setTitle("All Songs");
-                break;
-            case 1:
-                sharedPreferences.edit().putInt("FRAGMENT", position).apply();
                 FragmentLibrary fragmentlibrary = new FragmentLibrary();
                 fragmentTransaction.replace(R.id.fragment, fragmentlibrary);
                 fragmentTransaction.commit();
                 toolbar.setTitle("My Library");
                 break;
-            case 2:
+
+            case 1:
                 sharedPreferences.edit().putInt("FRAGMENT", position).apply();
-                FragmentFevorite fragmentfevorite = new FragmentFevorite();
-                fragmentTransaction.replace(R.id.fragment, fragmentfevorite);
+                FragmentFavorite fragmentfavorite = new FragmentFavorite();
+                fragmentTransaction.replace(R.id.fragment, fragmentfavorite);
                 fragmentTransaction.commit();
                 toolbar.setTitle("Favorite");
                 break;
 
-            case 3:
+            case 2:
                 sharedPreferences.edit().putInt("FRAGMENT", position).apply();
-                FragmentSettings fragmentsettings = new FragmentSettings();
-                fragmentTransaction.replace(R.id.fragment, fragmentsettings);
+                FragmentStream fragmentStream = new FragmentStream();
+                fragmentTransaction.replace(R.id.fragment, fragmentStream);
                 fragmentTransaction.commit();
-                toolbar.setTitle("Settings");
+                toolbar.setTitle("Stream");
                 break;
 
-            case 4:
+            case 3:
                 sharedPreferences.edit().putInt("FRAGMENT", position).apply();
                 FragmentEqualizer fragmentequalizer = new FragmentEqualizer();
                 fragmentTransaction.replace(R.id.fragment, fragmentequalizer);
@@ -559,45 +571,59 @@ public class DMPlayerBaseActivity extends ActionBarActivity implements View.OnCl
                 toolbar.setTitle("Equilizer");
                 break;
 
-            case 5:
+            case 4:
                 sharedPreferences.edit().putInt("FRAGMENT", position).apply();
-                FragmentFeedBack fragmentfeedback = new FragmentFeedBack();
-                fragmentTransaction.replace(R.id.fragment, fragmentfeedback);
+                FragmentSettings fragmentsettings = new FragmentSettings();
+                fragmentTransaction.replace(R.id.fragment, fragmentsettings);
                 fragmentTransaction.commit();
-                toolbar.setTitle("Send feedback");
+                toolbar.setTitle("Settings");
                 break;
         }
     }
 
-    //Catch  theme changed from settings
     public void theme() {
         sharedPreferences = getSharedPreferences("VALUES", Context.MODE_PRIVATE);
         theme = sharedPreferences.getInt("THEME", 0);
         DMPlayerUtility.settingTheme(context, theme);
     }
 
+    public void header() {
+        ImageView headerBackgroundImage = (ImageView) findViewById(R.id.imageViewCover);
+        CircleImageView avatarImage = (CircleImageView) findViewById(R.id.profileAvatar);
+        TextView nameText = (TextView) findViewById(R.id.profileName);
+
+        sharedPreferences = getSharedPreferences("VALUES", Context.MODE_PRIVATE);
+
+        String headerBackground = sharedPreferences.getString(FragmentSettings.HEADER_BACKGROUND, "");
+        String avatar = sharedPreferences.getString(FragmentSettings.AVATAR, "");
+        String name = sharedPreferences.getString(FragmentSettings.NAME, "");
+
+        Uri headerBackgroundUri = Uri.parse(headerBackground);
+        Uri avatarUri = Uri.parse(avatar);
+
+        if (DMPlayerUtility.isURIExists(headerBackgroundUri)) {
+            DMPlayerUtility.settingPicture(headerBackgroundImage, headerBackgroundUri);
+        } else {
+            DMPlayerUtility.settingPicture(headerBackgroundImage, R.drawable.drawer_header);
+        }
+
+        if (DMPlayerUtility.isURIExists(avatarUri)) {
+            DMPlayerUtility.settingPicture(avatarImage, avatarUri);
+        } else {
+            DMPlayerUtility.settingPicture(avatarImage, R.drawable.drawer_default_avatar);
+        }
+
+        if (!name.equals("")) {
+            nameText.setText(name);
+        } else {
+            nameText.setText("Anonymous");
+        }
+    }
+
     private void loadImageLoaderOption() {
         this.options = new DisplayImageOptions.Builder().showImageOnLoading(R.drawable.bg_default_album_art)
                 .showImageForEmptyUri(R.drawable.bg_default_album_art).showImageOnFail(R.drawable.bg_default_album_art).cacheInMemory(true)
                 .cacheOnDisk(true).considerExifParams(true).bitmapConfig(Bitmap.Config.RGB_565).build();
-    }
-
-    private static class AnimateFirstDisplayListener extends SimpleImageLoadingListener {
-
-        static final List<String> displayedImages = Collections.synchronizedList(new LinkedList<String>());
-
-        @Override
-        public void onLoadingComplete(String imageUri, View view, Bitmap loadedImage) {
-            if (loadedImage != null) {
-                ImageView imageView = (ImageView) view;
-                boolean firstDisplay = !displayedImages.contains(imageUri);
-                if (firstDisplay) {
-                    FadeInBitmapDisplayer.animate(imageView, 500);
-                    displayedImages.add(imageUri);
-                }
-            }
-        }
-
     }
 
     private void loadAlreadyPlayng() {
@@ -659,7 +685,6 @@ public class DMPlayerBaseActivity extends ActionBarActivity implements View.OnCl
         MediaController.getInstance().checkIsFavorite(context, (SongDetail) args[0], img_Favorite);
     }
 
-
     private void updateTitle(boolean shutdown) {
         SongDetail mSongDetail = MediaController.getInstance().getPlayingSongDetail();
         if (mSongDetail == null && shutdown) {
@@ -710,8 +735,7 @@ public class DMPlayerBaseActivity extends ActionBarActivity implements View.OnCl
         MediaController.getInstance().seekToProgress(MediaController.getInstance().getPlayingSongDetail(), (float) value / 100);
     }
 
-
-    private void systembartiteniam() {
+    private void setSystemBarTint() {
         try {
             setTranslucentStatus(true);
             TypedValue typedValueStatusBarColor = new TypedValue();
@@ -737,4 +761,23 @@ public class DMPlayerBaseActivity extends ActionBarActivity implements View.OnCl
         }
         win.setAttributes(winParams);
     }
+
+    private static class AnimateFirstDisplayListener extends SimpleImageLoadingListener {
+
+        static final List<String> displayedImages = Collections.synchronizedList(new LinkedList<String>());
+
+        @Override
+        public void onLoadingComplete(String imageUri, View view, Bitmap loadedImage) {
+            if (loadedImage != null) {
+                ImageView imageView = (ImageView) view;
+                boolean firstDisplay = !displayedImages.contains(imageUri);
+                if (firstDisplay) {
+                    FadeInBitmapDisplayer.animate(imageView, 500);
+                    displayedImages.add(imageUri);
+                }
+            }
+        }
+
+    }
+
 }

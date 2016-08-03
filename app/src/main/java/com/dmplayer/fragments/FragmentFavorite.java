@@ -6,16 +6,12 @@
 package com.dmplayer.fragments;
 
 import android.content.Context;
-import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.Color;
-import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.PopupMenu;
-import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -28,8 +24,6 @@ import android.widget.TextView;
 
 import com.dmplayer.R;
 import com.dmplayer.activities.DMPlayerBaseActivity;
-import com.dmplayer.adapter.CursorRecyclerViewAdapter;
-import com.dmplayer.dbhandler.FavoritePlayTableHelper;
 import com.dmplayer.manager.MediaController;
 import com.dmplayer.models.SongDetail;
 import com.dmplayer.phonemidea.DMPlayerUtility;
@@ -39,16 +33,16 @@ import com.nostra13.universalimageloader.core.ImageLoader;
 
 import java.util.ArrayList;
 
-public class FragmentFevorite extends Fragment {
+public class FragmentFavorite extends Fragment {
 
-    private static final String TAG = "FragmentFevorite";
+    private static final String TAG = "FragmentFavorite";
     private static Context context;
     private ListView recycler_songslist;
     private AllSongsListAdapter mAllSongsListAdapter;
     private ArrayList<SongDetail> songList = new ArrayList<SongDetail>();
 
-    public static FragmentFevorite newInstance(int position, Context mContext) {
-        FragmentFevorite f = new FragmentFevorite();
+    public static FragmentFavorite newInstance(int position, Context mContext) {
+        FragmentFavorite f = new FragmentFavorite();
         context = mContext;
         return f;
     }

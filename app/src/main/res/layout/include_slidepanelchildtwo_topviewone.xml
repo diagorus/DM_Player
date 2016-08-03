@@ -19,7 +19,7 @@
             android:layout_width="?attr/actionBarSize"
             android:layout_height="?attr/actionBarSize"
             android:scaleType="centerCrop"
-            android:src="@drawable/bg_default_album_art"></ImageView>
+            android:src="@drawable/bg_default_album_art" />
 
         <LinearLayout
             android:layout_width="match_parent"
