@@ -20,6 +20,7 @@ import android.view.ViewGroup;
 
 import com.dmplayer.R;
 import com.dmplayer.childfragment.ChildFragmentAllSongs;
+import com.dmplayer.childfragment.ChildFragmentPlaylists;
 import com.dmplayer.tablayout.SlidingTabLayout;
 import com.dmplayer.childfragment.ChildFragmentAlbum;
 import com.dmplayer.childfragment.ChildFragmentArtists;
@@ -28,7 +29,8 @@ import com.dmplayer.childfragment.ChildFragmentMostPlay;
 
 public class FragmentLibrary extends Fragment {
 
-    private final String[] TITLES = {"ALL SONGS","ALBUMS", "ARTISTS", "GENRES", "MOST PLAYED"};
+    private final String[] TITLES = {"ALL SONGS","ALBUMS", "ARTISTS", "GENRES", "MOST PLAYED",
+            "playlists"};
     private TypedValue typedValueToolbarHeight = new TypedValue();
 
     private MyPagerAdapter pagerAdapter;
@@ -112,6 +114,8 @@ public class FragmentLibrary extends Fragment {
 
                 case 4:
                     return ChildFragmentMostPlay.newInstance(position, getActivity());
+                case 5:
+                    return ChildFragmentPlaylists.newInstance(position,getActivity());
             }
             return null;
         }

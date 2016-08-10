@@ -47,6 +47,7 @@ import com.dmplayer.observablelib.ScrollState;
 import com.dmplayer.observablelib.ScrollUtils;
 import com.dmplayer.phonemidea.DMPlayerUtility;
 import com.dmplayer.phonemidea.PhoneMediaControl;
+import com.dmplayer.playlist.Playlist;
 import com.dmplayer.slidinguppanelhelper.SlidingUpPanelLayout;
 import com.dmplayer.uicomponent.ExpandableHeightListView;
 import com.dmplayer.uicomponent.PlayPauseView;
@@ -80,7 +81,7 @@ public class PlaylistDetailsActivity extends ActionBarActivity implements View.O
 
     private long id = -1;
     private long tagFor = -1;
-    private String albumname = "";
+    private String playlistname = "";
     private String title_one = "";
     private String title_sec = "";
     private ImageView banner;
@@ -89,6 +90,7 @@ public class PlaylistDetailsActivity extends ActionBarActivity implements View.O
     private ExpandableHeightListView recycler_songslist;
     private AllSongsListAdapter mAllSongsListAdapter;
     private ArrayList<SongDetail> songList = new ArrayList<>();
+    private Playlist mPlaylist;
 
     private DisplayImageOptions options;
     private ImageLoader imageLoader = ImageLoader.getInstance();
@@ -104,7 +106,7 @@ public class PlaylistDetailsActivity extends ActionBarActivity implements View.O
         setContentView(R.layout.activity_albumandartisdetails);
 
         initialize();
-        getBundleValuse();
+        getBundleValues();
 
         loadAlreadyPaing();
         addObserver();
@@ -256,10 +258,17 @@ public class PlaylistDetailsActivity extends ActionBarActivity implements View.O
         }
     }
 
-    private void getBundleValuse() {
-       // // TODO: 10.08.2016 get playlist info http://stackoverflow.com/questions/2836646/java-serializable-object-to-byte-array 
+    private void getBundleValues() {
 
-        tv_albumname.setText(albumname);
+        Bundle mBundle = getIntent().getExtras();
+        if(mBundle!=null) {
+            mPlaylist = Playlist.decipher(mBundle.getByteArray("playlist"));
+            playlistname = mPlaylist.getName();
+            title_one = String.valueOf(mPlaylist.getSongCount()) + "songs";
+            title_sec = "";
+            loadPlaylistSongs();
+        }
+        tv_albumname.setText(playlistname);
         tv_title_fst.setText(title_one);
         tv_title_sec.setText(title_sec);
     }
@@ -317,6 +326,11 @@ public class PlaylistDetailsActivity extends ActionBarActivity implements View.O
             }
         });
         mPhoneMediaControl.loadMusicList(context, id, PhoneMediaControl.SonLoadFor.Gener, "");
+    }
+
+    private void loadPlaylistSongs(){
+        songList = mPlaylist.getSongs();
+        mAllSongsListAdapter.notifyDataSetChanged();
     }
 
 

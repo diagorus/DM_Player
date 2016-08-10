@@ -10,8 +10,10 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Color;
+import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Environment;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.PopupMenu;
@@ -41,13 +43,16 @@ import com.dmplayer.utility.LogWriter;
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.ImageLoader;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.ObjectInputStream;
 import java.util.ArrayList;
 
 public class ChildFragmentPlaylists extends Fragment {
 
+    private static final String TAG = "ChildFragmentPlaylists";
     private PlaylistsAdapter mPlaylistsAdapter;
     private ArrayList<Playlist> playlists = new ArrayList<>();
-    private ArrayList<SongDetail> songList = new ArrayList<>();
     private static Context context;
 
     public static ChildFragmentPlaylists newInstance(int position, Context mContext) {
@@ -78,7 +83,45 @@ public class ChildFragmentPlaylists extends Fragment {
     }
 
     private void loadAllSongs() {
-        // TODO: 10.08.2016 get playlists from sdcard/DMplayer/playlists or something 
+
+        AsyncTask<Void, Void, Void> task = new AsyncTask<Void, Void, Void>() {
+            ArrayList<File> playlistsPaths = new ArrayList<>();
+
+            @Override
+            protected Void doInBackground(Void... voids) {
+                try {
+                    File parentDir = new File(
+                            Environment.getExternalStorageDirectory() + "/DMPlayer/",
+                            "DMPlayer_playlists");
+                    if (parentDir.exists()) {
+                        for (File file : parentDir.listFiles()) {
+                            if (file.getName().endsWith(".dpl"))
+                                playlistsPaths.add(file);
+                        }
+                        for(File file : playlistsPaths){
+                            ObjectInputStream fin = new ObjectInputStream(new FileInputStream
+                                    (file));
+                            Playlist current = (Playlist)fin.readObject();
+                            current.setPath(file.getPath());
+                            playlists.add(current);
+                        }
+                    }
+                    return null;
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    LogWriter.info(TAG, e.toString());
+                    return null;
+                }
+            }
+
+            @Override
+            protected void onPostExecute(Void aVoid) {
+                super.onPostExecute(aVoid);
+                mPlaylistsAdapter.notifyDataSetChanged();
+            }
+        };
+        task.execute();
+
     }
 
     public class PlaylistsAdapter extends RecyclerView.Adapter<PlaylistsAdapter.ViewHolder> {
@@ -117,13 +160,12 @@ public class ChildFragmentPlaylists extends Fragment {
             @Override
             public void onClick(View view) {
                 try {
-                    long albumID = getAlbumID(getPosition());
-
                     Intent mIntent = new Intent(context, PlaylistDetailsActivity.class);
                     Bundle mBundle = new Bundle();
-                    // TODO: 10.08.2016 save playlist and pass 
+                    Playlist current = playlists.get(getAdapterPosition());
+                    mBundle.putByteArray("playlist", current.getBytes());
                     mIntent.putExtras(mBundle);
-                    ((Activity) context).startActivity(mIntent);
+                    context.startActivity(mIntent);
                     ((Activity) context).overridePendingTransition(0, 0);
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -134,11 +176,10 @@ public class ChildFragmentPlaylists extends Fragment {
 
         @Override
         public void onBindViewHolder(ViewHolder holder, int position) {
-            SongDetail mSong = songList.get(position);
             Playlist playlist = playlists.get(position);
             holder.albumName.setText(playlist.getName());
-            holder.artistName.setText(playlist.getSongs().size());
-            imageLoader.displayImage("",holder.icon,options);
+            holder.artistName.setText("Songs: " + String.valueOf(playlist.getSongCount()));
+            imageLoader.displayImage("", holder.icon, options);
         }
 
         @Override
@@ -148,7 +189,7 @@ public class ChildFragmentPlaylists extends Fragment {
 
         @Override
         public int getItemCount() {
-            return (songList != null) ? songList.size() : 0;
+            return (playlists != null) ? playlists.size() : 0;
         }
 
         // TODO: 10.08.2016 wtf is this lmao 

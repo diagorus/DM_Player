@@ -7,7 +7,10 @@ package com.dmplayer.fragments;
 
 import com.dmplayer.R;
 import com.dmplayer.activities.DMPlayerBaseActivity;
+import com.dmplayer.models.SongDetail;
 import com.dmplayer.phonemidea.DMPlayerUtility;
+import com.dmplayer.playlist.Playlist;
+import com.dmplayer.utility.LogWriter;
 import com.dmplayer.utility.ProfileDialog;
 import com.dmplayer.utility.ThemeDialog;
 
@@ -16,6 +19,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.app.Activity;
@@ -26,7 +30,9 @@ import android.view.ViewGroup;
 import android.widget.RelativeLayout;
 
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.ObjectOutputStream;
 
 public class FragmentSettings extends Fragment implements View.OnClickListener {
 
@@ -61,6 +67,7 @@ public class FragmentSettings extends Fragment implements View.OnClickListener {
         ((RelativeLayout) rootview.findViewById(R.id.relativeLayoutChooseTheme)).setOnClickListener(this);
         ((RelativeLayout) rootview.findViewById(R.id.relativeLayoutCustomizeProfile)).setOnClickListener(this);
         ((RelativeLayout) rootview.findViewById(R.id.relativeLayoutChangeHeaderBackground)).setOnClickListener(this);
+        ((RelativeLayout) rootview.findViewById(R.id.relativeLayoutCreatePlaylist)).setOnClickListener(this);
 
     }
 
@@ -79,6 +86,27 @@ public class FragmentSettings extends Fragment implements View.OnClickListener {
                 Intent toGallery = new Intent(Intent.ACTION_PICK);
                 toGallery.setType("image/*");
                 startActivityForResult(toGallery, GALLERY_REQUEST);
+                break;
+
+            case R.id.relativeLayoutCreatePlaylist:
+                try {
+                    Playlist a = new Playlist();
+                    a.addSong(new SongDetail(0, 0, "Yiruma", "River flows in You", Environment
+                            .getExternalStorageDirectory() +
+                            "/Music/YirumaRiver.mp3", "River flows in You", "100000"));
+                    a.setName("asd fgh");
+                    File b = new File(Environment
+                            .getExternalStorageDirectory() + "/DMPlayer/DMPlayer_playlists");
+                    if(!b.exists())
+                        b.mkdirs();
+                    ObjectOutputStream os = new ObjectOutputStream(new FileOutputStream(Environment
+                            .getExternalStorageDirectory() + "/DMPlayer/DMPlayer_playlists/a.dpl"));
+                    os.writeObject(a);
+                    os.close();
+                    LogWriter.info(TAG,"OK");
+                } catch (Exception ex) {
+                    ex.printStackTrace();
+                }
                 break;
         }
     }
@@ -138,14 +166,14 @@ public class FragmentSettings extends Fragment implements View.OnClickListener {
     }
 
     private String copyBackgroundToStorage(Uri picture) {
-        File backgroundSource = new File (DMPlayerUtility.getRealPathFromURI(getActivity(), picture));
+        File backgroundSource = new File(DMPlayerUtility.getRealPathFromURI(getActivity(), picture));
         File backgroundDest = new File(ProfileDialog.checkPhotoDirectory() + "/" + "header_background" +
                 backgroundSource
                         .getPath()
                         .substring(backgroundSource
                                 .getPath()
                                 .lastIndexOf(".")));
-        try{
+        try {
             DMPlayerUtility.copyFile(backgroundSource, backgroundDest);
         } catch (IOException ioex) {
             Log.e(TAG, "Error occurred while coping background");

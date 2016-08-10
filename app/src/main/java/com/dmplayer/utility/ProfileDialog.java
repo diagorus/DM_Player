@@ -44,7 +44,7 @@ public class ProfileDialog extends DialogFragment implements View.OnClickListene
 
     private static File photoDirectory;
 
-    private String TAG = "ProfileDialog";
+    private static final String TAG = "ProfileDialog";
 
     private int where = 0;
     private String initialName;
@@ -168,6 +168,15 @@ public class ProfileDialog extends DialogFragment implements View.OnClickListene
                 "DMPlayer_photos");
         if (!photoDirectory.exists())
             photoDirectory.mkdirs();
+        //we aren't using default camera directory so lets not display our directory to gallery
+        File nomedia = new File(photoDirectory,"/.nomedia");
+        try {
+            nomedia.createNewFile();
+        }
+        catch (Exception ex) {
+            ex.printStackTrace();
+            LogWriter.info(TAG, ex.toString());
+        }
         return photoDirectory.getPath();
     }
 

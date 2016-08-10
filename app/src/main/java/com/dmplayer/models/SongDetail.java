@@ -8,6 +8,7 @@ package com.dmplayer.models;
 import java.io.FileDescriptor;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.Serializable;
 
 import android.content.Context;
 import android.graphics.Bitmap;
@@ -17,7 +18,7 @@ import android.os.ParcelFileDescriptor;
 import android.text.TextUtils;
 import android.util.Log;
 
-public class SongDetail {
+public class SongDetail implements Serializable {
 	public int id;
 	public int album_id;
 	public String artist;
