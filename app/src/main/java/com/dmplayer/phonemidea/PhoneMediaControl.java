@@ -5,6 +5,8 @@
  */
 package com.dmplayer.phonemidea;
 
+import java.io.FileInputStream;
+import java.io.ObjectInputStream;
 import java.util.ArrayList;
 
 import android.app.Activity;
@@ -15,12 +17,15 @@ import android.os.AsyncTask;
 import android.os.Build;
 import android.provider.MediaStore;
 import android.util.Log;
+import android.util.StringBuilderPrinter;
 
 import com.dmplayer.ApplicationDMPlayer;
 import com.dmplayer.dbhandler.FavoritePlayTableHelper;
 import com.dmplayer.dbhandler.MostAndRecentPlayTableHelper;
 import com.dmplayer.manager.MediaController;
 import com.dmplayer.models.SongDetail;
+import com.dmplayer.playlist.Playlist;
+import com.dmplayer.utility.LogWriter;
 
 public class PhoneMediaControl {
 
@@ -29,7 +34,7 @@ public class PhoneMediaControl {
     private static volatile PhoneMediaControl Instance = null;
 
     public static enum SonLoadFor {
-        All, Gener, Artis, Album, Musicintent, MostPlay, Favorite, ResecntPlay
+        All, Gener, Artis, Album, Musicintent, MostPlay, Favorite, ResecntPlay, Playlist
     }
 
     public static PhoneMediaControl getInstance() {
@@ -127,6 +132,36 @@ public class PhoneMediaControl {
             case Favorite:
                 cursor = FavoritePlayTableHelper.getInstance(context).getFavoriteSongList();
                 songsList = getSongsFromSQLDBCursor(cursor);
+                break;
+
+            case Playlist:
+                StringBuilder plCondition = new StringBuilder(MediaStore.Audio.Media.DATA);
+                if(path.endsWith(".dpl")){
+                    try {
+                        ObjectInputStream fin = new ObjectInputStream(new FileInputStream
+                                (path));
+                        Playlist current = (Playlist) fin.readObject();
+                        current.setPath(path);
+                        plCondition.append("='");
+                        ArrayList<SongDetail> sList = current.getSongs();
+                        for(int i=0;i<sList.size()-1;i++){
+                            plCondition.append(sList.get(i).getPath());
+                            plCondition.append("' OR ");
+                        }
+                        plCondition.append(sList.get(sList.size()));
+                    }
+                    catch (Exception e) {e.printStackTrace();}
+                }
+                else {
+                    plCondition.append("='");
+                    plCondition.append(path);
+                    plCondition.append("'");
+                }
+                sortOrder = MediaStore.Audio.Media.DEFAULT_SORT_ORDER;
+                cursor = ((Activity) context).getContentResolver().query(MediaStore.Audio
+                        .Media.EXTERNAL_CONTENT_URI,projectionSongs,plCondition.toString
+                        (),null,sortOrder);
+                songsList = getSongsFromCursor(cursor);
                 break;
         }
         return songsList;

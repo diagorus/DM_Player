@@ -106,6 +106,8 @@ public class AlbumAndArtistDetailsActivity extends ActionBarActivity implements 
         initialize();
         getBundleValuse();
 
+        initiSlidingUpPanel();
+
         loadAlreadyPaing();
         addObserver();
         fabanim();

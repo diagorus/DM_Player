@@ -20,6 +20,7 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.Color;
+import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
@@ -39,6 +40,7 @@ import android.widget.TextView;
 
 import com.dmplayer.R;
 import com.dmplayer.manager.MediaController;
+import com.dmplayer.manager.MusicPreferance;
 import com.dmplayer.manager.NotificationManager;
 import com.dmplayer.models.SongDetail;
 import com.dmplayer.observablelib.ObservableScrollView;
@@ -71,7 +73,7 @@ public class PlaylistDetailsActivity extends ActionBarActivity implements View.O
         Slider.OnValueChangedListener,
         NotificationManager.NotificationCenterDelegate {
 
-    private View mToolbarView;
+    private Toolbar mToolbarView;
     private ObservableScrollView mScrollView;
     private int mParallaxImageHeight;
 
@@ -106,6 +108,7 @@ public class PlaylistDetailsActivity extends ActionBarActivity implements View.O
         setContentView(R.layout.activity_albumandartisdetails);
 
         initialize();
+        initiSlidingUpPanel();
         getBundleValues();
 
         loadAlreadyPaing();
@@ -214,12 +217,11 @@ public class PlaylistDetailsActivity extends ActionBarActivity implements View.O
     }
 
     private void initialize() {
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
+        mToolbarView = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(mToolbarView);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowTitleEnabled(false);
 
-        mToolbarView = findViewById(R.id.toolbar);
 
         // Setup RecyclerView inside drawer
         final TypedValue typedValue = new TypedValue();
@@ -260,72 +262,29 @@ public class PlaylistDetailsActivity extends ActionBarActivity implements View.O
 
     private void getBundleValues() {
 
-        Bundle mBundle = getIntent().getExtras();
-        if(mBundle!=null) {
-            mPlaylist = Playlist.decipher(mBundle.getByteArray("playlist"));
-            playlistname = mPlaylist.getName();
-            title_one = String.valueOf(mPlaylist.getSongCount()) + "songs";
-            title_sec = "";
-            loadPlaylistSongs();
-        }
-        tv_albumname.setText(playlistname);
-        tv_title_fst.setText(title_one);
-        tv_title_sec.setText(title_sec);
-    }
-
-
-    private void loadAlbumSongs(long id) {
-        PhoneMediaControl mPhoneMediaControl = PhoneMediaControl.getInstance();
-        PhoneMediaControl.setPhonemediacontrolinterface(new PhoneMediaControl.PhoneMediaControlINterface() {
+        AsyncTask<Void,Void,Void> getValues = new AsyncTask<Void, Void, Void>() {
+            @Override
+            protected Void doInBackground(Void... voids) {Bundle mBundle = getIntent().getExtras();
+                if(mBundle!=null) {
+                    mPlaylist = Playlist.decipher(mBundle.getByteArray("playlist"));
+                    playlistname = mPlaylist.getName();
+                    title_one = String.valueOf(mPlaylist.getSongCount()) + " songs";
+                    title_sec = "";
+                    loadPlaylistSongs();
+                }
+                return null;
+            }
 
             @Override
-            public void loadSongsComplete(ArrayList<SongDetail> songsList_) {
-                songList = songsList_;
-                mAllSongsListAdapter.notifyDataSetChanged();
-                if (songList != null && songList.size() >= 1) {
-                    tv_title_sec.setText(songList.size() + " songs");
-                }
+            protected void onPostExecute(Void aVoid) {
+                super.onPostExecute(aVoid);
+                tv_albumname.setText(playlistname);
+                tv_title_fst.setText(title_one);
+                tv_title_sec.setText(title_sec);
             }
-        });
-        mPhoneMediaControl.loadMusicList(context, id, PhoneMediaControl.SonLoadFor.Album, "");
+        };
 
-        String contentURI = "content://media/external/audio/albumart/" + id;
-        imageLoader.displayImage(contentURI, banner, options);
-    }
-
-    private void loadArtisSongs(long id) {
-        PhoneMediaControl mPhoneMediaControl = PhoneMediaControl.getInstance();
-        PhoneMediaControl.setPhonemediacontrolinterface(new PhoneMediaControl.PhoneMediaControlINterface() {
-
-            @Override
-            public void loadSongsComplete(ArrayList<SongDetail> songsList_) {
-                songList = songsList_;
-                mAllSongsListAdapter.notifyDataSetChanged();
-                if (songList != null && songList.size() >= 1) {
-                    String contentURI = "content://media/external/audio/media/" + songList.get(0).getId() + "/albumart";
-                    imageLoader.displayImage(contentURI, banner, options);
-                }
-            }
-        });
-        mPhoneMediaControl.loadMusicList(context, id, PhoneMediaControl.SonLoadFor.Artis, "");
-    }
-
-    private void loadGenersSongs(long id) {
-        PhoneMediaControl mPhoneMediaControl = PhoneMediaControl.getInstance();
-        PhoneMediaControl.setPhonemediacontrolinterface(new PhoneMediaControl.PhoneMediaControlINterface() {
-
-            @Override
-            public void loadSongsComplete(ArrayList<SongDetail> songsList_) {
-                songList = songsList_;
-                mAllSongsListAdapter.notifyDataSetChanged();
-                if (songList != null && songList.size() >= 1) {
-                    String contentURI = "content://media/external/audio/media/" + songList.get(0).getId() + "/albumart";
-                    imageLoader.displayImage(contentURI, banner, options);
-                    tv_title_sec.setText(songList.size() + " songs");
-                }
-            }
-        });
-        mPhoneMediaControl.loadMusicList(context, id, PhoneMediaControl.SonLoadFor.Gener, "");
+        getValues.execute();
     }
 
     private void loadPlaylistSongs(){
@@ -389,11 +348,16 @@ public class PlaylistDetailsActivity extends ActionBarActivity implements View.O
                 public void onClick(View v) {
 
                     SongDetail mDetail = songList.get(position);
+                    mDetail.audioProgress = 0.0f;
+                    mDetail.audioProgressSec = 0;
+                    loadSongsDetails(mDetail);
                     if (mDetail != null) {
                         if (MediaController.getInstance().isPlayingAudio(mDetail) && !MediaController.getInstance().isAudioPaused()) {
                             MediaController.getInstance().pauseAudio(mDetail);
                         } else {
-                            MediaController.getInstance().setPlaylist(songList, mDetail, (int) tagFor, (int) id);
+                            MediaController.getInstance().setPlaylist(mPlaylist.getSongs(), mDetail,
+                                    (int) tagFor,
+                                    (int) id);
                         }
                     }
 
@@ -493,7 +457,7 @@ public class PlaylistDetailsActivity extends ActionBarActivity implements View.O
 //imp
     private void initiSlidingUpPanel() {
         mLayout = (SlidingUpPanelLayout) findViewById(R.id.sliding_layout);
-        // songAlbumbg = (ImageView) findViewById(R.id.image_songAlbumbg);
+        songAlbumbg = (ImageView) findViewById(R.id.image_songAlbumbg);
         songAlbumbg = (ImageView) findViewById(R.id.image_songAlbumbg_mid);
         img_bottom_slideone = (ImageView) findViewById(R.id.img_bottom_slideone);
         img_bottom_slidetwo = (ImageView) findViewById(R.id.img_bottom_slidetwo);
@@ -673,12 +637,12 @@ public class PlaylistDetailsActivity extends ActionBarActivity implements View.O
 
     @Override
     public void didReceivedNotification(int id, Object... args) {
-        if (id == NotificationManager.audioDidStarted || id == NotificationManager.audioPlayStateChanged || id == NotificationManager.audioDidReset) {
-            updateTitle(id == NotificationManager.audioDidReset && (Boolean) args[1]);
-        } else if (id == NotificationManager.audioProgressDidChanged) {
-            SongDetail mSongDetail = MediaController.getInstance().getPlayingSongDetail();
-            updateProgress(mSongDetail);
-        }
+//        if (id == NotificationManager.audioDidStarted || id == NotificationManager.audioPlayStateChanged || id == NotificationManager.audioDidReset) {
+//            updateTitle(id == NotificationManager.audioDidReset && (Boolean) args[1]);
+//        } else if (id == NotificationManager.audioProgressDidChanged) {
+//            SongDetail mSongDetail = MediaController.getInstance().getPlayingSongDetail();
+//            updateProgress(mSongDetail);
+//        }
     }
 
     @Override

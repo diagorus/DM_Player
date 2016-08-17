@@ -287,4 +287,54 @@
             android:background="@color/md_divider" />
 
     </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/relativeLayoutMusicChooser"
+        android:layout_width="match_parent"
+        android:layout_height="88dp"
+        android:layout_marginLeft="16dp"
+        android:layout_marginRight="16dp"
+        android:background="?attr/selectableItemBackground">
+
+        <LinearLayout
+            android:id="@+id/linLayoutMusicChooserText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="64dp"
+            android:gravity="center_vertical"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/textViewMusicChooserInfo"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="8dp"
+                android:layout_marginRight="8dp"
+                android:text="Open music chooser activity"
+                android:textAppearance="@style/TextAppearance.AppCompat.Inverse"
+                android:textColor="@color/md_text"
+                android:textSize="16sp" />
+
+            <TextView
+                android:id="@+id/textViewMusicChooserDescription"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="8dp"
+                android:layout_marginRight="8dp"
+                android:text="Open music chooser activity"
+                android:textAppearance="@style/TextAppearance.AppCompat.Inverse"
+                android:textColor="@color/md_secondary_text_icons"
+                android:textSize="14sp" />
+
+        </LinearLayout>
+
+        <FrameLayout
+            android:id="@+id/dividerHeaderBackground"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_alignParentBottom="true"
+            android:background="@color/md_divider" />
+
+    </RelativeLayout>
 </LinearLayout>

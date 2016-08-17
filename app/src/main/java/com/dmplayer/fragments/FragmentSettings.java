@@ -7,8 +7,10 @@ package com.dmplayer.fragments;
 
 import com.dmplayer.R;
 import com.dmplayer.activities.DMPlayerBaseActivity;
+import com.dmplayer.activities.MusicChooserActivity;
 import com.dmplayer.models.SongDetail;
 import com.dmplayer.phonemidea.DMPlayerUtility;
+import com.dmplayer.phonemidea.PhoneMediaControl;
 import com.dmplayer.playlist.Playlist;
 import com.dmplayer.utility.LogWriter;
 import com.dmplayer.utility.ProfileDialog;
@@ -33,11 +35,13 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectOutputStream;
+import java.util.ArrayList;
 
 public class FragmentSettings extends Fragment implements View.OnClickListener {
 
     public final static int GALLERY_REQUEST = 1;
     public final static int CAMERA_REQUEST = 2;
+    public final static int PICKER_REQUEST = 3;
 
     public final static String HEADER_BACKGROUND = "HEADER_BACKGROUND";
     public final static String AVATAR = "AVATAR";
@@ -47,6 +51,9 @@ public class FragmentSettings extends Fragment implements View.OnClickListener {
     private SharedPreferences.Editor editor;
 
     private String TAG = "FragmentSettings";
+
+    private ArrayList<Uri> mSongUri = new ArrayList<>();
+    private ArrayList<SongDetail> songList = new ArrayList<SongDetail>();
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -68,6 +75,7 @@ public class FragmentSettings extends Fragment implements View.OnClickListener {
         ((RelativeLayout) rootview.findViewById(R.id.relativeLayoutCustomizeProfile)).setOnClickListener(this);
         ((RelativeLayout) rootview.findViewById(R.id.relativeLayoutChangeHeaderBackground)).setOnClickListener(this);
         ((RelativeLayout) rootview.findViewById(R.id.relativeLayoutCreatePlaylist)).setOnClickListener(this);
+        ((RelativeLayout) rootview.findViewById(R.id.relativeLayoutMusicChooser)).setOnClickListener(this);
 
     }
 
@@ -90,23 +98,47 @@ public class FragmentSettings extends Fragment implements View.OnClickListener {
 
             case R.id.relativeLayoutCreatePlaylist:
                 try {
-                    Playlist a = new Playlist();
-                    a.addSong(new SongDetail(0, 0, "Yiruma", "River flows in You", Environment
-                            .getExternalStorageDirectory() +
-                            "/Music/YirumaRiver.mp3", "River flows in You", "100000"));
-                    a.setName("asd fgh");
-                    File b = new File(Environment
-                            .getExternalStorageDirectory() + "/DMPlayer/DMPlayer_playlists");
-                    if(!b.exists())
-                        b.mkdirs();
-                    ObjectOutputStream os = new ObjectOutputStream(new FileOutputStream(Environment
-                            .getExternalStorageDirectory() + "/DMPlayer/DMPlayer_playlists/a.dpl"));
-                    os.writeObject(a);
-                    os.close();
-                    LogWriter.info(TAG,"OK");
+                    final Playlist a = new Playlist();
+                    if(mSongUri!=null) {
+                        PhoneMediaControl mPhoneMediaControl = PhoneMediaControl.getInstance();
+                        PhoneMediaControl.setPhonemediacontrolinterface(new PhoneMediaControl.PhoneMediaControlINterface() {
+
+                            @Override
+                            public void loadSongsComplete(ArrayList<SongDetail> songsList_) {
+                                songList = songsList_;
+                                a.addSong(songList.get(0));
+                                a.setName("cyka blyat idi nahuy pidoras");
+                                try {
+                                    File b = new File(Environment
+                                            .getExternalStorageDirectory() + "/DMPlayer/DMPlayer_playlists");
+                                    if (!b.exists())
+                                        b.mkdirs();
+                                    ObjectOutputStream os = new ObjectOutputStream(new FileOutputStream(Environment
+                                            .getExternalStorageDirectory() + "/DMPlayer/DMPlayer_playlists/a.dpl"));
+                                    os.writeObject(a);
+                                    os.close();
+                                }
+                                catch (Exception ex) {ex.printStackTrace();}
+                            }
+                        });
+                        for (Uri uri :
+                                mSongUri) {
+                            mPhoneMediaControl.loadMusicList(getActivity(), -1, PhoneMediaControl
+                                            .SonLoadFor.Playlist,
+                                    uri.getPath());
+
+                        }
+                    }
+
+                    LogWriter.info(TAG, "OK");
                 } catch (Exception ex) {
                     ex.printStackTrace();
                 }
+                break;
+
+            case R.id.relativeLayoutMusicChooser:
+                Intent picker = new Intent(getContext(), MusicChooserActivity.class);
+                startActivityForResult(picker,PICKER_REQUEST);
                 break;
         }
     }
@@ -125,6 +157,19 @@ public class FragmentSettings extends Fragment implements View.OnClickListener {
                     startActivity(new Intent(getActivity(), DMPlayerBaseActivity.class));
                     getActivity().finish();
                     getActivity().overridePendingTransition(0, 0);
+                }
+                break;
+
+            case PICKER_REQUEST:
+                if(resultCode==Activity.RESULT_OK){
+                    try {
+                        mSongUri.add(returnedIntent.getData());
+                        LogWriter.info(TAG, "Got song " + mSongUri.get(mSongUri.size()));
+                    }
+                    catch (Exception ex){
+                        ex.printStackTrace();
+                        LogWriter.info(TAG,ex.toString());
+                    }
                 }
                 break;
         }

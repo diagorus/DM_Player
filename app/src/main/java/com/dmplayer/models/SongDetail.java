@@ -5,9 +5,15 @@
  */
 package com.dmplayer.models;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.FileDescriptor;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.ObjectInput;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutput;
+import java.io.ObjectOutputStream;
 import java.io.Serializable;
 
 import android.content.Context;
@@ -28,6 +34,7 @@ public class SongDetail implements Serializable {
 	public String path;
 	public float audioProgress = 0.0f;
 	public int audioProgressSec = 0;
+
 
 	public SongDetail(int _id, int aLBUM_ID, String _artist, String _title, String _path, String _display_name, String _duration) {
 		this.id = _id;
@@ -132,4 +139,54 @@ public class SongDetail implements Serializable {
 		}
 		return curThumb;
 	}
+
+	public byte[] getBytes(){
+        ByteArrayOutputStream bos = new ByteArrayOutputStream();
+        ObjectOutput out = null;
+        try {
+            out = new ObjectOutputStream(bos);
+            out.writeObject(this);
+            return bos.toByteArray();
+        }
+        catch(Exception ex) {return null;}
+        finally {
+            try {
+                if (out != null) {
+                    out.close();
+                }
+            } catch (Exception ex) {
+                // ignore close exception
+            }
+            try {
+                bos.close();
+            } catch (Exception ex) {
+                // ignore close exception
+            }
+        }
+    }
+
+    public static SongDetail getSongDetail(byte[] songDetail){
+        ByteArrayInputStream bis = new ByteArrayInputStream(songDetail);
+        ObjectInput in = null;
+        try {
+            in = new ObjectInputStream(bis);
+            return (SongDetail) in.readObject();
+        } catch (Exception ex) {
+            return null;
+        }
+        finally {
+            try {
+                bis.close();
+            } catch (Exception ex) {
+                // ignore close exception
+            }
+            try {
+                if (in != null) {
+                    in.close();
+                }
+            } catch (Exception ex) {
+                // ignore close exception
+            }
+        }
+    }
 }

@@ -145,7 +145,10 @@ public class DMPlayerBaseActivity extends ActionBarActivity implements View.OnCl
     protected void onResume() {
         super.onResume();
         addObserver();
-        loadAlreadyPlayng();
+        try {
+            loadAlreadyPlayng();
+        }
+        catch (Exception ex){ex.printStackTrace();}
     }
 
     @Override

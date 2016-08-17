@@ -141,6 +141,8 @@ public class ChildFragmentAllSongs extends Fragment {
                 public void onClick(View v) {
 
                     SongDetail mDetail = songList.get(position);
+                    mDetail.audioProgress = 0.0f;
+                    mDetail.audioProgressSec = 0;
                     ((DMPlayerBaseActivity) getActivity()).loadSongsDetails(mDetail);
 
                     if (mDetail != null) {

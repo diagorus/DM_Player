@@ -25,6 +25,9 @@ import com.dmplayer.phonemidea.PhoneMediaControl;
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.ImageLoader;
 
+import java.io.ByteArrayOutputStream;
+import java.io.ObjectOutput;
+import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 
 public class MusicChooserActivity extends ActionBarActivity {
@@ -135,7 +138,7 @@ public class MusicChooserActivity extends ActionBarActivity {
             } else {
                 mViewHolder = (ViewHolder) convertView.getTag();
             }
-            SongDetail mDetail = songList.get(position);
+            final SongDetail mDetail = songList.get(position);
 
             String audioDuration = "";
             try {
@@ -155,6 +158,7 @@ public class MusicChooserActivity extends ActionBarActivity {
                 @Override
                 public void onClick(View v) {
                     setResult(RESULT_OK, (new Intent()).setData(Uri.parse(songList.get(position).getPath())));
+//                    setResult(RESULT_OK,(new Intent()).putExtra("songInfo",mDetail.getBytes()));
                     overridePendingTransition(0, 0);
                     finish();
                 }
