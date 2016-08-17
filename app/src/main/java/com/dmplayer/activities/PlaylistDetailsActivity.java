@@ -637,12 +637,12 @@ public class PlaylistDetailsActivity extends ActionBarActivity implements View.O
 
     @Override
     public void didReceivedNotification(int id, Object... args) {
-//        if (id == NotificationManager.audioDidStarted || id == NotificationManager.audioPlayStateChanged || id == NotificationManager.audioDidReset) {
-//            updateTitle(id == NotificationManager.audioDidReset && (Boolean) args[1]);
-//        } else if (id == NotificationManager.audioProgressDidChanged) {
-//            SongDetail mSongDetail = MediaController.getInstance().getPlayingSongDetail();
-//            updateProgress(mSongDetail);
-//        }
+        if (id == NotificationManager.audioDidStarted || id == NotificationManager.audioPlayStateChanged || id == NotificationManager.audioDidReset) {
+            updateTitle(id == NotificationManager.audioDidReset && (Boolean) args[1]);
+        } else if (id == NotificationManager.audioProgressDidChanged) {
+            SongDetail mSongDetail = MediaController.getInstance().getPlayingSongDetail();
+            updateProgress(mSongDetail);
+        }
     }
 
     @Override
