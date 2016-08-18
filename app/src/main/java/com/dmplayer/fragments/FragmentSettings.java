@@ -99,38 +99,46 @@ public class FragmentSettings extends Fragment implements View.OnClickListener {
             case R.id.relativeLayoutCreatePlaylist:
                 try {
                     final Playlist a = new Playlist();
-                    if(mSongUri!=null) {
-                        PhoneMediaControl mPhoneMediaControl = PhoneMediaControl.getInstance();
-                        PhoneMediaControl.setPhonemediacontrolinterface(new PhoneMediaControl.PhoneMediaControlINterface() {
+//                    if(mSongUri!=null) {
+//                        PhoneMediaControl mPhoneMediaControl = PhoneMediaControl.getInstance();
+//                        PhoneMediaControl.setPhonemediacontrolinterface(new PhoneMediaControl.PhoneMediaControlINterface() {
+//
+//                            @Override
+//                            public void loadSongsComplete(ArrayList<SongDetail> songsList_) {
+//                                songList = songsList_;
+//                                a.addSong(songList.get(0));
+//                            }
+//                        });
+//                        for (Uri uri :
+//                                mSongUri) {
+//                            mPhoneMediaControl.loadMusicList(getActivity(), -1, PhoneMediaControl
+//                                            .SonLoadFor.Playlist,
+//                                    uri.getPath());
+//
+//                        }
+//                    }
 
-                            @Override
-                            public void loadSongsComplete(ArrayList<SongDetail> songsList_) {
-                                songList = songsList_;
-                                a.addSong(songList.get(0));
-                                a.setName("cyka blyat idi nahuy pidoras");
-                                try {
-                                    File b = new File(Environment
-                                            .getExternalStorageDirectory() + "/DMPlayer/DMPlayer_playlists");
-                                    if (!b.exists())
-                                        b.mkdirs();
-                                    ObjectOutputStream os = new ObjectOutputStream(new FileOutputStream(Environment
-                                            .getExternalStorageDirectory() + "/DMPlayer/DMPlayer_playlists/a.dpl"));
-                                    os.writeObject(a);
-                                    os.close();
-                                }
-                                catch (Exception ex) {ex.printStackTrace();}
-                            }
-                        });
-                        for (Uri uri :
-                                mSongUri) {
-                            mPhoneMediaControl.loadMusicList(getActivity(), -1, PhoneMediaControl
-                                            .SonLoadFor.Playlist,
-                                    uri.getPath());
-
+                    if (songList!=null) {
+                        for (SongDetail song:
+                             songList) {
+                            a.addSong(song);
                         }
-                    }
+                        a.setName("2cyka blyat idi nahuy pidoras");
+                        try {
+                            File b = new File(Environment
+                                    .getExternalStorageDirectory() + "/DMPlayer/DMPlayer_playlists");
+                            if (!b.exists())
+                                b.mkdirs();
+                            ObjectOutputStream os = new ObjectOutputStream(new FileOutputStream(Environment
+                                    .getExternalStorageDirectory() + "/DMPlayer/DMPlayer_playlists/a.dpl"));
+                            os.writeObject(a);
+                            os.close();
+                        } catch (Exception ex) {
+                            ex.printStackTrace();
+                        }
 
-                    LogWriter.info(TAG, "OK");
+                        LogWriter.info(TAG, "OK");
+                    }
                 } catch (Exception ex) {
                     ex.printStackTrace();
                 }
@@ -163,8 +171,9 @@ public class FragmentSettings extends Fragment implements View.OnClickListener {
             case PICKER_REQUEST:
                 if(resultCode==Activity.RESULT_OK){
                     try {
-                        mSongUri.add(returnedIntent.getData());
-                        LogWriter.info(TAG, "Got song " + mSongUri.get(mSongUri.size()));
+                        songList = (ArrayList<SongDetail>) returnedIntent.getExtras()
+                                .getSerializable("songs");
+                        LogWriter.info(TAG, "Got songs " + mSongUri.get(mSongUri.size()));
                     }
                     catch (Exception ex){
                         ex.printStackTrace();

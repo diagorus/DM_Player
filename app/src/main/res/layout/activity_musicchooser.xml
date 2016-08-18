@@ -21,6 +21,7 @@
         android:layout_height="match_parent"
         android:layout_marginBottom="?attr/actionBarSize"
         android:background="@android:color/white"
-        android:scrollbars="none" >
+        android:scrollbars="vertical">
     </ListView>
+
 </LinearLayout>

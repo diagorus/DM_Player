@@ -264,7 +264,8 @@ public class PlaylistDetailsActivity extends ActionBarActivity implements View.O
 
         AsyncTask<Void,Void,Void> getValues = new AsyncTask<Void, Void, Void>() {
             @Override
-            protected Void doInBackground(Void... voids) {Bundle mBundle = getIntent().getExtras();
+            protected Void doInBackground(Void... voids) {
+                Bundle mBundle = getIntent().getExtras();
                 if(mBundle!=null) {
                     mPlaylist = Playlist.decipher(mBundle.getByteArray("playlist"));
                     playlistname = mPlaylist.getName();

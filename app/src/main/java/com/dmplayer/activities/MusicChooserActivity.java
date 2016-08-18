@@ -8,9 +8,15 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.SparseBooleanArray;
+import android.util.TypedValue;
+import android.view.ActionMode;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AbsListView;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -84,6 +90,12 @@ public class MusicChooserActivity extends ActionBarActivity {
         recycler_songslist = (ListView) findViewById(R.id.recycler_allSongs);
         mAllSongsListAdapter = new AllSongsListAdapter(context);
         recycler_songslist.setAdapter(mAllSongsListAdapter);
+//        TypedValue primaryColor = new TypedValue();
+//        context.getTheme().resolveAttribute(R.attr.colorPrimary, primaryColor,true);
+//        recycler_songslist.setSelector(primaryColor.resourceId);
+        recycler_songslist.setFastScrollEnabled(true);
+        recycler_songslist.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE_MODAL);
+        recycler_songslist.setMultiChoiceModeListener(new MultiSongs(recycler_songslist));
     }
 
     private void loadAllSongs() {
@@ -115,7 +127,7 @@ public class MusicChooserActivity extends ActionBarActivity {
 
         @Override
         public Object getItem(int position) {
-            return null;
+            return songList.get(position);
         }
 
         @Override
@@ -153,16 +165,19 @@ public class MusicChooserActivity extends ActionBarActivity {
             imageLoader.displayImage(contentURI, mViewHolder.imageSongThm, options);
 
 
-            convertView.setOnClickListener(new View.OnClickListener() {
-
-                @Override
-                public void onClick(View v) {
-                    setResult(RESULT_OK, (new Intent()).setData(Uri.parse(songList.get(position).getPath())));
-//                    setResult(RESULT_OK,(new Intent()).putExtra("songInfo",mDetail.getBytes()));
-                    overridePendingTransition(0, 0);
-                    finish();
-                }
-            });
+//            convertView.setOnClickListener(new View.OnClickListener() {
+////
+//                @Override
+//                public void onClick(View v) {
+//
+//
+////
+////                    setResult(RESULT_OK, (new Intent()).setData(Uri.parse(songList.get(position).getPath())));
+//////                    setResult(RESULT_OK,(new Intent()).putExtra("songInfo",mDetail.getBytes()));
+////                    overridePendingTransition(0, 0);
+////                    finish();
+//                }
+//            });
 
             return convertView;
         }
@@ -177,6 +192,53 @@ public class MusicChooserActivity extends ActionBarActivity {
             ImageView imageSongThm;
             TextView textViewSongArtisNameAndDuration;
             LinearLayout song_row;
+        }
+    }
+
+    public class MultiSongs implements AbsListView.MultiChoiceModeListener{
+        private AbsListView listView;
+        private ArrayList<SongDetail> arrayOut = new ArrayList<>();
+
+        public MultiSongs(AbsListView listView){
+            this.listView=listView;
+        }
+
+        @Override
+        public void onItemCheckedStateChanged(ActionMode actionMode, int i, long l, boolean b) {
+            actionMode.setTitle(String.valueOf(listView.getCheckedItemCount()));
+        }
+
+        @Override
+        public boolean onCreateActionMode(ActionMode actionMode, Menu menu) {
+            actionMode.getMenuInflater().inflate(R.menu.contextbar_multi_select,menu);
+            return true;
+        }
+
+        @Override
+        public boolean onPrepareActionMode(ActionMode actionMode, Menu menu) {
+            return false;
+        }
+
+        @Override
+        public boolean onActionItemClicked(ActionMode actionMode, MenuItem menuItem) {
+            if (menuItem.getItemId() == R.id.cab_add){
+                SparseBooleanArray selectedSongs = listView.getCheckedItemPositions();
+                for(int i=0;i<selectedSongs.size();i++){
+                    if(selectedSongs.valueAt(i)){
+                        arrayOut.add((SongDetail) listView.getItemAtPosition(i));
+                    }
+                }
+                Bundle result = new Bundle();
+                result.putSerializable("songs", arrayOut);
+                setResult(RESULT_OK,(new Intent()).putExtras(result));
+                finish();
+            }
+            return false;
+        }
+
+        @Override
+        public void onDestroyActionMode(ActionMode actionMode) {
+            finish();
         }
     }
 

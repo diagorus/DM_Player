@@ -65,6 +65,7 @@ public class ChildFragmentAllSongs extends Fragment {
         ListView recyclerSongsList = (ListView) inflatreView.findViewById(R.id.recycler_allSongs);
         mAllSongsListAdapter = new AllSongsListAdapter(getActivity());
         recyclerSongsList.setAdapter(mAllSongsListAdapter);
+        recyclerSongsList.setFastScrollEnabled(true);
     }
 
     private void loadAllSongs() {
