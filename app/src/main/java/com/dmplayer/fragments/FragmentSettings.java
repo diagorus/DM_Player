@@ -16,8 +16,8 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
+import android.app.Fragment;
+import android.app.FragmentManager;
 import android.app.Activity;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -36,6 +36,7 @@ public class FragmentSettings extends Fragment implements View.OnClickListener {
     public final static String HEADER_BACKGROUND = "HEADER_BACKGROUND";
     public final static String AVATAR = "AVATAR";
     public final static String NAME = "NAME";
+
 
     private SharedPreferences sharedPreferences;
     private SharedPreferences.Editor editor;
@@ -58,24 +59,24 @@ public class FragmentSettings extends Fragment implements View.OnClickListener {
     private void setupInitialViews(View rootview) {
         sharedPreferences = getActivity().getSharedPreferences("VALUES", Context.MODE_PRIVATE);
 
-        ((RelativeLayout) rootview.findViewById(R.id.relativeLayoutChooseTheme)).setOnClickListener(this);
-        ((RelativeLayout) rootview.findViewById(R.id.relativeLayoutCustomizeProfile)).setOnClickListener(this);
-        ((RelativeLayout) rootview.findViewById(R.id.relativeLayoutChangeHeaderBackground)).setOnClickListener(this);
+        rootview.findViewById(R.id.relativeLayout_choose_theme).setOnClickListener(this);
+        rootview.findViewById(R.id.relativeLayout_customize_profile).setOnClickListener(this);
+        rootview.findViewById(R.id.relativeLayout_change_header_back).setOnClickListener(this);
 
     }
 
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
-            case R.id.relativeLayoutChooseTheme:
+            case R.id.relativeLayout_choose_theme:
                 showColorChooseDialog();
                 break;
 
-            case R.id.relativeLayoutCustomizeProfile:
+            case R.id.relativeLayout_customize_profile:
                 showColorProfileDialog();
                 break;
 
-            case R.id.relativeLayoutChangeHeaderBackground:
+            case R.id.relativeLayout_change_header_back:
                 Intent toGallery = new Intent(Intent.ACTION_PICK);
                 toGallery.setType("image/*");
                 startActivityForResult(toGallery, GALLERY_REQUEST);
@@ -113,7 +114,7 @@ public class FragmentSettings extends Fragment implements View.OnClickListener {
     }
 
     private void showColorChooseDialog() {
-        FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
+        FragmentManager fragmentManager = getActivity().getFragmentManager();
         ThemeDialog dialog = new ThemeDialog();
         dialog.setOnItemChoose(new ThemeDialog.OnItemChoose() {
             @Override
@@ -132,7 +133,7 @@ public class FragmentSettings extends Fragment implements View.OnClickListener {
     }
 
     private void showColorProfileDialog() {
-        FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
+        FragmentManager fragmentManager = getActivity().getFragmentManager();
         ProfileDialog dialog = new ProfileDialog();
         dialog.show(fragmentManager, "fragment_profile");
     }
