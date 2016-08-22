@@ -62,7 +62,6 @@ public class ApplicationDMPlayer extends Application {
         super.onConfigurationChanged(newConfig);
     }
 
-
     /**
      * Initialize Image Loader.
      */

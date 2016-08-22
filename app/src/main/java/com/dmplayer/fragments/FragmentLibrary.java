@@ -5,13 +5,11 @@
  */
 package com.dmplayer.fragments;
 
-import android.content.res.Configuration;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.Parcelable;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentStatePagerAdapter;
+import android.app.Fragment;
+import android.app.FragmentManager;
+import android.support.v13.app.FragmentStatePagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
@@ -45,7 +43,7 @@ public class FragmentLibrary extends Fragment {
     public void onDestroy() {
         super.onDestroy();
     }
-//test
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 

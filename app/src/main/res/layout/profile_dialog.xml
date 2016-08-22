@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/root_detector"
     android:orientation="vertical"
-    android:layout_width="match_parent"
+    android:layout_width="300dp"
     android:layout_height="match_parent" >
 
     <TextView
@@ -24,32 +25,73 @@
         android:layout_height="1dp"
         android:background="@color/md_divider" />
 
-    <com.dmplayer.uicomponent.CircleImageView
-        android:id="@+id/profile_dialog_avatar"
-        android:layout_width="100dp"
-        android:layout_height="100dp"
-        android:layout_gravity="center"
-        android:layout_marginTop="15dp"
-        app:border_width="1dp"
-        android:src="@drawable/drawer_default_avatar" />
-
-
-    <EditText
-        android:id="@+id/profile_dialog_name"
+    <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="20dp"
-        android:textSize="20sp"
-        android:text="Anonymous"
-        android:gravity="center_horizontal"/>
+        android:layout_height="wrap_content">
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="10dp"
-        android:layout_marginLeft="5dp"
-        android:textSize="15sp"
-        android:text="Information:" />
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <com.dmplayer.uicomponent.CircleImageView
+                android:id="@+id/profile_dialog_avatar"
+                android:layout_width="100dp"
+                android:layout_height="100dp"
+                android:layout_gravity="center"
+                android:layout_marginTop="15dp"
+                app:border_width="1dp"
+                android:src="@drawable/drawer_default_avatar" />
+
+            <EditText
+                android:id="@+id/profile_dialog_name"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:textSize="20sp"
+                android:text="Anonymous"
+                android:gravity="center_horizontal"/>
+
+            <LinearLayout
+                android:orientation="vertical"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginLeft="5dp"
+                    android:textAppearance="@style/TextAppearance.AppCompat.Title"
+                    android:text="Information:" />
+
+                <FrameLayout
+                    android:layout_width="250dp"
+                    android:layout_height="1dp"
+                    android:background="@color/md_divider" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal"
+                    android:layout_marginTop="5dp"
+                    android:textSize="18sp"
+                    android:text="Vk profile:" />
+
+                <com.dmplayer.uicomponent.SwappingLinearLayout
+                    android:id="@+id/vk_profile"
+                    android:layout_width="match_parent"
+                    android:layout_height="100dp"
+                    android:gravity="center"
+                    app:starting_layout="@layout/starting_vk_profile"
+                    app:swapping_layout="@layout/swapping_vk_profile" />
+            </LinearLayout>
+
+            <FrameLayout
+                android:layout_width="250dp"
+                android:layout_height="1dp"
+                android:background="@color/md_divider" />
+        </LinearLayout>
+    </ScrollView>
 
     <LinearLayout
         android:layout_width="wrap_content"
@@ -67,7 +109,6 @@
             android:textAppearance="@style/TextAppearance.AppCompat.Button"
             android:textColor="?attr/colorAccent" />
 
-
         <Button
             android:id="@+id/buttonOK"
             style="?android:attr/borderlessButtonStyle"
@@ -79,8 +120,5 @@
             android:text="OK"
             android:textAppearance="@style/TextAppearance.AppCompat.Button"
             android:textColor="?attr/colorAccent" />
-
     </LinearLayout>
-
-
 </LinearLayout>

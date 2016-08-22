@@ -73,7 +73,6 @@
 
     <!-- Custom SeekBar -->
     <declare-styleable name="CustomAttributes">
-
         <!-- in progress view indicate max value of progress -->
         <attr name="max" format="integer" />
         <!-- in progress view indicate min value of progress -->
@@ -85,4 +84,8 @@
         <attr name="isCircleDraw" format="boolean" />
     </declare-styleable>
 
+    <declare-styleable name="SwappingLinearLayout">
+        <attr name="starting_layout" format="reference" />
+        <attr name="swapping_layout" format="reference" />
+    </declare-styleable>
 </resources>

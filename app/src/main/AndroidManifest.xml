@@ -104,12 +104,6 @@
             </intent-filter>
         </activity>
 
-        <activity
-            android:name="com.vk.sdk.VKServiceActivity"
-            android:label="ServiceActivity"
-            android:theme="@style/VK.Transparent" />
-
-
         <service
             android:name=".manager.MusicPlayerService"
             android:enabled="true"
@@ -126,6 +120,11 @@
                 <action android:name="android.media.AUDIO_BECOMING_NOISY" />
             </intent-filter>
         </receiver>
+
+        <activity
+            android:name="com.vk.sdk.VKServiceActivity"
+            android:label="ServiceActivity"
+            android:theme="@style/VK.Transparent" />
 
     </application>
 
