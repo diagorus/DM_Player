@@ -88,17 +88,11 @@ public class ChildFragmentGenres extends Fragment {
         recyclerView.scrollToPosition(0);
     }
 
-
-
     public void init(Cursor c) {
         if (mAdapter == null) {
             return;
         }
-//        int genreId = c.getInt(0);
-//        ArrayList<SongDetail> genreSongsCollection = PhoneMediaControl.getInstance()
-//                .getList(context, genreId, PhoneMediaControl.SongsLoadFor.Genre, "");
-//        if(genreSongsCollection.isEmpty())
-//            return;
+
         mAdapter.changeCursor(c); // also sets mGenreCursor
         if (mGenreCursor == null) {
             DMPlayerUtility.displayDatabaseError(getActivity());
@@ -164,16 +158,7 @@ public class ChildFragmentGenres extends Fragment {
             mUnknownArtist = context.getString(R.string.unknown_artist_name);
         }
 
-        class QueryHandler extends AsyncQueryHandler {
-            QueryHandler(ContentResolver res) {
-                super(res);
-            }
 
-            @Override
-            protected void onQueryComplete(int token, Object cookie, Cursor cursor) {
-                init(cursor);
-            }
-        }
 
         public AsyncQueryHandler getQueryHandler() {
             return mQueryHandler;
@@ -236,6 +221,22 @@ public class ChildFragmentGenres extends Fragment {
 
         private long getGenreID(int position) {
             return getItemId(position);
+        }
+
+        class QueryHandler extends AsyncQueryHandler {
+            QueryHandler(ContentResolver res) {
+                super(res);
+            }
+
+            @Override
+            protected void onQueryComplete(int token, Object cookie, Cursor cursor) {
+//        int genreId = c.getInt(0);
+//        ArrayList<SongDetail> genreSongsCollection = PhoneMediaControl.getInstance()
+//                .getList(context, genreId, PhoneMediaControl.SongsLoadFor.Genre, "");
+//        if(genreSongsCollection.isEmpty())
+//            return;
+                init(cursor);
+            }
         }
 
         protected class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
