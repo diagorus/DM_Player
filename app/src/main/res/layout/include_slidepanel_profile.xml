@@ -9,7 +9,7 @@
         android:layout_width="match_parent"
         android:layout_height="172dp"
         android:scaleType="centerCrop"
-        android:src="@drawable/drawer_header" />
+        android:src="@drawable/drawer_defult_header" />
 
     <RelativeLayout
         android:layout_width="match_parent"
@@ -22,7 +22,8 @@
             android:layout_marginLeft="25dp"
             android:layout_marginTop="25dp"
             app:border_width="1dp"
-            android:src="@drawable/drawer_default_avatar" />
+            app:border_color="@color/md_black_1000"
+            android:src="@drawable/profile_default_avatar" />
 
         <TextView
             android:id="@+id/profileName"
@@ -33,8 +34,8 @@
             android:layout_marginLeft="25dp"
             android:textSize="20sp"
             android:textColor="@color/md_text_white"
-            android:shadowColor="#000"
-            android:shadowRadius="2"
-            android:text="Anonymous" />
+            android:shadowColor="@color/md_black_1000"
+            android:shadowRadius="1"
+            android:text="@string/profile_defult_name" />
     </RelativeLayout>
 </FrameLayout>

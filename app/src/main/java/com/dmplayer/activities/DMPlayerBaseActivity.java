@@ -13,7 +13,6 @@ import android.os.Handler;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.support.v4.widget.DrawerLayout;
-import android.support.v7.app.ActionBarActivity;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
@@ -74,7 +73,6 @@ public class DMPlayerBaseActivity extends AppCompatActivity implements View.OnCl
     private ActionBarDrawerToggle mDrawerToggle;
     private int theme;
 
-    private FrameLayout statusBar;
     private Toolbar toolbar;
     private DrawerLayout mDrawerLayout;
 
@@ -141,9 +139,11 @@ public class DMPlayerBaseActivity extends AppCompatActivity implements View.OnCl
         super.onResume();
         addObserver();
         try {
-            loadAlreadyPlayng();
+            loadAlreadyPlaying();
         }
-        catch (Exception ex){ex.printStackTrace();}
+        catch (Exception ex){
+            ex.printStackTrace();
+        }
     }
 
     @Override
@@ -245,7 +245,6 @@ public class DMPlayerBaseActivity extends AppCompatActivity implements View.OnCl
     }
 
     public void toolbarStatusBar() {
-        statusBar = (FrameLayout) findViewById(R.id.statusBar);
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
     }
@@ -358,11 +357,7 @@ public class DMPlayerBaseActivity extends AppCompatActivity implements View.OnCl
                         ImageView imageViewDrawerIcon = (ImageView) recyclerViewDrawer.getChildAt(i).findViewById(R.id.imageViewDrawerIcon);
                         TextView textViewDrawerTitle = (TextView) recyclerViewDrawer.getChildAt(i).findViewById(R.id.textViewDrawerItemTitle);
                         imageViewDrawerIcon.setColorFilter(color);
-                        if (Build.VERSION.SDK_INT > 15) {
-                            imageViewDrawerIcon.setImageAlpha(255);
-                        } else {
-                            imageViewDrawerIcon.setAlpha(255);
-                        }
+                        imageViewDrawerIcon.setImageAlpha(255);
                         textViewDrawerTitle.setTextColor(color);
                         RelativeLayout relativeLayoutDrawerItem = (RelativeLayout) recyclerViewDrawer.getChildAt(i).findViewById(R.id.relativeLayoutDrawerItem);
                         TypedValue typedValueDrawerSelected = new TypedValue();
@@ -375,11 +370,7 @@ public class DMPlayerBaseActivity extends AppCompatActivity implements View.OnCl
                         ImageView imageViewDrawerIcon = (ImageView) recyclerViewDrawer.getChildAt(i).findViewById(R.id.imageViewDrawerIcon);
                         TextView textViewDrawerTitle = (TextView) recyclerViewDrawer.getChildAt(i).findViewById(R.id.textViewDrawerItemTitle);
                         imageViewDrawerIcon.setColorFilter(getResources().getColor(R.color.md_text));
-                        if (Build.VERSION.SDK_INT > 15) {
-                            imageViewDrawerIcon.setImageAlpha(138);
-                        } else {
-                            imageViewDrawerIcon.setAlpha(138);
-                        }
+                        imageViewDrawerIcon.setImageAlpha(138);
                         textViewDrawerTitle.setTextColor(getResources().getColor(R.color.md_text));
                         RelativeLayout relativeLayoutDrawerItem = (RelativeLayout) recyclerViewDrawer.getChildAt(i).findViewById(R.id.relativeLayoutDrawerItem);
                         relativeLayoutDrawerItem.setBackgroundColor(getResources().getColor(R.color.md_white_1000));
@@ -590,19 +581,19 @@ public class DMPlayerBaseActivity extends AppCompatActivity implements View.OnCl
         if (DMPlayerUtility.isURIExists(headerBackgroundUri)) {
             DMPlayerUtility.settingPicture(headerBackgroundImage, headerBackgroundUri);
         } else {
-            DMPlayerUtility.settingPicture(headerBackgroundImage, R.drawable.drawer_header);
+            DMPlayerUtility.settingPicture(headerBackgroundImage, R.drawable.drawer_defult_header);
         }
 
         if (DMPlayerUtility.isURIExists(avatarUri)) {
             DMPlayerUtility.settingPicture(avatarImage, avatarUri);
         } else {
-            DMPlayerUtility.settingPicture(avatarImage, R.drawable.drawer_default_avatar);
+            DMPlayerUtility.settingPicture(avatarImage, R.drawable.profile_default_avatar);
         }
 
         if (!name.equals("")) {
             nameText.setText(name);
         } else {
-            nameText.setText("Anonymous");
+            nameText.setText(R.string.profile_defult_name);
         }
     }
 
@@ -612,7 +603,7 @@ public class DMPlayerBaseActivity extends AppCompatActivity implements View.OnCl
                 .cacheOnDisk(true).considerExifParams(true).bitmapConfig(Bitmap.Config.RGB_565).build();
     }
 
-    private void loadAlreadyPlayng() {
+    private void loadAlreadyPlaying() {
         SongDetail mSongDetail = MusicPreferance.getLastSong(context);
         ArrayList<SongDetail> playlist = MusicPreferance.getPlaylist(context);
         if (mSongDetail != null) {

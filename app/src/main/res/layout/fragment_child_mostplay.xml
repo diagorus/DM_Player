@@ -4,14 +4,12 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
 
-    <android.support.v7.widget.RecyclerView
-        android:id="@+id/recyclerview_grid"
+    <ListView
+        android:id="@+id/listView_songs"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_marginBottom="?attr/actionBarSize"
-        android:clipToPadding="false"
-        android:fadingEdge="none"
-        android:paddingLeft="10dp"
-        android:paddingRight="10dp" />
-
+        android:background="@android:color/white"
+        android:listSelector="@drawable/bar_selector_white"
+        android:scrollbars="none"></ListView>
 </LinearLayout>

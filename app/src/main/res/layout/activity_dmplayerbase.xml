@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fitsSystemWindows="@bool/fitsSystemWindows"
-    tools:context=".MainActivity">
+    tools:context=".activities.DMPlayerBaseActivity">
 
     <!-- The toolbar and main content view -->
     <include
@@ -17,7 +17,8 @@
 
     <!-- The navigation drawer -->
 
-    <com.dmplayer.uicomponent.ScrimInsetsFrameLayout xmlns:app="http://schemas.android.com/apk/res-auto"
+    <com.dmplayer.uicomponent.ScrimInsetsFrameLayout
+        xmlns:app="http://schemas.android.com/apk/res-auto"
         android:id="@+id/scrimInsetsFrameLayout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"

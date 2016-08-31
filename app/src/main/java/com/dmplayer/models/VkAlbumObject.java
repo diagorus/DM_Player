@@ -1,6 +1,6 @@
 package com.dmplayer.models;
 
-public class VkAlbum {
+public class VkAlbumObject {
     private String id;
 
     private String owner_id ;
@@ -33,7 +33,7 @@ public class VkAlbum {
 
     @Override
     public String toString() {
-        return "VkAlbum{" +
+        return "VkAlbumObject{" +
                 "id='" + id + '\'' +
                 ", owner_id='" + owner_id + '\'' +
                 ", title='" + title + '\'' +

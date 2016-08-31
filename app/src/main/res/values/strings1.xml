@@ -198,7 +198,6 @@
     <string name="new_playlist_name_template">New playlist <xliff:g id="number">%d</xliff:g></string>
     <!-- Toasts after adding song(s) to playlists -->
     <plurals name="NNNtrackstoplaylist">
-
         <!-- message shown when one song was added -->
         <item quantity="one">1 song added to playlist.</item>
         <!-- message shown when zero or more than one song was added -->

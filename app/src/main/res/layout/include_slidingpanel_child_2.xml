@@ -9,7 +9,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:scaleType="centerCrop"
-        android:src="@drawable/drawer_header"
+        android:src="@drawable/drawer_defult_header"
         android:visibility="invisible" />
 
     <LinearLayout
@@ -25,13 +25,13 @@
 
             <include
                 android:id="@+id/slidepanelchildtwo_topviewone"
-                layout="@layout/include_slidepanelchildtwo_topviewone"
+                layout="@layout/include_slidepanel_child_2_topview_1"
                 android:layout_width="match_parent"
                 android:layout_height="?attr/actionBarSize" />
 
             <include
                 android:id="@+id/slidepanelchildtwo_topviewtwo"
-                layout="@layout/include_slidepanelchildtwo_topviewtwo"
+                layout="@layout/include_slidepanel_child_2_topview_2"
                 android:layout_width="match_parent"
                 android:layout_height="?attr/actionBarSize"
                 android:visibility="invisible" />
@@ -51,7 +51,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:scaleType="centerCrop"
-                    android:src="@drawable/drawer_header"
+                    android:src="@drawable/drawer_defult_header"
                     android:visibility="visible" />
 
                 <View
@@ -73,7 +73,7 @@
 
             <include
                 android:id="@+id/bottom_palyLayout"
-                layout="@layout/include_slidepanelchildtwo_bottomview"
+                layout="@layout/include_slidepanel_child_2_bottomview"
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/bottom_control_panel"
                 android:layout_alignParentBottom="true"

@@ -16,14 +16,14 @@
 
 package com.dmplayer.activities;
 
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.os.AsyncTask;
-import android.os.Build;
 import android.os.Bundle;
-import android.support.v7.app.ActionBarActivity;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.PopupMenu;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -39,21 +39,27 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.dmplayer.R;
+import com.dmplayer.converters.VkToSongDetailConverter;
+import com.dmplayer.internetservices.VkAPIService;
 import com.dmplayer.manager.MediaController;
-import com.dmplayer.manager.MusicPreferance;
 import com.dmplayer.manager.NotificationManager;
+import com.dmplayer.models.Playlist;
 import com.dmplayer.models.SongDetail;
+import com.dmplayer.models.VkAudioGetResponce.VkAudioWrapper;
+import com.dmplayer.models.VkAudioObject;
+import com.dmplayer.models.VkPlaylist;
+import com.dmplayer.models.VkPopularAudioResponce.VkPopularCollection;
 import com.dmplayer.observablelib.ObservableScrollView;
 import com.dmplayer.observablelib.ObservableScrollViewCallbacks;
 import com.dmplayer.observablelib.ScrollState;
 import com.dmplayer.observablelib.ScrollUtils;
 import com.dmplayer.phonemidea.DMPlayerUtility;
 import com.dmplayer.phonemidea.PhoneMediaControl;
-import com.dmplayer.playlist.Playlist;
 import com.dmplayer.slidinguppanelhelper.SlidingUpPanelLayout;
 import com.dmplayer.uicomponent.ExpandableHeightListView;
 import com.dmplayer.uicomponent.PlayPauseView;
 import com.dmplayer.uicomponent.Slider;
+import com.dmplayer.utility.VkSettings;
 import com.nineoldandroids.animation.AnimatorSet;
 import com.nineoldandroids.animation.ObjectAnimator;
 import com.nineoldandroids.view.ViewHelper;
@@ -63,17 +69,26 @@ import com.nostra13.universalimageloader.core.display.FadeInBitmapDisplayer;
 import com.nostra13.universalimageloader.core.listener.ImageLoadingListener;
 import com.nostra13.universalimageloader.core.listener.SimpleImageLoadingListener;
 
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
-public class PlaylistDetailsActivity extends ActionBarActivity implements View.OnClickListener,
+import retrofit2.Call;
+import retrofit2.Response;
+import retrofit2.Retrofit;
+import retrofit2.converter.gson.GsonConverterFactory;
+
+public class PlaylistActivity extends AppCompatActivity implements View.OnClickListener,
         ObservableScrollViewCallbacks,
         Slider.OnValueChangedListener,
         NotificationManager.NotificationCenterDelegate {
 
-    private Toolbar mToolbarView;
+    private View mToolbarView;
     private ObservableScrollView mScrollView;
     private int mParallaxImageHeight;
 
@@ -83,35 +98,43 @@ public class PlaylistDetailsActivity extends ActionBarActivity implements View.O
 
     private long id = -1;
     private long tagFor = -1;
-    private String playlistname = "";
+    private String albumname = "";
     private String title_one = "";
     private String title_sec = "";
+
+    private VkAPIService service;
+    private int vkType = -1;
+    private String vkAlbumId;
+    private String vkAccessToken;
+    private String vkUserId;
+    private String vkPlaylistName;
+
     private ImageView banner;
     private ImageView fab_button;
-    private TextView tv_albumname, tv_title_fst, tv_title_sec;
+    private TextView displayMainString, displayFirstSubString, displaySecondSubString;
     private ExpandableHeightListView recycler_songslist;
-    private AllSongsListAdapter mAllSongsListAdapter;
+    private AllSongsListAdapter mSongsListAdapter;
     private ArrayList<SongDetail> songList = new ArrayList<>();
-    private Playlist mPlaylist;
 
     private DisplayImageOptions options;
     private ImageLoader imageLoader = ImageLoader.getInstance();
-
+    PhoneMediaControl mPhoneMediaControl = PhoneMediaControl.getInstance();
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         //Set your theme first
-        context = PlaylistDetailsActivity.this;
+        context = PlaylistActivity.this;
         theme();
 
         //Set your Layout view
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_albumandartisdetails);
+        setContentView(R.layout.activity_playlist);
 
         initialize();
-        initiSlidingUpPanel();
         getBundleValues();
 
-        loadAlreadyPaing();
+        initSlidingUpPanel();
+
+        loadAlreadyPlaying();
         addObserver();
         fabanim();
     }
@@ -217,11 +240,12 @@ public class PlaylistDetailsActivity extends ActionBarActivity implements View.O
     }
 
     private void initialize() {
-        mToolbarView = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(mToolbarView);
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowTitleEnabled(false);
 
+        mToolbarView = findViewById(R.id.toolbar);
 
         // Setup RecyclerView inside drawer
         final TypedValue typedValue = new TypedValue();
@@ -236,12 +260,12 @@ public class PlaylistDetailsActivity extends ActionBarActivity implements View.O
 
 
         banner = (ImageView) findViewById(R.id.banner);
-        tv_albumname = (TextView) findViewById(R.id.tv_albumname);
-        tv_title_fst = (TextView) findViewById(R.id.tv_title_frst);
-        tv_title_sec = (TextView) findViewById(R.id.tv_title_sec);
-        recycler_songslist = (ExpandableHeightListView) findViewById(R.id.recycler_allSongs);
-        mAllSongsListAdapter = new AllSongsListAdapter(context);
-        recycler_songslist.setAdapter(mAllSongsListAdapter);
+        displayMainString = (TextView) findViewById(R.id.tv_albumname);
+        displayFirstSubString = (TextView) findViewById(R.id.tv_title_frst);
+        displaySecondSubString = (TextView) findViewById(R.id.tv_title_sec);
+        recycler_songslist = (ExpandableHeightListView) findViewById(R.id.listView_songs);
+        mSongsListAdapter = new AllSongsListAdapter(context);
+        recycler_songslist.setAdapter(mSongsListAdapter);
 
         options = new DisplayImageOptions.Builder().showImageOnLoading(R.drawable.bg_default_album_art)
                 .showImageForEmptyUri(R.drawable.bg_default_album_art).showImageOnFail(R.drawable.bg_default_album_art).cacheInMemory(true)
@@ -250,49 +274,343 @@ public class PlaylistDetailsActivity extends ActionBarActivity implements View.O
         try {
             fab_button = (ImageView) findViewById(R.id.fab_button);
             fab_button.setColorFilter(color);
-            if (Build.VERSION.SDK_INT > 15) {
-                fab_button.setImageAlpha(255);
-            } else {
-                fab_button.setAlpha(255);
-            }
+            fab_button.setImageAlpha(255);
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
     private void getBundleValues() {
+        Bundle bundle = getIntent().getExtras();
+        if (bundle != null) {
+            tagFor = bundle.getLong("tagfor");
 
-        AsyncTask<Void,Void,Void> getValues = new AsyncTask<Void, Void, Void>() {
+            if (tagFor == PhoneMediaControl.SongsLoadFor.VkPlaylist.ordinal()) {
+                vkUserId = sharedPreferences.getString("VKUSERID", "");
+                vkAccessToken = sharedPreferences.getString("VKACCESSTOKEN", "");
+                vkType = bundle.getInt("playlisttype");
+                vkPlaylistName = bundle.getString("playlistname");
+                vkAlbumId = bundle.getString("playlistid");
+
+                title_one = bundle.getString("title_one");
+            } else if (tagFor == PhoneMediaControl.SongsLoadFor.Playlist.ordinal()) {
+
+            } else {
+                id = bundle.getLong("id");
+                tagFor = bundle.getLong("tagfor");
+                albumname = bundle.getString("albumname");
+                title_one = bundle.getString("title_one");
+                title_sec = bundle.getString("title_sec");
+            }
+        }
+
+        if (tagFor == PhoneMediaControl.SongsLoadFor.Genre.ordinal()) {
+            loadSongsGenres(id);
+        } else if (tagFor == PhoneMediaControl.SongsLoadFor.Album.ordinal()) {
+            loadSongsAlbum(id);
+        } else if (tagFor == PhoneMediaControl.SongsLoadFor.Artist.ordinal()) {
+            loadSongsArtist(id);
+        } else if (tagFor == PhoneMediaControl.SongsLoadFor.Playlist.ordinal()) {
+
+        } else if (tagFor == PhoneMediaControl.SongsLoadFor.VkPlaylist.ordinal()) {
+            loadSongsVkPlaylist(vkType, vkAlbumId, vkPlaylistName);
+        }
+
+        displayMainString.setText(albumname);
+        displayFirstSubString.setText(title_one);
+        displaySecondSubString.setText(title_sec);
+    }
+
+    private void loadSongsAlbum(long id) {
+        PhoneMediaControl.setPhoneMediaControlInterface(new PhoneMediaControl.PhoneMediaControlInterface() {
+
             @Override
-            protected Void doInBackground(Void... voids) {
-                Bundle mBundle = getIntent().getExtras();
-                if(mBundle!=null) {
-                    mPlaylist = Playlist.decipher(mBundle.getByteArray("playlist"));
-                    playlistname = mPlaylist.getName();
-                    title_one = String.valueOf(mPlaylist.getSongCount()) + " songs";
-                    title_sec = "";
-                    loadPlaylistSongs();
+            public void loadSongsComplete(ArrayList<SongDetail> songsList_) {
+                songList = songsList_;
+                mSongsListAdapter.notifyDataSetChanged();
+                if (songList != null && songList.size() >= 1) {
+                    displaySecondSubString.setText(songList.size() + " songs");
                 }
-                return null;
+            }
+        });
+        mPhoneMediaControl.loadMusicList(context, id, PhoneMediaControl.SongsLoadFor.Album, "");
+
+        String contentURI = "content://media/external/audio/albumart/" + id;
+        imageLoader.displayImage(contentURI, banner, options);
+    }
+
+    private void loadSongsArtist(long id) {
+        PhoneMediaControl mPhoneMediaControl = PhoneMediaControl.getInstance();
+        PhoneMediaControl.setPhoneMediaControlInterface(new PhoneMediaControl.PhoneMediaControlInterface() {
+
+            @Override
+            public void loadSongsComplete(ArrayList<SongDetail> songsList_) {
+                songList = songsList_;
+                mSongsListAdapter.notifyDataSetChanged();
+                if (songList != null && songList.size() >= 1) {
+                    String contentURI = "content://media/external/audio/media/" + songList.get(0).getId() + "/albumart";
+                    imageLoader.displayImage(contentURI, banner, options);
+                }
+            }
+        });
+        mPhoneMediaControl.loadMusicList(context, id, PhoneMediaControl.SongsLoadFor.Artist, "");
+    }
+
+    private void loadSongsGenres(long id) {
+        PhoneMediaControl mPhoneMediaControl = PhoneMediaControl.getInstance();
+        PhoneMediaControl.setPhoneMediaControlInterface(new PhoneMediaControl.PhoneMediaControlInterface() {
+
+            @Override
+            public void loadSongsComplete(ArrayList<SongDetail> songsList_) {
+                songList = songsList_;
+                mSongsListAdapter.notifyDataSetChanged();
+                if (songList != null && songList.size() >= 1) {
+                    String contentURI = "content://media/external/audio/media/" + songList.get(0).getId() + "/albumart";
+                    imageLoader.displayImage(contentURI, banner, options);
+                    displaySecondSubString.setText(songList.size() + " songs");
+                }
+            }
+        });
+        mPhoneMediaControl.loadMusicList(context, id, PhoneMediaControl.SongsLoadFor.Genre, "");
+    }
+
+    private void loadSongsLocalPlaylist(long id) {
+
+    }
+
+    private void loadSongsVkPlaylist(final int type, final String id, final String name){
+        PhoneMediaControl.setPhoneMediaControlInterface(new PhoneMediaControl.PhoneMediaControlInterface() {
+
+            @Override
+            public void loadSongsComplete(ArrayList<SongDetail> songsList_) {
+                songList = songsList_;
+                mSongsListAdapter.notifyDataSetChanged();
+                if (songList != null && songList.size() >= 1) {
+                    imageLoader.displayImage("", banner, options);
+                    displayMainString.setText(name);
+                }
+            }
+        });
+
+        createApiService();
+
+        switch (type) {
+            case VkPlaylist.ALL:
+                loadAlbum(0, 0, "", "My audios");
+                break;
+
+            case VkPlaylist.POPULAR:
+                loadPopular(0, 40);
+                break;
+
+            case VkPlaylist.RECOMMENDED:
+                loadRecommended(0, 40);
+                break;
+
+            case VkPlaylist.ALBUM:
+                loadAlbum(0, 0, id, name);
+                break;
+        }
+    }
+
+    private void loadAlbum(final int offset, final int count,
+                                            final String albumId, final String albumName) {
+        new AsyncTask<Void, Void, ArrayList<SongDetail>>() {
+            private ProgressDialog progressDialog;
+
+            @Override
+            protected void onPreExecute() {
+                super.onPreExecute();
+
+                progressDialog = new ProgressDialog(PlaylistActivity.this);
+                progressDialog.setMessage(getString(R.string.loading_message));
+                progressDialog.show();
             }
 
             @Override
-            protected void onPostExecute(Void aVoid) {
-                super.onPostExecute(aVoid);
-                tv_albumname.setText(playlistname);
-                tv_title_fst.setText(title_one);
-                tv_title_sec.setText(title_sec);
+            protected ArrayList<SongDetail> doInBackground(Void... voids) {
+                Map<String, String> optionsForAlbum = new HashMap<>();
+                optionsForAlbum.put("owner_id", vkUserId);
+                optionsForAlbum.put("album_id", albumId);
+                optionsForAlbum.put("need_user", "0");
+                optionsForAlbum.put("offset", String.valueOf(offset));
+                optionsForAlbum.put("count", String.valueOf(count));
+                optionsForAlbum.put("access_token", vkAccessToken);
+                optionsForAlbum.put("v", "5.53");
+
+                Call<VkAudioWrapper> callForAlbum = service.loadAudio(optionsForAlbum);
+
+                Response<VkAudioWrapper> responseAlbum = null;
+                try {
+                    responseAlbum = callForAlbum.execute();
+                } catch (IOException e) {
+                    Log.e(TAG, "Handled: " + e.toString());
+                    e.printStackTrace();
+                }
+
+                ArrayList<VkAudioObject> vkAlbum = new ArrayList<>(
+                        Arrays.asList(responseAlbum.body().getResponse().getItems()));
+
+                Playlist playlistAlbum = new Playlist();
+                playlistAlbum.setName(albumName);
+                VkToSongDetailConverter converter = new VkToSongDetailConverter();
+                for (VkAudioObject vkSong : vkAlbum) {
+                    try {
+                        playlistAlbum.addSong(converter.convert(vkSong));
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+
+                return playlistAlbum.getSongs();
             }
-        };
 
-        getValues.execute();
+            @Override
+            protected void onPostExecute(ArrayList<SongDetail> songDetails) {
+                super.onPostExecute(songDetails);
+
+                progressDialog.dismiss();
+
+                mPhoneMediaControl.loadMusicList(songDetails);
+            }
+        }.execute();
     }
 
-    private void loadPlaylistSongs(){
-        songList = mPlaylist.getSongs();
-        mAllSongsListAdapter.notifyDataSetChanged();
+
+
+    private void loadPopular(final int offset, final int count) {
+        new AsyncTask<Void, Void, ArrayList<SongDetail>>() {
+            private ProgressDialog progressDialog;
+
+            @Override
+            protected void onPreExecute() {
+                super.onPreExecute();
+
+                progressDialog = new ProgressDialog(PlaylistActivity.this);
+                progressDialog.setMessage(getString(R.string.loading_message));
+                progressDialog.show();
+            }
+
+            @Override
+            protected ArrayList<SongDetail> doInBackground(Void... voids) {
+                Map<String, String> optionsForPopular = new HashMap<>();
+                optionsForPopular.put("only_eng", "1");
+                optionsForPopular.put("genre_id", "");
+                optionsForPopular.put("offset", String.valueOf(offset));
+                optionsForPopular.put("count", String.valueOf(count));
+                optionsForPopular.put("access_token", vkAccessToken);
+                optionsForPopular.put("v", "5.53");
+
+                Call<VkPopularCollection> callForPopular = service.loadPopularAudio(optionsForPopular);
+
+                Response<VkPopularCollection> responsePopular = null;
+                try {
+                    responsePopular = callForPopular.execute();
+                } catch (IOException e) {
+                    Log.e(TAG, "Handled: " + e.toString());
+                    e.printStackTrace();
+                }
+
+                ArrayList<VkAudioObject> vkPopular = new ArrayList<>(
+                        Arrays.asList(responsePopular.body().getResponse()));
+
+                Playlist playlistPopular = new Playlist();
+                playlistPopular.setName("Popular");
+                VkToSongDetailConverter converter = new VkToSongDetailConverter();
+                for (VkAudioObject vkSong : vkPopular) {
+                    try {
+                        playlistPopular.addSong(converter.convert(vkSong));
+                    } catch (IOException e) {
+                        Log.e(TAG, "Handled: " + e.toString());
+                        e.printStackTrace();
+                    }
+                }
+
+                return playlistPopular.getSongs();
+            }
+
+            @Override
+            protected void onPostExecute(ArrayList<SongDetail> songDetails) {
+                super.onPostExecute(songDetails);
+
+                progressDialog.dismiss();
+
+                mPhoneMediaControl.loadMusicList(songDetails);
+            }
+        }.execute();
     }
 
+    private void loadRecommended(final int offset, final int count) {
+        new AsyncTask<Void, Void, ArrayList<SongDetail>>() {
+            private ProgressDialog progressDialog;
+
+            @Override
+            protected void onPreExecute() {
+                super.onPreExecute();
+
+                progressDialog = new ProgressDialog(PlaylistActivity.this);
+                progressDialog.setMessage(getString(R.string.loading_message));
+                progressDialog.show();
+            }
+
+            @Override
+            protected ArrayList<SongDetail> doInBackground(Void... voids) {
+                Map<String, String> optionsForRecommended = new HashMap<>();
+                optionsForRecommended.put("target_audio", "");
+                optionsForRecommended.put("user_id", vkUserId);
+                optionsForRecommended.put("offset", String.valueOf(offset));
+                optionsForRecommended.put("count", String.valueOf(count));
+                optionsForRecommended.put("shuffle", "1");
+                optionsForRecommended.put("access_token", vkAccessToken);
+                optionsForRecommended.put("v", "5.53");
+
+                Call<VkAudioWrapper> callForRecommended = service.loadRecommendedAudio(optionsForRecommended);
+
+                Response<VkAudioWrapper> responseRecommended = null;
+                try {
+                    responseRecommended = callForRecommended.execute();
+                } catch (IOException e) {
+                    Log.e(TAG, "Handled: " + e.toString());
+                    e.printStackTrace();
+                }
+
+                ArrayList<VkAudioObject> vkRecommended = new ArrayList<>(
+                        Arrays.asList(responseRecommended.body().getResponse().getItems()));
+
+                Playlist playlistRecommended = new Playlist();
+                playlistRecommended.setName("Recommended");
+                VkToSongDetailConverter converter = new VkToSongDetailConverter();
+                for (VkAudioObject vkSong : vkRecommended) {
+                    try {
+                        playlistRecommended.addSong(converter.convert(vkSong));
+                    } catch (IOException e) {
+                        Log.e(TAG, "Handled: " + e.toString());
+                        e.printStackTrace();
+                    }
+                }
+
+                return playlistRecommended.getSongs();
+            }
+
+            @Override
+            protected void onPostExecute(ArrayList<SongDetail> songDetails) {
+                super.onPostExecute(songDetails);
+
+                progressDialog.dismiss();
+
+                mPhoneMediaControl.loadMusicList(songDetails);
+            }
+        }.execute();
+    }
+
+    private void createApiService() {
+        Retrofit retrofit = new Retrofit.Builder()
+                .baseUrl(VkSettings.VK_API_URL)
+                .addConverterFactory(GsonConverterFactory.create())
+                .build();
+
+        service = retrofit.create(VkAPIService.class);
+    }
 
     public class AllSongsListAdapter extends BaseAdapter {
         private Context context = null;
@@ -349,27 +667,18 @@ public class PlaylistDetailsActivity extends ActionBarActivity implements View.O
                 public void onClick(View v) {
 
                     SongDetail mDetail = songList.get(position);
-                    mDetail.audioProgress = 0.0f;
-                    mDetail.audioProgressSec = 0;
-                    loadSongsDetails(mDetail);
                     if (mDetail != null) {
                         if (MediaController.getInstance().isPlayingAudio(mDetail) && !MediaController.getInstance().isAudioPaused()) {
                             MediaController.getInstance().pauseAudio(mDetail);
                         } else {
-                            MediaController.getInstance().setPlaylist(mPlaylist.getSongs(), mDetail,
-                                    (int) tagFor,
-                                    (int) id);
+                            MediaController.getInstance().setPlaylist(songList, mDetail, (int) tagFor, (int) id);
                         }
                     }
 
                 }
             });
             mViewHolder.imagemore.setColorFilter(Color.DKGRAY);
-            if (Build.VERSION.SDK_INT > 15) {
-                mViewHolder.imagemore.setImageAlpha(255);
-            } else {
-                mViewHolder.imagemore.setAlpha(255);
-            }
+            mViewHolder.imagemore.setImageAlpha(255);
 
             mViewHolder.imagemore.setOnClickListener(new View.OnClickListener() {
 
@@ -456,9 +765,9 @@ public class PlaylistDetailsActivity extends ActionBarActivity implements View.O
     private boolean isDragingStart = false;
     private int TAG_Observer;
 //imp
-    private void initiSlidingUpPanel() {
+    private void initSlidingUpPanel() {
         mLayout = (SlidingUpPanelLayout) findViewById(R.id.sliding_layout);
-        songAlbumbg = (ImageView) findViewById(R.id.image_songAlbumbg);
+        // songAlbumbg = (ImageView) findViewById(R.id.image_songAlbumbg);
         songAlbumbg = (ImageView) findViewById(R.id.image_songAlbumbg_mid);
         img_bottom_slideone = (ImageView) findViewById(R.id.img_bottom_slideone);
         img_bottom_slidetwo = (ImageView) findViewById(R.id.img_bottom_slidetwo);
@@ -574,7 +883,7 @@ public class PlaylistDetailsActivity extends ActionBarActivity implements View.O
 
     }
 
-    private void loadAlreadyPaing() {
+    private void loadAlreadyPlaying() {
         SongDetail mSongDetail = MediaController.getInstance().getPlayingSongDetail();
         if (mSongDetail != null) {
             loadSongsDetails(mSongDetail);
@@ -650,7 +959,6 @@ public class PlaylistDetailsActivity extends ActionBarActivity implements View.O
     public void newSongLoaded(Object... args) {
         MediaController.getInstance().checkIsFavorite(context, (SongDetail) args[0], img_Favorite);
     }
-
 
     private void updateTitle(boolean shutdown) {
         SongDetail mSongDetail = MediaController.getInstance().getPlayingSongDetail();

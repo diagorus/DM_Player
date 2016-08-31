@@ -2,7 +2,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.dmplayer">
 
-    <uses-permission android:name="android.permission.CHANGE_WIFI_STATE" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.WRITE_SETTINGS" />
     <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
     <uses-permission android:name="android.permission.WAKE_LOCK" />
@@ -29,7 +29,6 @@
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-
             <intent-filter>
                 <action android:name="android.intent.action.MUSIC_PLAYER" />
                 <category android:name="android.intent.category.DEFAULT" />
@@ -76,14 +75,8 @@
 
         </activity>
 
-
         <activity
-            android:name=".activities.AlbumAndArtistDetailsActivity"
-            android:label="@string/app_name"
-            android:screenOrientation="portrait" />
-
-        <activity
-            android:name=".activities.PlaylistDetailsActivity"
+            android:name=".activities.PlaylistActivity"
             android:label="@string/app_name"
             android:screenOrientation="portrait" />
 
@@ -104,6 +97,11 @@
             </intent-filter>
         </activity>
 
+        <activity
+            android:name="com.vk.sdk.VKServiceActivity"
+            android:label="ServiceActivity"
+            android:theme="@style/VK.Transparent" />
+
         <service
             android:name=".manager.MusicPlayerService"
             android:enabled="true"
@@ -121,10 +119,7 @@
             </intent-filter>
         </receiver>
 
-        <activity
-            android:name="com.vk.sdk.VKServiceActivity"
-            android:label="ServiceActivity"
-            android:theme="@style/VK.Transparent" />
+
 
     </application>
 

@@ -37,7 +37,7 @@
             <!-- The height is set to half the height of the parent, which is 64 dip -->
 
             <TextView
-                android:id="@+id/line1"
+                android:id="@+id/line_1"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:ellipsize="marquee"
@@ -50,10 +50,10 @@
             <!-- The height is set to half the height of the parent, which is 64 dip -->
 
             <TextView
-                android:id="@+id/line2"
+                android:id="@+id/line_2"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_below="@+id/line1"
+                android:layout_below="@+id/line_1"
                 android:layout_marginTop="1dp"
                 android:ellipsize="end"
                 android:gravity="center_vertical"
@@ -61,7 +61,7 @@
                 android:singleLine="true"
                 android:text=""
                 android:textColor="?colorPrimary"
-                android:textSize="11sp"
+                android:textSize="12sp"
                 android:visibility="visible" />
         </RelativeLayout>
     </RelativeLayout>

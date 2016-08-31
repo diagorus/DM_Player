@@ -5,7 +5,8 @@
     android:background="@color/md_white_1000"
     android:orientation="vertical">
 
-    <com.dmplayer.slidinguppanelhelper.SlidingUpPanelLayout xmlns:sothree="http://schemas.android.com/apk/res-auto"
+    <com.dmplayer.slidinguppanelhelper.SlidingUpPanelLayout
+        xmlns:sothree="http://schemas.android.com/apk/res-auto"
         android:id="@+id/sliding_layout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -19,7 +20,7 @@
         <!-- MAIN CONTENT -->
 
         <include
-            android:id="@+id/include_sliding_panelchildone"
+            android:id="@+id/include_slidingpanel_child_1"
             layout="@layout/include_albumandartisdetails"
             android:layout_width="match_parent"
             android:layout_height="match_parent" />
@@ -27,8 +28,8 @@
         <!-- SLIDING LAYOUT -->
 
         <include
-            android:id="@+id/include_sliding_panel_childtwo"
-            layout="@layout/include_slidingpanel_childtwo"
+            android:id="@+id/include_slidingpanel_child_2"
+            layout="@layout/include_slidingpanel_child_2"
             android:layout_width="match_parent"
             android:layout_height="match_parent" />
     </com.dmplayer.slidinguppanelhelper.SlidingUpPanelLayout>

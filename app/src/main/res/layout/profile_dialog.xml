@@ -2,7 +2,6 @@
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:id="@+id/root_detector"
     android:orientation="vertical"
     android:layout_width="300dp"
     android:layout_height="match_parent" >
@@ -41,15 +40,17 @@
                 android:layout_gravity="center"
                 android:layout_marginTop="15dp"
                 app:border_width="1dp"
-                android:src="@drawable/drawer_default_avatar" />
+                android:src="@drawable/profile_default_avatar" />
 
             <EditText
                 android:id="@+id/profile_dialog_name"
+                android:imeOptions="actionDone"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="20dp"
                 android:textSize="20sp"
                 android:text="Anonymous"
+                android:inputType="text"
                 android:gravity="center_horizontal"/>
 
             <LinearLayout

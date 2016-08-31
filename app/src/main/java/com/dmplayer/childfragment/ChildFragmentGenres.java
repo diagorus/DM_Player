@@ -6,8 +6,9 @@
 package com.dmplayer.childfragment;
 
 import com.dmplayer.R;
-import com.dmplayer.activities.AlbumAndArtistDetailsActivity;
+import com.dmplayer.activities.PlaylistActivity;
 import com.dmplayer.adapter.CursorRecyclerViewAdapter;
+import com.dmplayer.models.SongDetail;
 import com.dmplayer.utility.LogWriter;
 import com.dmplayer.phonemidea.DMPlayerUtility;
 import com.dmplayer.phonemidea.MusicAlphabetIndexer;
@@ -36,14 +37,16 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import java.util.ArrayList;
+
 public class ChildFragmentGenres extends Fragment {
 
     private static final String TAG = "ChildFragmentArtists";
+    private static final String DELETE_GENRE_TAG = "<*EMPTY*>";
     private static Context context;
     private RecyclerView recyclerView;
-    boolean mIsUnknownArtist;
-    boolean mIsUnknownAlbum;
-    private GenersRecyclerAdapter mAdapter;
+    private GenresRecyclerAdapter mAdapter;
+    private Cursor mGenreCursor;
 
     public static ChildFragmentGenres newInstance(int position, Context mContext) {
         ChildFragmentGenres f = new ChildFragmentGenres();
@@ -53,30 +56,30 @@ public class ChildFragmentGenres extends Fragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragmentchild_album, null);
+        View view = inflater.inflate(R.layout.fragment_child_album, null);
         setupView(view);
         return view;
     }
 
     private void setupView(View v) {
-        recyclerView = (RecyclerView) v.findViewById(R.id.recyclerview_grid);
+        recyclerView = (RecyclerView) v.findViewById(R.id.recyclerView_playlists);
         recyclerView.setLayoutManager(new GridLayoutManager(getActivity(), 2));
         populateData();
     }
 
     private void populateData() {
-        mAdapter = (GenersRecyclerAdapter) getActivity().getLastNonConfigurationInstance();
+        mAdapter = (GenresRecyclerAdapter) getActivity().getLastNonConfigurationInstance();
         if (mAdapter == null) {
-            mAdapter = new GenersRecyclerAdapter(getActivity(), null);
+            mAdapter = new GenresRecyclerAdapter(getActivity(), null);
             recyclerView.setAdapter(mAdapter);
-            getGenersCursor(mAdapter.getQueryHandler(), null);
+            getGenresCursor(mAdapter.getQueryHandler(), null);
         } else {
             recyclerView.setAdapter(mAdapter);
-            mArtistCursor = mAdapter.getCursor();
-            if (mArtistCursor != null) {
-                init(mArtistCursor);
+            mGenreCursor = mAdapter.getCursor();
+            if (mGenreCursor != null) {
+                init(mGenreCursor);
             } else {
-                getGenersCursor(mAdapter.getQueryHandler(), null);
+                getGenresCursor(mAdapter.getQueryHandler(), null);
             }
         }
     }
@@ -85,17 +88,21 @@ public class ChildFragmentGenres extends Fragment {
         recyclerView.scrollToPosition(0);
     }
 
-    private Cursor mArtistCursor;
+
 
     public void init(Cursor c) {
         if (mAdapter == null) {
             return;
         }
-        mAdapter.changeCursor(c); // also sets mArtistCursor
-        if (mArtistCursor == null) {
+//        int genreId = c.getInt(0);
+//        ArrayList<SongDetail> genreSongsCollection = PhoneMediaControl.getInstance()
+//                .getList(context, genreId, PhoneMediaControl.SongsLoadFor.Genre, "");
+//        if(genreSongsCollection.isEmpty())
+//            return;
+        mAdapter.changeCursor(c); // also sets mGenreCursor
+        if (mGenreCursor == null) {
             DMPlayerUtility.displayDatabaseError(getActivity());
             mReScanHandler.sendEmptyMessageDelayed(0, 1000);
-            return;
         }
     }
 
@@ -103,12 +110,12 @@ public class ChildFragmentGenres extends Fragment {
         @Override
         public void handleMessage(Message msg) {
             if (mAdapter != null) {
-                getGenersCursor(mAdapter.getQueryHandler(), null);
+                getGenresCursor(mAdapter.getQueryHandler(), null);
             }
         }
     };
 
-    private Cursor getGenersCursor(AsyncQueryHandler async, String filter) {
+    private Cursor getGenresCursor(AsyncQueryHandler async, String filter) {
 
         String[] cols = new String[]{MediaStore.Audio.Genres._ID, MediaStore.Audio.Genres.NAME};
 
@@ -126,22 +133,21 @@ public class ChildFragmentGenres extends Fragment {
         return ret;
     }
 
-    public class GenersRecyclerAdapter extends CursorRecyclerViewAdapter<GenersRecyclerAdapter.ViewHolder> {
+    public class GenresRecyclerAdapter extends CursorRecyclerViewAdapter<GenresRecyclerAdapter.ViewHolder> {
 
         private final BitmapDrawable mDefaultAlbumIcon;
-        private int genenrsIdIdx;
-        private int genersIdx;
+        private int genresIdIdx;
+        private int genresIdx;
 
         private final Context mContext;
         private final Resources mResources;
         private final String mUnknownArtist;
-        private final StringBuilder mBuffer = new StringBuilder();
         private MusicAlphabetIndexer mIndexer;
         private AsyncQueryHandler mQueryHandler;
         private String mConstraint = null;
         private boolean mConstraintIsValid = false;
 
-        protected GenersRecyclerAdapter(Context context, Cursor cursor) {
+        protected GenresRecyclerAdapter(Context context, Cursor cursor) {
             super(context, cursor);
             mQueryHandler = new QueryHandler(context.getContentResolver());
 
@@ -179,8 +185,8 @@ public class ChildFragmentGenres extends Fragment {
                 cursor.close();
                 cursor = null;
             }
-            if (cursor != mArtistCursor) {
-                mArtistCursor = cursor;
+            if (cursor != mGenreCursor) {
+                mGenreCursor = cursor;
                 getColumnIndices(cursor);
                 super.changeCursor(cursor);
             }
@@ -191,7 +197,7 @@ public class ChildFragmentGenres extends Fragment {
             if (mConstraintIsValid && ((s == null && mConstraint == null) || (s != null && s.equals(mConstraint)))) {
                 return getCursor();
             }
-            Cursor c = getGenersCursor(null, s);
+            Cursor c = getGenresCursor(null, s);
             mConstraint = s;
             mConstraintIsValid = true;
             return c;
@@ -199,29 +205,28 @@ public class ChildFragmentGenres extends Fragment {
 
         private void getColumnIndices(Cursor cursor) {
             if (cursor != null) {
-                genenrsIdIdx = cursor.getColumnIndexOrThrow(MediaStore.Audio.Genres._ID);
-                genersIdx = cursor.getColumnIndexOrThrow(MediaStore.Audio.Genres.NAME);
+                genresIdIdx = cursor.getColumnIndexOrThrow(MediaStore.Audio.Genres._ID);
+                genresIdx = cursor.getColumnIndexOrThrow(MediaStore.Audio.Genres.NAME);
                 if (mIndexer != null) {
                     mIndexer.setCursor(cursor);
                 } else {
-                    mIndexer = new MusicAlphabetIndexer(cursor, genersIdx, mResources.getString(R.string.fast_scroll_alphabet));
+                    mIndexer = new MusicAlphabetIndexer(cursor, genresIdx, mResources.getString(R.string.fast_scroll_alphabet));
                 }
             }
         }
 
-
         @Override
         public void onBindViewHolder(ViewHolder viewHolder, Cursor cursor) {
 
-            String displaygeners = cursor.getString(genersIdx);
-            int genenrsId = cursor.getInt(genenrsIdIdx);
+            String displayGenres = cursor.getString(genresIdx);
+            int genreId = cursor.getInt(genresIdIdx);
 
-            boolean unknown = displaygeners == null || displaygeners.equals(MediaStore.UNKNOWN_STRING);
+            boolean unknown = ((displayGenres == null) || displayGenres.equals(MediaStore.UNKNOWN_STRING));
             if (unknown) {
-                displaygeners = mUnknownArtist;
+                displayGenres = mUnknownArtist;
             }
-            viewHolder.line1.setText(displaygeners);
-            viewHolder.line2.setVisibility(View.GONE);
+            viewHolder.topLine.setText(displayGenres);
+            viewHolder.bottomLine.setVisibility(View.GONE);
         }
 
         @Override
@@ -229,20 +234,19 @@ public class ChildFragmentGenres extends Fragment {
             return new ViewHolder(LayoutInflater.from(viewgroup.getContext()).inflate(R.layout.inflate_grid_item, viewgroup, false));
         }
 
-        private long getGenerID(int position) {
+        private long getGenreID(int position) {
             return getItemId(position);
         }
 
-
         protected class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
-            TextView line1;
-            TextView line2;
+            TextView topLine;
+            TextView bottomLine;
             ImageView icon;
 
             public ViewHolder(View itemView) {
                 super(itemView);
-                line1 = (TextView) itemView.findViewById(R.id.line1);
-                line2 = (TextView) itemView.findViewById(R.id.line2);
+                topLine = (TextView) itemView.findViewById(R.id.line_1);
+                bottomLine = (TextView) itemView.findViewById(R.id.line_2);
                 icon = (ImageView) itemView.findViewById(R.id.icon);
                 icon.setScaleType(ImageView.ScaleType.CENTER_CROP);
                 itemView.setOnClickListener(this);
@@ -251,16 +255,16 @@ public class ChildFragmentGenres extends Fragment {
             @Override
             public void onClick(View view) {
                 try {
-                    long generid = getGenerID(getPosition());
-                    Intent mIntent = new Intent(context, AlbumAndArtistDetailsActivity.class);
+                    long genreId = getGenreID(getAdapterPosition());
+                    Intent mIntent = new Intent(context, PlaylistActivity.class);
                     Bundle mBundle = new Bundle();
-                    mBundle.putLong("id", generid);
-                    mBundle.putLong("tagfor", PhoneMediaControl.SonLoadFor.Gener.ordinal());
-                    mBundle.putString("albumname", ((TextView) view.findViewById(R.id.line1)).getText().toString().trim());
+                    mBundle.putLong("id", genreId);
+                    mBundle.putLong("tagfor", PhoneMediaControl.SongsLoadFor.Genre.ordinal());
+                    mBundle.putString("albumname", ((TextView) view.findViewById(R.id.line_1)).getText().toString().trim());
                     mBundle.putString("title_one", "All my songs");
-                    mBundle.putString("title_sec", ((TextView) view.findViewById(R.id.line2)).getText().toString().trim());
+                    mBundle.putString("title_sec", ((TextView) view.findViewById(R.id.line_2)).getText().toString().trim());
                     mIntent.putExtras(mBundle);
-                    ((Activity) context).startActivity(mIntent);
+                    context.startActivity(mIntent);
                     ((Activity) context).overridePendingTransition(0, 0);
                 } catch (Exception e) {
                     e.printStackTrace();

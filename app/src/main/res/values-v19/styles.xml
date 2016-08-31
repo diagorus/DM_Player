@@ -12,8 +12,6 @@
         <item name="android:colorForeground">@color/md_black_1000_75</item>
         <item name="windowActionModeOverlay">true</item>
         <item name="actionModeBackground">@color/md_blue_500</item>
-        <item name="android:windowTranslucentNavigation">@bool/translucentNavigationBar</item>
-        <item name="android:windowTranslucentStatus">@bool/translucentStatusBar</item>
 
         <!-- Navigation Drawer Arrow Style. -->
         <item name="drawerArrowStyle">@style/DrawerArrowStyle</item>
@@ -33,8 +31,6 @@
         <item name="android:colorForeground">@color/md_black_1000_75</item>
         <item name="windowActionModeOverlay">true</item>
         <item name="actionModeBackground">@color/md_red_500</item>​
-        <item name="android:windowTranslucentNavigation">@bool/translucentNavigationBar</item>
-        <item name="android:windowTranslucentStatus">@bool/translucentStatusBar</item>
 
         <!-- Navigation Drawer Arrow Style. -->
         <item name="drawerArrowStyle">@style/DrawerArrowStyle</item>
@@ -54,8 +50,6 @@
         <item name="android:colorForeground">@color/md_black_1000_75</item>
         <item name="windowActionModeOverlay">true</item>
         <item name="actionModeBackground">@color/md_green_500</item>
-        <item name="android:windowTranslucentNavigation">@bool/translucentNavigationBar</item>
-        <item name="android:windowTranslucentStatus">@bool/translucentStatusBar</item>
 
         <!-- Navigation Drawer Arrow Style. -->
         <item name="drawerArrowStyle">@style/DrawerArrowStyle</item>
@@ -75,8 +69,6 @@
         <item name="android:colorForeground">@color/md_black_1000_75</item>
         <item name="windowActionModeOverlay">true</item>
         <item name="actionModeBackground">@color/md_orange_500</item>
-        <item name="android:windowTranslucentNavigation">@bool/translucentNavigationBar</item>
-        <item name="android:windowTranslucentStatus">@bool/translucentStatusBar</item>
 
         <!-- Navigation Drawer Arrow Style. -->
         <item name="drawerArrowStyle">@style/DrawerArrowStyle</item>
@@ -97,9 +89,6 @@
         <item name="windowActionModeOverlay">true</item>
         <item name="actionModeBackground">@color/md_pink_500</item>
 
-        <item name="android:windowTranslucentNavigation">@bool/translucentNavigationBar</item>
-        <item name="android:windowTranslucentStatus">@bool/translucentStatusBar</item>
-
         <!-- Navigation Drawer Arrow Style. -->
         <item name="drawerArrowStyle">@style/DrawerArrowStyle</item>
 
@@ -118,8 +107,6 @@
         <item name="android:colorForeground">@color/md_black_1000_75</item>
         <item name="windowActionModeOverlay">true</item>
         <item name="actionModeBackground">@color/md_indigo_500</item>
-        <item name="android:windowTranslucentNavigation">@bool/translucentNavigationBar</item>
-        <item name="android:windowTranslucentStatus">@bool/translucentStatusBar</item>
 
         <!-- Navigation Drawer Arrow Style. -->
         <item name="drawerArrowStyle">@style/DrawerArrowStyle</item>
@@ -139,8 +126,6 @@
         <item name="android:colorForeground">@color/md_black_1000_75</item>
         <item name="windowActionModeOverlay">true</item>
         <item name="actionModeBackground">@color/md_brown_500</item>
-        <item name="android:windowTranslucentNavigation">@bool/translucentNavigationBar</item>
-        <item name="android:windowTranslucentStatus">@bool/translucentStatusBar</item>
 
         <!-- Navigation Drawer Arrow Style. -->
         <item name="drawerArrowStyle">@style/DrawerArrowStyle</item>
@@ -160,8 +145,6 @@
         <item name="android:colorForeground">@color/md_black_1000_75</item>
         <item name="windowActionModeOverlay">true</item>
         <item name="actionModeBackground">@color/md_blue_grey_500</item>
-        <item name="android:windowTranslucentNavigation">@bool/translucentNavigationBar</item>
-        <item name="android:windowTranslucentStatus">@bool/translucentStatusBar</item>
 
         <!-- Navigation Drawer Arrow Style. -->
         <item name="drawerArrowStyle">@style/DrawerArrowStyle</item>
@@ -181,8 +164,6 @@
         <item name="android:colorForeground">@color/md_black_1000_75</item>
         <item name="windowActionModeOverlay">true</item>
         <item name="actionModeBackground">@color/md_falcon_500</item>
-        <item name="android:windowTranslucentNavigation">@bool/translucentNavigationBar</item>
-        <item name="android:windowTranslucentStatus">@bool/translucentStatusBar</item>
 
         <!-- Navigation Drawer Arrow Style. -->
         <item name="drawerArrowStyle">@style/DrawerArrowStyle</item>
@@ -202,8 +183,6 @@
         <item name="android:colorForeground">@color/md_black_1000_75</item>
         <item name="windowActionModeOverlay">true</item>
         <item name="actionModeBackground">@color/md_light_blue_500</item>
-        <item name="android:windowTranslucentNavigation">@bool/translucentNavigationBar</item>
-        <item name="android:windowTranslucentStatus">@bool/translucentStatusBar</item>
 
         <!-- Navigation Drawer Arrow Style. -->
         <item name="drawerArrowStyle">@style/DrawerArrowStyle</item>

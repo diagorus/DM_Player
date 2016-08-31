@@ -153,7 +153,7 @@ public class MusicPlayerService extends Service implements AudioManager.OnAudioF
                 setListeners(expandedView);
             }
 
-            Bitmap albumArt = audioInfo != null ? audioInfo.getSmallCover(ApplicationDMPlayer.applicationContext) : null;
+            Bitmap albumArt = audioInfo != null ? audioInfo.getCover(ApplicationDMPlayer.applicationContext) : null;
 
             if (albumArt != null) {
                 notification.contentView.setImageViewBitmap(R.id.player_album_art, albumArt);

@@ -7,10 +7,12 @@ package com.dmplayer.phonemidea;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.net.URI;
 import java.util.Formatter;
 import java.util.Locale;
 
@@ -19,9 +21,13 @@ import android.content.ContentResolver;
 import android.content.Context;
 import android.content.res.Resources;
 import android.database.Cursor;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.Environment;
 import android.provider.MediaStore;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
@@ -46,6 +52,7 @@ public abstract class DMPlayerUtility {
     private static Formatter sFormatter = new Formatter(sFormatBuilder, Locale.getDefault());
     private static final Object[] sTimeArgs = new Object[5];
 
+    @NonNull
     public static String makeAlbumsLabel(Context context, int numalbums, int numsongs, boolean isUnknown) {
         // There are two formats for the albums/songs information:
         // "N Song(s)" - used for unknown artist/album
@@ -130,6 +137,7 @@ public abstract class DMPlayerUtility {
         return query(context, uri, projection, selection, selectionArgs, sortOrder, 0);
     }
 
+    @Nullable
     public static Cursor query(Context context, Uri uri, String[] projection, String selection, String[] selectionArgs, String sortOrder, int limit) {
         try {
             ContentResolver resolver = context.getContentResolver();
@@ -196,7 +204,6 @@ public abstract class DMPlayerUtility {
     }
 
     public static String getAudioDuration(long durationLong) {
-        // long totalSecs = durationLong / 1000;
         long totalSecs = durationLong;
         long hours = totalSecs / 3600;
         long minutes = (totalSecs % 3600) / 60;
@@ -314,6 +321,22 @@ public abstract class DMPlayerUtility {
         return (int) Math.ceil(ApplicationDMPlayer.density * value);
     }
 
+    public static boolean hasConnection(final Context context) {
+        ConnectivityManager cm = (ConnectivityManager)context.getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo wifiInfo = cm.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
+        if (wifiInfo != null && wifiInfo.isConnected()) {
+            return true;
+        }
+        wifiInfo = cm.getNetworkInfo(ConnectivityManager.TYPE_MOBILE);
+        if (wifiInfo != null && wifiInfo.isConnected()) {
+            return true;
+        }
+        wifiInfo = cm.getActiveNetworkInfo();
+        if (wifiInfo != null && wifiInfo.isConnected()) {
+            return true;
+        }
+        return false;
+    }
 
     private static final DecelerateInterpolator DECCELERATE_INTERPOLATOR = new DecelerateInterpolator();
     private static final AccelerateInterpolator ACCELERATE_INTERPOLATOR = new AccelerateInterpolator();
@@ -346,7 +369,6 @@ public abstract class DMPlayerUtility {
         animatorSet.play(bounceAnimX).with(bounceAnimY).after(rotationAnim);
         animatorSet.start();
     }
-
 
     public static void animatePhotoLike(final View vBgLike, final View ivLike) {
         vBgLike.setVisibility(View.VISIBLE);

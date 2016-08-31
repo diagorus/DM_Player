@@ -1,7 +1,6 @@
-package com.dmplayer.models;
+package com.dmplayer.models.VkProfileUserDataResponse;
 
-public class VkUserDataRespItem
-{
+public class VkUserData {
     private String id;
 
     private String first_name;
@@ -52,7 +51,7 @@ public class VkUserDataRespItem
 
     @Override
     public String toString() {
-        return "VkUserDataRespItem{" +
+        return "VkUserData{" +
                 "id='" + id + '\'' +
                 ", first_name='" + first_name + '\'' +
                 ", last_name='" + last_name + '\'' +

@@ -30,7 +30,7 @@ import android.widget.ImageView.ScaleType;
 import android.widget.TextView;
 
 import com.dmplayer.R;
-import com.dmplayer.activities.AlbumAndArtistDetailsActivity;
+import com.dmplayer.activities.PlaylistActivity;
 import com.dmplayer.adapter.CursorRecyclerViewAdapter;
 import com.dmplayer.utility.LogWriter;
 import com.dmplayer.phonemidea.DMPlayerUtility;
@@ -53,13 +53,13 @@ public class ChildFragmentArtists extends Fragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragmentchild_album, null);
+        View view = inflater.inflate(R.layout.fragment_child_album, null);
         setupView(view);
         return view;
     }
 
     private void setupView(View v) {
-        recyclerView = (RecyclerView) v.findViewById(R.id.recyclerview_grid);
+        recyclerView = (RecyclerView) v.findViewById(R.id.recyclerView_playlists);
         recyclerView.setLayoutManager(new GridLayoutManager(getActivity(), 2));
         populateData();
     }
@@ -221,8 +221,8 @@ public class ChildFragmentArtists extends Fragment {
 
             public ViewHolder(View itemView) {
                 super(itemView);
-                line1 = (TextView) itemView.findViewById(R.id.line1);
-                line2 = (TextView) itemView.findViewById(R.id.line2);
+                line1 = (TextView) itemView.findViewById(R.id.line_1);
+                line2 = (TextView) itemView.findViewById(R.id.line_2);
                 icon = (ImageView) itemView.findViewById(R.id.icon);
                 icon.setScaleType(ScaleType.CENTER_CROP);
                 itemView.setOnClickListener(this);
@@ -232,15 +232,15 @@ public class ChildFragmentArtists extends Fragment {
             public void onClick(View view) {
                 try {
                     long artisID = getArtisID(getPosition());
-                    Intent mIntent = new Intent(context, AlbumAndArtistDetailsActivity.class);
+                    Intent mIntent = new Intent(context, PlaylistActivity.class);
                     Bundle mBundle = new Bundle();
                     mBundle.putLong("id", artisID);
-                    mBundle.putLong("tagfor", PhoneMediaControl.SonLoadFor.Artis.ordinal());
-                    mBundle.putString("albumname", ((TextView) view.findViewById(R.id.line1)).getText().toString().trim());
+                    mBundle.putLong("tagfor", PhoneMediaControl.SongsLoadFor.Artist.ordinal());
+                    mBundle.putString("albumname", ((TextView) view.findViewById(R.id.line_1)).getText().toString().trim());
                     mBundle.putString("title_one", "All my songs");
-                    mBundle.putString("title_sec", ((TextView) view.findViewById(R.id.line2)).getText().toString().trim());
+                    mBundle.putString("title_sec", ((TextView) view.findViewById(R.id.line_2)).getText().toString().trim());
                     mIntent.putExtras(mBundle);
-                    ((Activity) context).startActivity(mIntent);
+                    context.startActivity(mIntent);
                     ((Activity) context).overridePendingTransition(0, 0);
                 } catch (Exception e) {
                     e.printStackTrace();

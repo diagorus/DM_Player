@@ -4,12 +4,10 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
-import android.net.Uri;
 import android.os.Bundle;
-import android.support.v7.app.ActionBarActivity;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.SparseBooleanArray;
-import android.util.TypedValue;
 import android.view.ActionMode;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -24,19 +22,15 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.dmplayer.R;
-import com.dmplayer.fragments.FragmentSettings;
 import com.dmplayer.models.SongDetail;
 import com.dmplayer.phonemidea.DMPlayerUtility;
 import com.dmplayer.phonemidea.PhoneMediaControl;
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.ImageLoader;
 
-import java.io.ByteArrayOutputStream;
-import java.io.ObjectOutput;
-import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 
-public class MusicChooserActivity extends ActionBarActivity {
+public class MusicChooserActivity extends AppCompatActivity {
 
     private SharedPreferences sharedPreferences;
     private int color = 0xFFFFFF;
@@ -87,7 +81,7 @@ public class MusicChooserActivity extends ActionBarActivity {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowTitleEnabled(true);
 
-        recycler_songslist = (ListView) findViewById(R.id.recycler_allSongs);
+        recycler_songslist = (ListView) findViewById(R.id.listView_songs);
         mAllSongsListAdapter = new AllSongsListAdapter(context);
         recycler_songslist.setAdapter(mAllSongsListAdapter);
 //        TypedValue primaryColor = new TypedValue();
@@ -100,7 +94,7 @@ public class MusicChooserActivity extends ActionBarActivity {
 
     private void loadAllSongs() {
         PhoneMediaControl mPhoneMediaControl = PhoneMediaControl.getInstance();
-        PhoneMediaControl.setPhonemediacontrolinterface(new PhoneMediaControl.PhoneMediaControlINterface() {
+        PhoneMediaControl.setPhoneMediaControlInterface(new PhoneMediaControl.PhoneMediaControlInterface() {
 
             @Override
             public void loadSongsComplete(ArrayList<SongDetail> songsList_) {
@@ -108,7 +102,7 @@ public class MusicChooserActivity extends ActionBarActivity {
                 mAllSongsListAdapter.notifyDataSetChanged();
             }
         });
-        mPhoneMediaControl.loadMusicList(context, -1, PhoneMediaControl.SonLoadFor.All,"");
+        mPhoneMediaControl.loadMusicList(context, -1, PhoneMediaControl.SongsLoadFor.All,"");
     }
 
     public class AllSongsListAdapter extends BaseAdapter {
@@ -144,7 +138,7 @@ public class MusicChooserActivity extends ActionBarActivity {
                 convertView = layoutInflater.inflate(R.layout.inflate_allsongsitem, null);
                 mViewHolder.song_row = (LinearLayout) convertView.findViewById(R.id.inflate_allsong_row);
                 mViewHolder.textViewSongName = (TextView) convertView.findViewById(R.id.inflate_allsong_textsongname);
-                mViewHolder.textViewSongArtisNameAndDuration = (TextView) convertView.findViewById(R.id.inflate_allsong_textsongArtisName_duration);
+                mViewHolder.textViewSongArtistNameAndDuration = (TextView) convertView.findViewById(R.id.inflate_allsong_textsongArtisName_duration);
                 mViewHolder.imageSongThm = (ImageView) convertView.findViewById(R.id.inflate_allsong_imgSongThumb);
                 convertView.setTag(mViewHolder);
             } else {
@@ -159,7 +153,7 @@ public class MusicChooserActivity extends ActionBarActivity {
                 e.printStackTrace();
             }
 
-            mViewHolder.textViewSongArtisNameAndDuration.setText((audioDuration.isEmpty() ? "" : audioDuration + " | ") + mDetail.getArtist());
+            mViewHolder.textViewSongArtistNameAndDuration.setText((audioDuration.isEmpty() ? "" : audioDuration + " | ") + mDetail.getArtist());
             mViewHolder.textViewSongName.setText(mDetail.getTitle());
             String contentURI = "content://media/external/audio/media/" + mDetail.getId() + "/albumart";
             imageLoader.displayImage(contentURI, mViewHolder.imageSongThm, options);
@@ -190,7 +184,7 @@ public class MusicChooserActivity extends ActionBarActivity {
         class ViewHolder {
             TextView textViewSongName;
             ImageView imageSongThm;
-            TextView textViewSongArtisNameAndDuration;
+            TextView textViewSongArtistNameAndDuration;
             LinearLayout song_row;
         }
     }

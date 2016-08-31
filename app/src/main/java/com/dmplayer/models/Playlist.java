@@ -1,8 +1,10 @@
-package com.dmplayer.playlist;
+package com.dmplayer.models;
 
+import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.util.Log;
 
-import com.dmplayer.models.SongDetail;
+import com.dmplayer.phonemidea.PhoneMediaControl;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -13,14 +15,32 @@ import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.util.ArrayList;
 
-/**
- * Created by asus on 03.08.2016.
- */
 public class Playlist implements Serializable {
 
-    private String name="";
-    private transient String path="";
+    private static int count = 0;
+
+    private String name = "";
+    private transient String path = "";
     private ArrayList<SongDetail> songs = new ArrayList<>();
+
+    private boolean isVk = false;
+
+    private static final String TAG = "Playlist";
+
+    public Playlist() {
+        count++;
+    }
+
+    public Playlist(String name) {
+        this();
+        this.name = name;
+    }
+
+    public Playlist(String name, boolean isVk) {
+        this(name);
+        this.isVk = isVk;
+    }
+
 
     public void addSong(SongDetail newSong){
         songs.add(newSong);
@@ -35,7 +55,7 @@ public class Playlist implements Serializable {
     }
 
     public void setName(String name){
-        this.name=name;
+        this.name = name;
     }
 
     public int getSongCount(){
@@ -43,7 +63,34 @@ public class Playlist implements Serializable {
     }
 
     public void setPath(String path){
-        this.path=path;
+        this.path = path;
+    }
+
+    public static int getCount() {
+        return count;
+    }
+
+    public String getPath() {
+        return path;
+    }
+
+    public boolean isVk() {
+        return isVk;
+    }
+
+    public void setVk(boolean vk) {
+        isVk = vk;
+    }
+
+    public Bundle getBundle() {
+        Bundle bundle = new Bundle();
+
+        bundle.putLong("tagfor", PhoneMediaControl.SongsLoadFor.Playlist.ordinal());
+        bundle.putString("playlistname", name);
+        bundle.putString("playlistpath", path);
+        bundle.putString("title_one", "All my songs");
+
+        return bundle;
     }
 
     public byte[] getBytes(){
@@ -84,15 +131,11 @@ public class Playlist implements Serializable {
         finally {
             try {
                 bis.close();
-            } catch (Exception ex) {
-                // ignore close exception
-            }
-            try {
                 if (in != null) {
                     in.close();
                 }
             } catch (Exception ex) {
-                // ignore close exception
+                Log.e(TAG, ex.getMessage());
             }
         }
     }
