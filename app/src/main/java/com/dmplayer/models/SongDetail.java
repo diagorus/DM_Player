@@ -174,7 +174,8 @@ public class SongDetail implements Serializable {
         } catch (Exception ex) {
             return null;
         }
-        finally {
+        finally
+		{
             try {
                 bis.close();
             } catch (Exception ex) {
