@@ -112,13 +112,15 @@ public class PlaylistActivity extends AppCompatActivity implements View.OnClickL
     private ImageView banner;
     private ImageView fab_button;
     private TextView displayMainString, displayFirstSubString, displaySecondSubString;
-    private ExpandableHeightListView recycler_songslist;
+    private ExpandableHeightListView songsList;
     private AllSongsListAdapter mSongsListAdapter;
+    private LinearLayout mLoadingFooter;
     private ArrayList<SongDetail> songList = new ArrayList<>();
 
     private DisplayImageOptions options;
     private ImageLoader imageLoader = ImageLoader.getInstance();
     PhoneMediaControl mPhoneMediaControl = PhoneMediaControl.getInstance();
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         //Set your theme first
@@ -226,10 +228,12 @@ public class PlaylistActivity extends AppCompatActivity implements View.OnClickL
 
     @Override
     public void onDownMotionEvent() {
+        Log.i("Scroll_onDown", "onDownMotionEvent");
     }
 
     @Override
     public void onUpOrCancelMotionEvent(ScrollState scrollState) {
+        Log.i("Scroll_onUpOrCancel", "onUpOrCancelMotionEvent " + scrollState.toString());
     }
 
     //Catch  theme changed from settings
@@ -254,18 +258,19 @@ public class PlaylistActivity extends AppCompatActivity implements View.OnClickL
 
         mToolbarView.setBackgroundColor(ScrollUtils.getColorWithAlpha(0, color));
         mScrollView = (ObservableScrollView) findViewById(R.id.scroll);
-        mScrollView.setScrollViewCallbacks(this);
+        mScrollView.addScrollViewCallbacks(this);
 
         mParallaxImageHeight = getResources().getDimensionPixelSize(R.dimen.parallax_image_height);
-
 
         banner = (ImageView) findViewById(R.id.banner);
         displayMainString = (TextView) findViewById(R.id.tv_albumname);
         displayFirstSubString = (TextView) findViewById(R.id.tv_title_frst);
         displaySecondSubString = (TextView) findViewById(R.id.tv_title_sec);
-        recycler_songslist = (ExpandableHeightListView) findViewById(R.id.listView_songs);
+        songsList = (ExpandableHeightListView) findViewById(R.id.listView_songs);
+        mLoadingFooter = (LinearLayout) getLayoutInflater().inflate(R.layout.loading, null);
         mSongsListAdapter = new AllSongsListAdapter(context);
-        recycler_songslist.setAdapter(mSongsListAdapter);
+
+        songsList.setAdapter(mSongsListAdapter);
 
         options = new DisplayImageOptions.Builder().showImageOnLoading(R.drawable.bg_default_album_art)
                 .showImageForEmptyUri(R.drawable.bg_default_album_art).showImageOnFail(R.drawable.bg_default_album_art).cacheInMemory(true)
@@ -313,7 +318,7 @@ public class PlaylistActivity extends AppCompatActivity implements View.OnClickL
         } else if (tagFor == PhoneMediaControl.SongsLoadFor.Playlist.ordinal()) {
 
         } else if (tagFor == PhoneMediaControl.SongsLoadFor.VkPlaylist.ordinal()) {
-            loadSongsVkPlaylist(vkType, vkAlbumId, vkPlaylistName);
+            loadVkPlaylist(vkType, vkAlbumId, vkPlaylistName);
         }
 
         displayMainString.setText(albumname);
@@ -378,13 +383,14 @@ public class PlaylistActivity extends AppCompatActivity implements View.OnClickL
 
     }
 
-    private void loadSongsVkPlaylist(final int type, final String id, final String name){
+    private void loadVkPlaylist(final int type, final String id, final String name){
         PhoneMediaControl.setPhoneMediaControlInterface(new PhoneMediaControl.PhoneMediaControlInterface() {
 
             @Override
-            public void loadSongsComplete(ArrayList<SongDetail> songsList_) {
+            public void loadSongsComplete(final ArrayList<SongDetail> songsList_) {
                 songList = songsList_;
                 mSongsListAdapter.notifyDataSetChanged();
+
                 if (songList != null && songList.size() >= 1) {
                     imageLoader.displayImage("", banner, options);
                     displayMainString.setText(name);
@@ -396,19 +402,19 @@ public class PlaylistActivity extends AppCompatActivity implements View.OnClickL
 
         switch (type) {
             case VkPlaylist.ALL:
-                loadAlbum(0, 0, "", "My audios");
+                loadAlbum(0, 16, "", "My audios");
                 break;
 
             case VkPlaylist.POPULAR:
-                loadPopular(0, 40);
+                loadPopular(0, 16);
                 break;
 
             case VkPlaylist.RECOMMENDED:
-                loadRecommended(0, 40);
+                loadRecommended(0, 16);
                 break;
 
             case VkPlaylist.ALBUM:
-                loadAlbum(0, 0, id, name);
+                loadAlbum(0, 16, id, name);
                 break;
         }
     }
@@ -444,8 +450,7 @@ public class PlaylistActivity extends AppCompatActivity implements View.OnClickL
                 try {
                     responseAlbum = callForAlbum.execute();
                 } catch (IOException e) {
-                    Log.e(TAG, "Handled: " + e.toString());
-                    e.printStackTrace();
+                    Log.e(TAG, "Handled: " + Log.getStackTraceString(e));
                 }
 
                 ArrayList<VkAudioObject> vkAlbum = new ArrayList<>(
@@ -458,7 +463,7 @@ public class PlaylistActivity extends AppCompatActivity implements View.OnClickL
                     try {
                         playlistAlbum.addSong(converter.convert(vkSong));
                     } catch (IOException e) {
-                        e.printStackTrace();
+                        Log.e(TAG, "Handled: " + Log.getStackTraceString(e));
                     }
                 }
 
@@ -475,8 +480,6 @@ public class PlaylistActivity extends AppCompatActivity implements View.OnClickL
             }
         }.execute();
     }
-
-
 
     private void loadPopular(final int offset, final int count) {
         new AsyncTask<Void, Void, ArrayList<SongDetail>>() {
@@ -732,7 +735,6 @@ public class PlaylistActivity extends AppCompatActivity implements View.OnClickL
             LinearLayout song_row;
         }
     }
-
 
 
     /*-----------------All Work Related to Slide Panel-----------------*/

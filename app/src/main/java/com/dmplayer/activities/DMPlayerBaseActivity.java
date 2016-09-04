@@ -57,6 +57,7 @@ import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.display.FadeInBitmapDisplayer;
 import com.nostra13.universalimageloader.core.listener.ImageLoadingListener;
 import com.nostra13.universalimageloader.core.listener.SimpleImageLoadingListener;
+import com.vk.sdk.util.VKUtil;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -131,7 +132,6 @@ public class DMPlayerBaseActivity extends AppCompatActivity implements View.OnCl
         setFragment(0);
 
         getIntentData();
-
     }
 
     @Override

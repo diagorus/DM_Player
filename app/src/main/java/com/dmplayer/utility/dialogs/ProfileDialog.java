@@ -1,4 +1,4 @@
-package com.dmplayer.utility;
+package com.dmplayer.utility.dialogs;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -41,6 +41,7 @@ import com.dmplayer.models.VkProfileUserDataResponse.VkUserDataCollection;
 import com.dmplayer.phonemidea.DMPlayerUtility;
 import com.dmplayer.uicomponent.CircleImageView;
 import com.dmplayer.uicomponent.SwappingLinearLayout;
+import com.dmplayer.utility.VkSettings;
 import com.vk.sdk.VKAccessToken;
 import com.vk.sdk.VKCallback;
 import com.vk.sdk.VKScope;
@@ -112,10 +113,13 @@ public class ProfileDialog extends DialogFragment implements View.OnClickListene
         switch (v.getId()) {
             case R.id.buttonOK:
                 new SaveDataTask(getActivity()).execute();
-                getDialog().dismiss();
+                if (getOnWorkDone() != null)
+                    getOnWorkDone().onPositiveAnswer();
                 break;
             case R.id.buttonCancel:
                 deletePhoto(generateAvatarUri(getActivity(), true).getPath());
+                if (getOnWorkDone() != null)
+                    getOnWorkDone().onNegativeAnswer();
                 getDialog().dismiss();
                 break;
             case  R.id.profile_dialog_name:
@@ -624,5 +628,19 @@ public class ProfileDialog extends DialogFragment implements View.OnClickListene
                     || isAvatarChanged
                     || isJustLoggedViaVk;
         }
+    }
+    private OnWorkDone OnWorkDone;
+
+    public OnWorkDone getOnWorkDone() {
+        return OnWorkDone;
+    }
+
+    public void setOnWorkDone(OnWorkDone OnWorkDone) {
+        this.OnWorkDone = OnWorkDone;
+    }
+
+    public interface OnWorkDone {
+        void onPositiveAnswer();
+        void onNegativeAnswer();
     }
 }

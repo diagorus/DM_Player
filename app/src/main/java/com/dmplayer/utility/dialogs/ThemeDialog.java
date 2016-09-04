@@ -1,4 +1,4 @@
-package com.dmplayer.utility;
+package com.dmplayer.utility.dialogs;
 
 import android.app.ActivityOptions;
 import android.content.Context;
@@ -140,6 +140,7 @@ public class ThemeDialog extends DialogFragment implements View.OnClickListener 
         }
     }
 
+    private OnItemChoose onItemChoose;
 
     public OnItemChoose getOnItemChoose() {
         return onItemChoose;
@@ -148,8 +149,6 @@ public class ThemeDialog extends DialogFragment implements View.OnClickListener 
     public void setOnItemChoose(OnItemChoose onItemChoose) {
         this.onItemChoose = onItemChoose;
     }
-
-    public OnItemChoose onItemChoose;
 
     public interface OnItemChoose {
         void onClick(int position);

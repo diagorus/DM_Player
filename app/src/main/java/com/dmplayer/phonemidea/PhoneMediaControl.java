@@ -97,6 +97,11 @@ public class PhoneMediaControl {
             phonemediacontrolinterface.loadSongsComplete(songsList);
         }
     }
+    public void addMusicToList(ArrayList<SongDetail> songsList) {
+        if (phonemediacontrolinterface != null) {
+            phonemediacontrolinterface.loadSongsComplete(songsList);
+        }
+    }
 
     public ArrayList<SongDetail> getList(final Context context, final long id, final SongsLoadFor songsLoadFor, final String path) {
         ArrayList<SongDetail> songsList = new ArrayList<>();

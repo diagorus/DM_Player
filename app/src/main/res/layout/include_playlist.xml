@@ -8,7 +8,8 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@color/md_white_1000"
-        android:fillViewport="true">
+        android:fillViewport="true"
+        android:scrollbarStyle="insideOverlay">
 
         <RelativeLayout
             android:layout_width="match_parent"
@@ -28,7 +29,7 @@
                 android:minHeight="@dimen/parallax_image_height" />
 
             <include
-                layout="@layout/include_albumdetailsongslist"
+                layout="@layout/include_playlistsongslist"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_below="@+id/anchor" />

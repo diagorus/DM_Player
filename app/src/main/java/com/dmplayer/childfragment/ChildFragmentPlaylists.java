@@ -23,6 +23,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
 import com.dmplayer.R;
 import com.dmplayer.activities.PlaylistActivity;
 import com.dmplayer.internetservices.VkAPIService;
@@ -57,7 +58,6 @@ public class ChildFragmentPlaylists extends Fragment {
     private static Context context;
 
     private static VkAPIService service;
-    boolean isLoggedViaVk = false;
 
     private SharedPreferences sharedPreferences;
 
@@ -91,195 +91,6 @@ public class ChildFragmentPlaylists extends Fragment {
         recyclerView.setAdapter(playlistsAdapter);
     }
 
-//    private class LoadPlaylistsTask1 extends AsyncTask<Void, Void, Void> {
-//
-//        ArrayList<File> playlistsPaths = new ArrayList<>();
-//        ProgressDialog progressDialog;
-//        boolean isLoggedViaVk = false;
-//        String vkUserId;
-//        String vkAccessToken;
-//        String vkSongsCount;
-//
-//        @Override
-//        protected void onPreExecute() {
-//            super.onPreExecute();
-//
-//            sharedPreferences = getActivity().getSharedPreferences("VALUES", Context.MODE_PRIVATE);
-//            isLoggedViaVk = sharedPreferences.getBoolean("LOGGED_VK", false);
-//
-//            if (isLoggedViaVk) {
-//                vkUserId = sharedPreferences.getString("VKUSERID", "");
-//                vkAccessToken = sharedPreferences.getString("VKACCESSTOKEN", "");
-//                vkSongsCount = sharedPreferences.getString("VKSONGSCOUNT", "");
-//            }
-//
-//            progressDialog = new ProgressDialog(getActivity());
-//            progressDialog.setMessage("Wait a bit...");
-//            progressDialog.show();
-//        }
-//
-//        @Override
-//        protected Void doInBackground(Void... voids) {
-//            try {
-//                loadLocalPlaylists(context);
-//            } catch (Exception e) {
-//                Log.e(TAG, e.getCause().toString());
-//            }
-//
-//            loadVkSongs();
-//
-//            return null;
-//        }
-//
-//        @Override
-//        protected void onPostExecute(Void aVoid) {
-//            super.onPostExecute(aVoid);
-//
-//            progressDialog.dismiss();
-//
-//            playlistsAdapter.notifyDataSetChanged();
-//        }
-//
-//        private void loadLocalPlaylists(Context context) throws Exception{
-//            File parentDir = new File(
-//                    context.getExternalCacheDir() + "/DMPlayer/", "DMPlayer_playlists");
-//            if (parentDir.exists()) {
-//                for (File file : parentDir.listFiles()) {
-//                    if (file.getName().endsWith(".dpl"))
-//                        playlistsPaths.add(file);
-//                }
-//
-//                for (File file : playlistsPaths){
-//                    ObjectInputStream fin = new ObjectInputStream(new FileInputStream (file));
-//                    Playlist current = (Playlist) fin.readObject();
-//                    current.setPath(file.getPath());
-//                    playlists.add(current);
-//                }
-//            }
-//        }
-//
-//        private void loadVkSongs() {
-//            if (DMPlayerUtility.hasConnection(getActivity()) && isLoggedViaVk) {
-//                createApiService();
-//                try {
-//                    loadAlbum(0, 24, "", "My audios");
-//                    loadUserAlbums();
-//                    loadPopular(0, 24);
-//                    loadRecommended(0, 24);
-//                } catch (IOException e) {
-//                    Log.e(TAG, e.getCause().toString());
-//                }
-//            }
-//        }
-//
-//        private void loadAlbum(int offset, int count, String albumId, String albumName) throws IOException {
-//            Map<String, String> optionsForAlbum = new HashMap<>();
-//            optionsForAlbum.put("owner_id", vkUserId);
-//            optionsForAlbum.put("album_id", albumId);
-//            optionsForAlbum.put("need_user", "0");
-//            optionsForAlbum.put("offset", String.valueOf(offset));
-//            optionsForAlbum.put("count", String.valueOf(count));
-//            optionsForAlbum.put("access_token", vkAccessToken);
-//            optionsForAlbum.put("v", "5.53");
-//
-//            Call<VkAudioWrapper> callForAlbum = service.loadAudio(optionsForAlbum);
-//
-//            Response<VkAudioWrapper> responseAlbum = callForAlbum.execute();
-//
-//            ArrayList<VkAudioObject> vkAlbum = new ArrayList<>(
-//                    Arrays.asList(responseAlbum.body().getResponse().getItems()));
-//
-//            Playlist playlistAlbum = new Playlist();
-//            playlistAlbum.setName(albumName);
-//            VkToSongDetailConverter converter = new VkToSongDetailConverter();
-//            for (VkAudioObject vkSong : vkAlbum) {
-//                playlistAlbum.addSong(converter.convert(vkSong));
-//            }
-//            playlists.add(playlistAlbum);
-//        }
-//
-//        private void loadUserAlbums() throws IOException {
-//            Map<String, String> optionsForAlbums = new HashMap<>();
-//            optionsForAlbums.put("offset", "0");
-//            optionsForAlbums.put("count", "100");
-//            optionsForAlbums.put("owner_id", vkUserId);
-//            optionsForAlbums.put("access_token", vkAccessToken);
-//            optionsForAlbums.put("v", "5.53");
-//
-//            Call<VkAlbumsWrapper> callForAlbums = service.loadAlbums(optionsForAlbums);
-//
-//            Response<VkAlbumsWrapper> responseAlbums = callForAlbums.execute();
-//
-//            ArrayList<VkAlbumObject> vkAllAlbums = new ArrayList<>(
-//                    Arrays.asList(responseAlbums.body().getResponse().getItems()));
-//
-//            for (VkAlbumObject vkAlbum : vkAllAlbums) {
-//                loadAlbum(0, 24, vkAlbum.getId(), vkAlbum.getTitle());
-//            }
-//        }
-//
-//        private void loadPopular(int offset, int count) throws IOException {
-//            Map<String, String> optionsForPopular = new HashMap<>();
-//            optionsForPopular.put("only_eng", "1");
-//            optionsForPopular.put("genre_id", "");
-//            optionsForPopular.put("offset", String.valueOf(offset));
-//            optionsForPopular.put("count", String.valueOf(count));
-//            optionsForPopular.put("access_token", vkAccessToken);
-//            optionsForPopular.put("v", "5.53");
-//
-//            Call<VkPopularCollection> callForPopular = service.loadPopularAudio(optionsForPopular);
-//
-//            Response<VkPopularCollection> responsePopular = callForPopular.execute();
-//
-//            ArrayList<VkAudioObject> vkPopular = new ArrayList<>(
-//                    Arrays.asList(responsePopular.body().getResponse()));
-//
-//            Playlist playlistPopular = new Playlist();
-//            playlistPopular.setName("Popular");
-//            VkToSongDetailConverter converter = new VkToSongDetailConverter();
-//            for (VkAudioObject vkSong : vkPopular) {
-//                playlistPopular.addSong(converter.convert(vkSong));
-//            }
-//            playlists.add(playlistPopular);
-//        }
-//
-//        private void loadRecommended(int offset, int count) throws IOException {
-//            Map<String, String> optionsForRecommended = new HashMap<>();
-//            optionsForRecommended.put("target_audio", "");
-//            optionsForRecommended.put("user_id", vkUserId);
-//            optionsForRecommended.put("offset", String.valueOf(offset));
-//            optionsForRecommended.put("count", String.valueOf(count));
-//            optionsForRecommended.put("shuffle", "1");
-//            optionsForRecommended.put("access_token", vkAccessToken);
-//            optionsForRecommended.put("v", "5.53");
-//
-//            Call<VkAudioWrapper> callForRecommended = service.loadRecommendedAudio(optionsForRecommended);
-//
-//            Response<VkAudioWrapper> responseRecommended = callForRecommended.execute();
-//
-//            ArrayList<VkAudioObject> vkRecommended = new ArrayList<>(
-//                    Arrays.asList(responseRecommended.body().getResponse().getItems()));
-//
-//            Playlist playlistRecommended = new Playlist();
-//            playlistRecommended.setName("Recommended");
-//            VkToSongDetailConverter converter = new VkToSongDetailConverter();
-//            for (VkAudioObject vkSong : vkRecommended) {
-//                playlistRecommended.addSong(converter.convert(vkSong));
-//            }
-//            playlists.add(playlistRecommended);
-//        }
-//
-//        private void createApiService() {
-//
-//            Retrofit retrofit = new Retrofit.Builder()
-//                    .baseUrl(VkSettings.VK_API_URL)
-//                    .addConverterFactory(GsonConverterFactory.create())
-//                    .build();
-//
-//            service = retrofit.create(VkAPIService.class);
-//        }
-//    }
-
     private class LoadPlaylistsTask extends AsyncTask<Void, Void, Void> {
         ProgressDialog progressDialog;
         boolean isLoggedViaVk = false;
@@ -305,11 +116,11 @@ public class ChildFragmentPlaylists extends Fragment {
 
         @Override
         protected Void doInBackground(Void... voids) {
-            try {
-                showLocalPlaylists(context);
-            } catch (Exception e) {
-                Log.e(TAG, e.getCause().toString());
-            }
+//            try {
+//                showLocalPlaylists(context);
+//            } catch (Exception e) {
+//                Log.e(TAG, Log.getStackTraceString(e));
+//            }
 
             showVkPlaylists();
 
@@ -349,7 +160,7 @@ public class ChildFragmentPlaylists extends Fragment {
                     playlists.add(new VkPlaylist("Popular", VkPlaylist.POPULAR));
                     playlists.add(new VkPlaylist("Recommended", VkPlaylist.RECOMMENDED));
                 } catch (IOException e) {
-                    Log.e(TAG, e.getCause().toString());
+                    Log.e(TAG, Log.getStackTraceString(e));
                 }
             }
         }

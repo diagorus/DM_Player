@@ -12,18 +12,17 @@ public class SwappingLinearLayout extends LinearLayout {
 
     private ChildForSwapping startingLayout;
     private ChildForSwapping swappingLayout;
+    private ChildForSwapping loadingLayout;
 
     private boolean wasSwapped = false;
 
     public SwappingLinearLayout(Context context, AttributeSet attrs) {
         super(context, attrs);
-
         init(context, attrs);
     }
 
     public SwappingLinearLayout(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
-
         init(context, attrs);
     }
 
@@ -59,7 +58,7 @@ public class SwappingLinearLayout extends LinearLayout {
 
         startingLayout = new ChildForSwapping(getContext(), startingLayoutRes);
         swappingLayout = new ChildForSwapping(getContext(), swappingLayoutRes);
-
+        loadingLayout = new ChildForSwapping(getContext(), R.id.external_profile_onLoad);
         if (!wasSwapped)
             setFirstLayout();
         else

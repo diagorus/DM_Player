@@ -7,7 +7,7 @@
 
 
 <include
-    layout="@layout/include_slidepanel_profile" />
+    layout="@layout/include_drawer_profile" />
 
     <!-- Set visibility to visible to edit -->
 

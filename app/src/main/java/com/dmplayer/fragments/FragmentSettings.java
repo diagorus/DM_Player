@@ -12,8 +12,8 @@ import com.dmplayer.models.SongDetail;
 import com.dmplayer.phonemidea.DMPlayerUtility;
 import com.dmplayer.models.Playlist;
 import com.dmplayer.utility.LogWriter;
-import com.dmplayer.utility.ProfileDialog;
-import com.dmplayer.utility.ThemeDialog;
+import com.dmplayer.utility.dialogs.ProfileDialog;
+import com.dmplayer.utility.dialogs.ThemeDialog;
 
 import android.content.Context;
 import android.content.Intent;
@@ -28,7 +28,6 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.RelativeLayout;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -214,6 +213,18 @@ public class FragmentSettings extends Fragment implements View.OnClickListener {
     private void showColorProfileDialog() {
         FragmentManager fragmentManager = getActivity().getFragmentManager();
         ProfileDialog dialog = new ProfileDialog();
+        dialog.setOnWorkDone(new ProfileDialog.OnWorkDone() {
+            @Override
+            public void onPositiveAnswer() {
+                startActivity(new Intent(getActivity(), DMPlayerBaseActivity.class));
+                getActivity().finish();
+                getActivity().overridePendingTransition(0, 0);
+            }
+
+            @Override
+            public void onNegativeAnswer() {
+            }
+        });
         dialog.setCancelable(false);
         dialog.show(fragmentManager, "fragment_profile");
     }

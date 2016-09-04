@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="app_name">DM Player Re</string>
+    <string name="app_name">DM_Player</string>
 
     <!-- DataBase Name And Version -->
     <string name="DataBaseName_Version">1</string>
