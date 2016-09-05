@@ -84,8 +84,10 @@
         <attr name="isCircleDraw" format="boolean" />
     </declare-styleable>
 
-    <declare-styleable name="SwappingLinearLayout">
+
+    <declare-styleable name="ExternalProfileLayout">
         <attr name="starting_layout" format="reference" />
         <attr name="swapping_layout" format="reference" />
+        <attr name="loading_layout" format="reference" />
     </declare-styleable>
 </resources>

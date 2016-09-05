@@ -2,7 +2,6 @@ package com.dmplayer.utility.dialogs;
 
 import android.app.Activity;
 import android.app.AlertDialog;
-import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -36,11 +35,13 @@ import com.bumptech.glide.request.target.SimpleTarget;
 import com.dmplayer.R;
 import com.dmplayer.fragments.FragmentSettings;
 import com.dmplayer.internetservices.VkAPIService;
+import com.dmplayer.models.ExternalMusicAccount;
+import com.dmplayer.models.VkAccount;
 import com.dmplayer.models.VkAlbumsResponse.VkAlbumsWrapper;
 import com.dmplayer.models.VkProfileUserDataResponse.VkUserDataCollection;
 import com.dmplayer.phonemidea.DMPlayerUtility;
 import com.dmplayer.uicomponent.CircleImageView;
-import com.dmplayer.uicomponent.SwappingLinearLayout;
+import com.dmplayer.uicomponent.SwappingLayout.ExternalProfileLayout;
 import com.dmplayer.utility.VkSettings;
 import com.vk.sdk.VKAccessToken;
 import com.vk.sdk.VKCallback;
@@ -73,7 +74,7 @@ public class ProfileDialog extends DialogFragment implements View.OnClickListene
     private CircleImageView avatar;
     private CircleImageView vkAvatar;
     private View view;
-    private SwappingLinearLayout vkProfile;
+    private ExternalProfileLayout vkProfile;
 
     private SharedPreferences sharedPreferences;
     private SharedPreferences.Editor editor;
@@ -144,8 +145,12 @@ public class ProfileDialog extends DialogFragment implements View.OnClickListene
             public void onResult(VKAccessToken res) {
                 isJustLoggedViaVk = true;
                 isVkLoggedOut = false;
-
-                new VkLoginTask().execute(res.accessToken, res.userId);
+                ExternalMusicAccount vkAccount = new VkAccount.Builder()
+                        .setToken(res.accessToken)
+                        .setUserId(res.userId)
+                        .setSwappingLayoutController(vkProfile)
+                        .build();
+                vkAccount.loadProfile();
             }
 
             @Override
@@ -164,17 +169,19 @@ public class ProfileDialog extends DialogFragment implements View.OnClickListene
         switch (requestCode) {
             case FragmentSettings.GALLERY_REQUEST:
                 if (resultCode == Activity.RESULT_OK) {
-                    photoFromGallery = data.getData();
-                    avatar.setImageURI(null);
-                    avatar.setImageURI(photoFromGallery);
                     isAvatarChanged = true;
+
+                    photoFromGallery = data.getData();
+                    DMPlayerUtility.settingPicture(avatar, photoFromGallery);
                 }
                 break;
+
             case FragmentSettings.CAMERA_REQUEST:
                 if (resultCode == Activity.RESULT_OK) {
-                    avatar.setImageURI(null);
-                    avatar.setImageURI(generateAvatarUri(getActivity(), true));
                     isAvatarChanged = true;
+
+                    Uri tempAvatarUri = generateAvatarUri(getActivity(), true);
+                    DMPlayerUtility.settingPicture(avatar, tempAvatarUri);
                 }
                 break;
         }
@@ -185,7 +192,7 @@ public class ProfileDialog extends DialogFragment implements View.OnClickListene
         buttonCancel = (Button) view.findViewById(R.id.buttonCancel);
         nickName = (EditText) view.findViewById(R.id.profile_dialog_name);
         avatar = (CircleImageView) view.findViewById(R.id.profile_dialog_avatar);
-        vkProfile = (SwappingLinearLayout) view.findViewById(R.id.vk_profile);
+        vkProfile = (ExternalProfileLayout) view.findViewById(R.id.vk_profile);
 
         buttonOK.setOnClickListener(this);
         buttonCancel.setOnClickListener(this);
@@ -194,8 +201,8 @@ public class ProfileDialog extends DialogFragment implements View.OnClickListene
             @Override
             public boolean onEditorAction(TextView textView, int i, KeyEvent keyEvent) {
                 if (i == EditorInfo.IME_ACTION_DONE) {
-
                     hideKeys();
+
                     return true;
                 }
                 return false;
@@ -218,12 +225,12 @@ public class ProfileDialog extends DialogFragment implements View.OnClickListene
     }
 
     void initForVkProfileSecond() {
-        vkAvatar = (CircleImageView) view.findViewById(R.id.vk_avatar);
-        vkName = (TextView) view.findViewById(R.id.vk_name);
-        vkSongs = (TextView) view.findViewById(R.id.vk_songsCount);
-        vkAlbums = (TextView) view.findViewById(R.id.vk_albumsCount);
-        imageViewLogOut = (ImageView) view.findViewById(R.id.imageView_vk_logout);
-        imageViewRefresh = (ImageView) view.findViewById(R.id.imageView_vk_refresh);
+        vkAvatar = (CircleImageView) view.findViewById(R.id.external_avatar);
+        vkName = (TextView) view.findViewById(R.id.external_nickname);
+        vkSongs = (TextView) view.findViewById(R.id.external_songsCount);
+        vkAlbums = (TextView) view.findViewById(R.id.external_albumsCount);
+        imageViewLogOut = (ImageView) view.findViewById(R.id.external_logout);
+        imageViewRefresh = (ImageView) view.findViewById(R.id.external_refresh);
 
         imageViewRefresh.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -232,9 +239,6 @@ public class ProfileDialog extends DialogFragment implements View.OnClickListene
 
                 String accessToken = sharedPreferences.getString("VKACCESSTOKEN", "");
                 String userId = sharedPreferences.getString("VKUSERID", "");
-
-                new VkLoginTask().execute(accessToken,
-                        userId);
             }
         });
         imageViewLogOut.setOnClickListener(new View.OnClickListener() {
@@ -361,144 +365,11 @@ public class ProfileDialog extends DialogFragment implements View.OnClickListene
                 InputMethodManager.HIDE_NOT_ALWAYS);
     }
 
-    private void showVkQuestionDialog() {
-        AlertDialog adb = new AlertDialog.Builder(getActivity())
-                .setMessage("Do you want to customize your VK playlists now?")
-                .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialogInterface, int i) {
-
-                    }
-                })
-                .setNegativeButton("No", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialogInterface, int i) {
-                        dismiss();
-                    }
-                }).create();
-        adb.show();
-    }
-
-    private void showSaveQuestionDialog() {
-        AlertDialog adb = new AlertDialog.Builder(getActivity())
-                .setMessage("You have some unsaved changes,\nAre you sure to exit?")
-                .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialogInterface, int i) {
-                        ProfileDialog.this.dismiss();
-                    }
-                })
-                .setNegativeButton("No", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialogInterface, int i) {
-                        dismiss();
-                    }
-                }).create();
-        adb.show();
-    }
-
-    private class VkLoginTask extends AsyncTask<String, Void, Void> {
-        private VkAPIService service;
-        private ProgressDialog progressDialog;
-
-        @Override
-        protected void onPreExecute() {
-            super.onPreExecute();
-
-            vkData = new HashMap<>();
-
-            createApiService();
-
-            vkProfile.setSecondLayout();
-            initForVkProfileSecond();
-
-            progressDialog = new ProgressDialog(getActivity());
-            progressDialog.setMessage(getString(R.string.loading_message));
-            progressDialog.show();
-        }
-
-        @Override
-        protected Void doInBackground(String... accessTokenAndUserId) {
-
-            Map<String, String> optionsForUserData = new HashMap<>();
-            optionsForUserData.put("fields", "photo_100");
-            optionsForUserData.put("access_token", accessTokenAndUserId[0]);
-            optionsForUserData.put("v", "5.53");
-
-            Call<VkUserDataCollection> callForUserData = service.loadUserData(optionsForUserData);
-
-            Map<String, String> optionsForSongsCount = new HashMap<>();
-            optionsForSongsCount.put("owner_id", accessTokenAndUserId[1]);
-            optionsForSongsCount.put("access_token", accessTokenAndUserId[0]);
-            optionsForSongsCount.put("v", "5.53");
-
-            Call<ResponseBody> callForSongsCount = service.loadSongsCount(optionsForSongsCount);
-
-            Map<String, String> optionsForAlbumsCount = new HashMap<>();
-            optionsForAlbumsCount.put("offset", "0");
-            optionsForAlbumsCount.put("count", "100");
-            optionsForAlbumsCount.put("owner_id", accessTokenAndUserId[1]);
-            optionsForAlbumsCount.put("access_token", accessTokenAndUserId[0]);
-            optionsForAlbumsCount.put("v", "5.53");
-
-            Call<VkAlbumsWrapper> callForAlbumsCount = service.loadAlbums(optionsForAlbumsCount);
-
-            try {
-                Response<VkUserDataCollection> responseUserData = callForUserData.execute();
-                Response<ResponseBody> responseSongsCount = callForSongsCount.execute();
-                Response<VkAlbumsWrapper> responseAlbumsCount = callForAlbumsCount.execute();
-
-                String[] userData = responseUserData.body().getStringValues();
-                vkData.put("vkname", userData[1]);
-                vkData.put("vksurname", userData[2]);
-                vkData.put("vkphotourl", userData[3]);
-
-                String json = responseSongsCount.body().string();
-                String songCount = json.substring(json.lastIndexOf(":") + 1, json.length() - 1);
-                vkData.put("vksongscount", songCount);
-
-                String albumsCount = responseAlbumsCount.body().getResponse().getCount();
-                vkData.put("vkalbumscount", albumsCount);
-
-            } catch (IOException e) {
-                Log.e(TAG, e.getMessage());
-            }
-
-            sharedPreferences.edit()
-                    .putString("VKACCESSTOKEN", accessTokenAndUserId[0])
-                    .putString("VKUSERID", accessTokenAndUserId[1])
-                    .apply();
-
-            return null;
-        }
-
-        @Override
-        protected void onPostExecute(Void data) {
-            super.onPostExecute(data);
-
-            setVkProfile();
-
-            progressDialog.dismiss();
-        }
-
-        private void setVkProfile() {
-
-            vkName.setText(vkData.get("vkname") + " " + vkData.get("vksurname"));
-            Glide.with(ProfileDialog.this).load(vkData.get("vkphotourl")).into(vkAvatar);
-
-            vkSongs.setText("Songs: " + vkData.get("vksongscount"));
-            vkAlbums.setText("Albums: " + vkData.get("vkalbumscount"));
-        }
-
-        private void createApiService() {
-
-            Retrofit retrofit = new Retrofit.Builder()
-                    .baseUrl(VkSettings.VK_API_URL)
-                    .addConverterFactory(GsonConverterFactory.create())
-                    .build();
-
-            service = retrofit.create(VkAPIService.class);
-        }
+    private void rememberVkUser(String accessToken, String userId) {
+        sharedPreferences.edit()
+                .putString("VKACCESSTOKEN", accessToken)
+                .putString("VKUSERID", userId)
+                .apply();
     }
 
     private class SaveDataTask extends AsyncTask<Void, Void, Void> {
@@ -629,6 +500,8 @@ public class ProfileDialog extends DialogFragment implements View.OnClickListene
                     || isJustLoggedViaVk;
         }
     }
+
+
     private OnWorkDone OnWorkDone;
 
     public OnWorkDone getOnWorkDone() {

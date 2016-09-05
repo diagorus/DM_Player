@@ -57,5 +57,6 @@
     <string name="profile_defult_name">Anonymous</string>
 
     <string name="loading_message">Loading…</string>
+    <string name="log_in">Log in</string>
 
 </resources>

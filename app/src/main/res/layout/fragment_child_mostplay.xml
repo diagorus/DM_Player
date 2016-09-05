@@ -3,7 +3,6 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical">
-
     <ListView
         android:id="@+id/listView_songs"
         android:layout_width="match_parent"
@@ -11,5 +10,5 @@
         android:layout_marginBottom="?attr/actionBarSize"
         android:background="@android:color/white"
         android:listSelector="@drawable/bar_selector_white"
-        android:scrollbars="none"></ListView>
+        android:scrollbars="none" />
 </LinearLayout>

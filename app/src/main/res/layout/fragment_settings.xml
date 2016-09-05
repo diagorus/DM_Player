@@ -4,7 +4,6 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:background="@android:color/white" >
-
     <TextView
         android:id="@+id/textViewCommonSettings"
         android:layout_width="match_parent"
@@ -26,14 +25,12 @@
         android:layout_marginLeft="16dp"
         android:layout_marginRight="16dp"
         android:background="?attr/selectableItemBackground">
-
         <FrameLayout
             android:id="@+id/frameLayout_profile_images"
             android:layout_width="48dp"
             android:layout_height="48dp"
             android:layout_centerVertical="true"
             android:layout_marginLeft="8dp">
-
             <ImageView
                 android:id="@+id/imageView_profile_1"
                 android:layout_width="match_parent"
@@ -57,7 +54,6 @@
             android:layout_marginLeft="64dp"
             android:gravity="center_vertical"
             android:orientation="vertical">
-
             <TextView
                 android:id="@+id/textView_profile_info"
                 android:layout_width="wrap_content"
@@ -82,12 +78,10 @@
         </LinearLayout>
 
         <FrameLayout
-            android:id="@+id/divider_profile"
             android:layout_width="match_parent"
             android:layout_height="1dp"
             android:layout_alignParentBottom="true"
             android:background="@color/md_divider" />
-
     </RelativeLayout>
 
     <TextView
@@ -111,14 +105,12 @@
         android:layout_marginLeft="16dp"
         android:layout_marginRight="16dp"
         android:background="?attr/selectableItemBackground">
-
         <FrameLayout
             android:id="@+id/frameLayout_choose_theme_images"
             android:layout_width="48dp"
             android:layout_height="48dp"
             android:layout_centerVertical="true"
             android:layout_marginLeft="8dp">
-
             <ImageView
                 android:id="@+id/imageView_phone_3"
                 android:layout_width="match_parent"
@@ -149,7 +141,6 @@
             android:layout_marginLeft="64dp"
             android:gravity="center_vertical"
             android:orientation="vertical">
-
             <TextView
                 android:id="@+id/textView_theme_info"
                 android:layout_width="wrap_content"
@@ -171,16 +162,13 @@
                 android:textAppearance="@style/TextAppearance.AppCompat.Inverse"
                 android:textColor="@color/md_secondary_text_icons"
                 android:textSize="14sp" />
-
         </LinearLayout>
 
         <FrameLayout
-            android:id="@+id/divider_theme"
             android:layout_width="match_parent"
             android:layout_height="1dp"
             android:layout_alignParentBottom="true"
             android:background="@color/md_divider" />
-
     </RelativeLayout>
 
     <RelativeLayout
@@ -190,7 +178,6 @@
         android:layout_marginLeft="16dp"
         android:layout_marginRight="16dp"
         android:background="?attr/selectableItemBackground">
-
         <FrameLayout
             android:id="@+id/frameLayout_header_back_images"
             android:layout_width="48dp"
@@ -220,7 +207,6 @@
             android:layout_marginLeft="64dp"
             android:gravity="center_vertical"
             android:orientation="vertical">
-
             <TextView
                 android:id="@+id/textView_header_back_info"
                 android:layout_width="wrap_content"
@@ -242,16 +228,13 @@
                 android:textAppearance="@style/TextAppearance.AppCompat.Inverse"
                 android:textColor="@color/md_secondary_text_icons"
                 android:textSize="14sp" />
-
         </LinearLayout>
 
         <FrameLayout
-            android:id="@+id/divider_header_background"
             android:layout_width="match_parent"
             android:layout_height="1dp"
             android:layout_alignParentBottom="true"
             android:background="@color/md_divider" />
-
     </RelativeLayout>
 
     <RelativeLayout
@@ -261,7 +244,6 @@
         android:layout_marginLeft="16dp"
         android:layout_marginRight="16dp"
         android:background="?attr/selectableItemBackground">
-
         <LinearLayout
             android:id="@+id/linLayoutCreatePlaylistText"
             android:layout_width="match_parent"
@@ -270,7 +252,6 @@
             android:layout_marginLeft="64dp"
             android:gravity="center_vertical"
             android:orientation="vertical">
-
             <TextView
                 android:id="@+id/textViewCreatePlaylistInfo"
                 android:layout_width="wrap_content"
@@ -292,16 +273,13 @@
                 android:textAppearance="@style/TextAppearance.AppCompat.Inverse"
                 android:textColor="@color/md_secondary_text_icons"
                 android:textSize="14sp" />
-
         </LinearLayout>
 
         <FrameLayout
-            android:id="@+id/dividerHeaderBackground"
             android:layout_width="match_parent"
             android:layout_height="1dp"
             android:layout_alignParentBottom="true"
             android:background="@color/md_divider" />
-
     </RelativeLayout>
 
     <RelativeLayout
@@ -311,7 +289,6 @@
         android:layout_marginLeft="16dp"
         android:layout_marginRight="16dp"
         android:background="?attr/selectableItemBackground">
-
         <LinearLayout
             android:id="@+id/linLayoutMusicChooserText"
             android:layout_width="match_parent"
@@ -320,7 +297,6 @@
             android:layout_marginLeft="64dp"
             android:gravity="center_vertical"
             android:orientation="vertical">
-
             <TextView
                 android:id="@+id/textViewMusicChooserInfo"
                 android:layout_width="wrap_content"
@@ -342,7 +318,6 @@
                 android:textAppearance="@style/TextAppearance.AppCompat.Inverse"
                 android:textColor="@color/md_secondary_text_icons"
                 android:textSize="14sp" />
-
         </LinearLayout>
 
         <FrameLayout
@@ -351,6 +326,5 @@
             android:layout_height="1dp"
             android:layout_alignParentBottom="true"
             android:background="@color/md_divider" />
-
     </RelativeLayout>
 </LinearLayout>

@@ -4,15 +4,12 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@android:color/transparent">
-
-
     <RelativeLayout
         android:id="@+id/scrol_slidecontainer"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_marginTop="36dp"
         android:background="@color/md_white_1000">
-
         <TextView
             android:id="@+id/tv_albumname"
             android:layout_width="match_parent"
@@ -34,7 +31,6 @@
             android:layout_marginRight="12dp"
             android:layout_marginTop="12dp"
             android:orientation="horizontal">
-
             <com.dmplayer.uicomponent.CircleImageView
                 android:layout_width="30dp"
                 android:layout_height="30dp"
@@ -48,7 +44,6 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="6dp">
-
                 <TextView
                     android:id="@+id/tv_title_frst"
                     android:layout_width="match_parent"
@@ -68,7 +63,6 @@
                     android:singleLine="true"
                     android:textColor="@color/md_secondary_text_icons"
                     android:textSize="13sp" />
-
             </RelativeLayout>
         </LinearLayout>
 
@@ -94,6 +88,4 @@
         android:layout_marginRight="16dp"
         android:background="@drawable/bar_selector_white"
         android:src="@drawable/ic_fab_play_btn_normal_1" />
-
-
 </RelativeLayout>

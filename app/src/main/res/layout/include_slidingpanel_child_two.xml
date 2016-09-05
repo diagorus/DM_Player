@@ -3,7 +3,6 @@
     android:id="@+id/dragView"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
-
     <ImageView
         android:id="@+id/image_songAlbumbg"
         android:layout_width="match_parent"
@@ -18,20 +17,18 @@
         android:clickable="true"
         android:focusable="false"
         android:orientation="vertical">
-
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize">
-
             <include
                 android:id="@+id/slidepanelchildtwo_topviewone"
-                layout="@layout/include_slidepanel_child_2_topview_1"
+                layout="@layout/include_slidepanel_child_two_topview_one"
                 android:layout_width="match_parent"
                 android:layout_height="?attr/actionBarSize" />
 
             <include
                 android:id="@+id/slidepanelchildtwo_topviewtwo"
-                layout="@layout/include_slidepanel_child_2_topview_2"
+                layout="@layout/include_slidepanel_child_two_topview_two"
                 android:layout_width="match_parent"
                 android:layout_height="?attr/actionBarSize"
                 android:visibility="invisible" />
@@ -40,12 +37,10 @@
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent">
-
             <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_above="@+id/bottom_palyLayout">
-
                 <ImageView
                     android:id="@+id/image_songAlbumbg_mid"
                     android:layout_width="match_parent"
@@ -68,12 +63,11 @@
                     android:scaleType="center"
                     android:src="@drawable/selector_favorite2"
                     android:visibility="invisible" />
-
             </RelativeLayout>
 
             <include
                 android:id="@+id/bottom_palyLayout"
-                layout="@layout/include_slidepanel_child_2_bottomview"
+                layout="@layout/include_slidepanel_child_one_bottomview"
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/bottom_control_panel"
                 android:layout_alignParentBottom="true"

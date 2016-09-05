@@ -3,7 +3,6 @@
     android:layout_width="match_parent"
     android:layout_height="172dp"
     xmlns:app="http://schemas.android.com/apk/res-auto">
-
     <ImageView
         android:id="@+id/imageViewCover"
         android:layout_width="match_parent"
@@ -14,7 +13,6 @@
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent" >
-
         <com.dmplayer.uicomponent.CircleImageView
             android:id="@+id/profileAvatar"
             android:layout_width="85dp"

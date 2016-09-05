@@ -14,9 +14,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 
-
     <!-- The navigation drawer -->
-
     <com.dmplayer.uicomponent.ScrimInsetsFrameLayout
         xmlns:app="http://schemas.android.com/apk/res-auto"
         android:id="@+id/scrimInsetsFrameLayout"
@@ -28,7 +26,6 @@
         android:elevation="10dp"
         android:fitsSystemWindows="true"
         app:insetForeground="@color/inset">
-
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
@@ -36,10 +33,7 @@
             android:orientation="vertical">
 
             <!-- Your drawer content -->
-
             <include layout="@layout/drawer" />
-
         </LinearLayout>
-
     </com.dmplayer.uicomponent.ScrimInsetsFrameLayout>
 </android.support.v4.widget.DrawerLayout>

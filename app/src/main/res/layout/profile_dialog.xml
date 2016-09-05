@@ -5,7 +5,6 @@
     android:orientation="vertical"
     android:layout_width="300dp"
     android:layout_height="match_parent" >
-
     <TextView
         android:id="@+id/textViewProfileDialogTitle"
         android:layout_width="wrap_content"
@@ -27,12 +26,10 @@
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
-
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical">
-
             <com.dmplayer.uicomponent.CircleImageView
                 android:id="@+id/profile_dialog_avatar"
                 android:layout_width="100dp"
@@ -78,13 +75,14 @@
                     android:textSize="18sp"
                     android:text="Vk profile:" />
 
-                <com.dmplayer.uicomponent.SwappingLinearLayout
+                <com.dmplayer.uicomponent.SwappingLayout.ExternalProfileLayout
                     android:id="@+id/vk_profile"
                     android:layout_width="match_parent"
                     android:layout_height="100dp"
                     android:gravity="center"
                     app:starting_layout="@layout/starting_vk_profile"
-                    app:swapping_layout="@layout/swapping_vk_profile" />
+                    app:swapping_layout="@layout/swapping_vk_profile"
+                    app:loading_layout="@layout/loading" />
             </LinearLayout>
 
             <FrameLayout
@@ -98,7 +96,6 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="end">
-
         <Button
             android:id="@+id/buttonCancel"
             style="?android:attr/borderlessButtonStyle"

@@ -5,4 +5,4 @@
     <dimen name="statusBarHeight">25dp</dimen>
     <dimen name="space">48dp</dimen>
     <color name="inset">#4000</color>
-    </resources>
+</resources>
