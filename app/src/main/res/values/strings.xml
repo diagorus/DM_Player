@@ -35,6 +35,7 @@
         <item>My Library</item>
         <item>Favorite</item>
         <item>Stream</item>
+        <item>Chat</item>
         <!-- after divider -->
         <item>Equilizer</item>
         <item>Settings</item>
@@ -47,6 +48,7 @@
         <item>@drawable/ic_library_music</item>
         <item>@drawable/ic_favorite</item>
         <item>@drawable/ic_content_send</item>
+        <item>@android:drawable/ic_dialog_email</item>
         <!-- after divider -->
         <item>@drawable/ic_equalizer</item>
         <item>@drawable/ic_settings</item>
@@ -58,5 +60,14 @@
 
     <string name="loading_message">Loading…</string>
     <string name="log_in">Log in</string>
+
+
+    <string name="enabled">Enabled</string>
+    <string name="flat">Flat</string>
+    <string name="bass_boost">Bass boost</string>
+
+    <string name="ok">OK</string>
+    <string name="copyright_message">Simple Equalizer v0.1a, Copyright \u00A92013 Kevin Boone. Feel free to distribute as you see fit.</string>
+
 
 </resources>

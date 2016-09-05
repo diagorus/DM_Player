@@ -157,7 +157,8 @@ public class SongDetail implements Serializable {
 			Log.e(TAG, ex.getMessage());
             return null;
         }
-        finally {
+        finally
+		{
             try {
                 bis.close();
                 if (in != null) {

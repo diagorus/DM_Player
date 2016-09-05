@@ -199,7 +199,7 @@ public class MusicChooserActivity extends AppCompatActivity {
 
         @Override
         public void onItemCheckedStateChanged(ActionMode actionMode, int i, long l, boolean b) {
-            actionMode.setTitle(String.valueOf(listView.getCheckedItemCount()));
+            actionMode.setTitle(String.valueOf(listView.getCheckedItemCount()) + " selected");
         }
 
         @Override
