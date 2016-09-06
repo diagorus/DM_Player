@@ -231,7 +231,7 @@ public class FragmentSettings extends Fragment implements View.OnClickListener {
 
     private String copyBackgroundToStorage(Uri picture) {
         File backgroundSource = new File(DMPlayerUtility.getRealPathFromURI(getActivity(), picture));
-        File backgroundDest = new File(ProfileDialog.checkPhotoDirectory(getActivity()) + "/" + "header_background" +
+        File backgroundDest = new File(ProfileDialog.getPhotoDirectory(getActivity()) + "/" + "header_background" +
                 backgroundSource
                         .getPath()
                         .substring(backgroundSource

@@ -31,10 +31,10 @@ import com.dmplayer.manager.MediaController;
 import com.dmplayer.models.SongDetail;
 import com.dmplayer.models.Playlist;
 import com.dmplayer.models.VkAlbumObject;
-import com.dmplayer.models.VkAlbumsResponse.VkAlbumsWrapper;
-import com.dmplayer.models.VkAudioGetResponce.VkAudioWrapper;
-import com.dmplayer.models.VkAudioObject;
-import com.dmplayer.models.VkPopularAudioResponce.VkPopularCollection;
+import com.dmplayer.models.VkObjects.VkAlbumsResponse.VkAlbumsWrapper;
+import com.dmplayer.models.VkObjects.VkAudioGetResponce.VkAudioWrapper;
+import com.dmplayer.models.VkObjects.VkAudioObject;
+import com.dmplayer.models.VkObjects.VkPopularAudioResponce.VkPopularCollection;
 import com.dmplayer.utility.VkSettings;
 
 import retrofit2.Call;

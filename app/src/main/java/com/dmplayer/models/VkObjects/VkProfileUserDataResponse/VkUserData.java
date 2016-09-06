@@ -1,4 +1,4 @@
-package com.dmplayer.models.VkProfileUserDataResponse;
+package com.dmplayer.models.VkObjects.VkProfileUserDataResponse;
 
 public class VkUserData {
     private String id;

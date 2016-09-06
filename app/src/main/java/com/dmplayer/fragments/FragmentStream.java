@@ -15,7 +15,7 @@ import android.media.MediaPlayer;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
-import android.support.v4.app.Fragment;
+import android.app.Fragment;
 import android.text.Layout;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -121,7 +121,7 @@ public class FragmentStream extends Fragment {
 			//startStreaming();
 			ipAdress=editTextIpAdress.getText().toString();
 			if(audioInfo!=null){
-				path1=audioInfo.path;
+				path1=audioInfo.getPath();
 				port=editTextPortAdress.getText().toString();
 				SendAudio();
 			}else{
@@ -206,7 +206,6 @@ public class FragmentStream extends Fragment {
 	{
 
 		Thread thrd = new Thread(new Runnable() {
-			@TargetApi(Build.VERSION_CODES.M)
 			@Override
 			public void run()
 			{

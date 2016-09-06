@@ -8,7 +8,6 @@ package com.dmplayer.fragments;
 import android.content.Context;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -77,7 +76,7 @@ public class FragmentChat extends com.dmplayer.utility.WebViewFragment {
 //            webView.getSettings().setBuiltInZoomControls(false);
 //            webView.getSettings().setJavaScriptEnabled(true);
             try {
-                chatServer = new Server(serverPort,getContext());
+                chatServer = new Server(serverPort, getActivity());
             } catch (Exception ex) {
                 ex.printStackTrace();
                 LogWriter.info(TAG, ex.toString());

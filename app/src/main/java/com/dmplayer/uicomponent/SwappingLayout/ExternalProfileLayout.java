@@ -49,20 +49,19 @@ public class ExternalProfileLayout extends LinearLayout implements SwappingLayou
         startingLayout = new ChildForSwapping(getContext(), startingLayoutRes);
         loadingLayout = new ChildForSwapping(getContext(), loadingLayoutRes);
         swappingLayout = new ProfileViewChild(getContext(), swappingLayoutRes);
-
         if (!isSwapped)
             setFirstLayout();
         else
             setSecondLayout();
     }
 
-    public void setSecondLayout() {
+    private void setSecondLayout() {
         removeAllViews();
         isSwapped = true;
         addView(swappingLayout);
     }
 
-    public void setFirstLayout() {
+    private void setFirstLayout() {
         removeAllViews();
         isSwapped = false;
         addView(startingLayout);
@@ -89,4 +88,12 @@ public class ExternalProfileLayout extends LinearLayout implements SwappingLayou
     public void onLoggedOut() {
         setFirstLayout();
     }
+
+//    public void setOnRefreshButtonListener(OnClickListener onClickListener) {
+//        swappingLayout.setOnRefreshListener(onClickListener);
+//    }
+//
+//    public void setOnLogOutButtonListener(OnClickListener onClickListener) {
+//        swappingLayout.setOnLogOutListener(onClickListener);
+//    }
 }

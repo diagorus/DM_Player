@@ -4,8 +4,8 @@ import android.os.AsyncTask;
 import android.util.Log;
 
 import com.dmplayer.internetservices.VkAPIService;
-import com.dmplayer.models.VkAlbumsResponse.VkAlbumsWrapper;
-import com.dmplayer.models.VkProfileUserDataResponse.VkUserDataCollection;
+import com.dmplayer.models.VkObjects.VkAlbumsResponse.VkAlbumsWrapper;
+import com.dmplayer.models.VkObjects.VkProfileUserDataResponse.VkUserDataCollection;
 import com.dmplayer.uicomponent.SwappingLayout.SwappingLayoutController;
 import com.dmplayer.utility.VkSettings;
 
@@ -75,8 +75,13 @@ public class VkAccount implements ExternalMusicAccount {
     }
 
     @Override
-    public List<Playlist> loadMusicLists() {
-        return Collections.emptyList();
+    public List<Playlist> loadMusicListsToShow() {
+        return null;
+    }
+
+    @Override
+    public Playlist loadMusicList(String... args) {
+        return null;
     }
 
     @Override

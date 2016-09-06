@@ -129,8 +129,9 @@ public class DMPlayerBaseActivity extends AppCompatActivity implements View.OnCl
         toolbarStatusBar();
         navigationDrawer();
 
+        sharedPreferences = getSharedPreferences("VALUES", Context.MODE_PRIVATE);
+
         initSlidingUpPanel();
-        header();
 
         setFragment(0);
 
@@ -177,10 +178,8 @@ public class DMPlayerBaseActivity extends AppCompatActivity implements View.OnCl
 
     @Override
     public void onClick(View v) {
-
         switch (v.getId()) {
             case R.id.bottombar_play:
-
             case R.id.btn_play:
                 if (MediaController.getInstance().getPlayingSongDetail() != null)
                     PlayPauseEvent(v);
@@ -197,11 +196,9 @@ public class DMPlayerBaseActivity extends AppCompatActivity implements View.OnCl
                 break;
 
             case R.id.btn_suffel:
-
                 break;
 
             case R.id.btn_toggle:
-
                 break;
 
             case R.id.bottombar_img_Favorite:
@@ -512,6 +509,7 @@ public class DMPlayerBaseActivity extends AppCompatActivity implements View.OnCl
             }
         });
 
+        header();
     }
 
     public void setFragment(int position) {
@@ -576,30 +574,44 @@ public class DMPlayerBaseActivity extends AppCompatActivity implements View.OnCl
     }
 
     public void header() {
-        ImageView headerBackgroundImage = (ImageView) findViewById(R.id.imageViewCover);
-        CircleImageView avatarImage = (CircleImageView) findViewById(R.id.profileAvatar);
-        TextView nameText = (TextView) findViewById(R.id.profileName);
+        setBackgroundImage();
 
-        sharedPreferences = getSharedPreferences("VALUES", Context.MODE_PRIVATE);
+        setAvatarImage();
+
+        setUserName();
+    }
+
+
+    private void setBackgroundImage() {
+        ImageView headerBackgroundImage = (ImageView) findViewById(R.id.imageViewCover);
 
         String headerBackground = sharedPreferences.getString(FragmentSettings.HEADER_BACKGROUND, "");
-        String avatar = sharedPreferences.getString(FragmentSettings.AVATAR, "");
-        String name = sharedPreferences.getString(FragmentSettings.NAME, "");
-
         Uri headerBackgroundUri = Uri.parse(headerBackground);
-        Uri avatarUri = Uri.parse(avatar);
 
         if (DMPlayerUtility.isURIExists(headerBackgroundUri)) {
             DMPlayerUtility.settingPicture(headerBackgroundImage, headerBackgroundUri);
         } else {
             DMPlayerUtility.settingPicture(headerBackgroundImage, R.drawable.drawer_defult_header);
         }
+    }
+
+    private void setAvatarImage() {
+        CircleImageView avatarImage = (CircleImageView) findViewById(R.id.profileAvatar);
+
+        String avatar = sharedPreferences.getString(FragmentSettings.AVATAR, "");
+        Uri avatarUri = Uri.parse(avatar);
 
         if (DMPlayerUtility.isURIExists(avatarUri)) {
             DMPlayerUtility.settingPicture(avatarImage, avatarUri);
         } else {
             DMPlayerUtility.settingPicture(avatarImage, R.drawable.profile_default_avatar);
         }
+    }
+
+    private void setUserName() {
+        TextView nameText = (TextView) findViewById(R.id.profileName);
+
+        String name = sharedPreferences.getString(FragmentSettings.NAME, "");
 
         if (!name.equals("")) {
             nameText.setText(name);
@@ -609,9 +621,15 @@ public class DMPlayerBaseActivity extends AppCompatActivity implements View.OnCl
     }
 
     private void loadImageLoaderOption() {
-        this.options = new DisplayImageOptions.Builder().showImageOnLoading(R.drawable.bg_default_album_art)
-                .showImageForEmptyUri(R.drawable.bg_default_album_art).showImageOnFail(R.drawable.bg_default_album_art).cacheInMemory(true)
-                .cacheOnDisk(true).considerExifParams(true).bitmapConfig(Bitmap.Config.RGB_565).build();
+        this.options = new DisplayImageOptions.Builder()
+                .showImageOnLoading(R.drawable.bg_default_album_art)
+                .showImageForEmptyUri(R.drawable.bg_default_album_art)
+                .showImageOnFail(R.drawable.bg_default_album_art)
+                .cacheInMemory(true)
+                .cacheOnDisk(true)
+                .considerExifParams(true)
+                .bitmapConfig(Bitmap.Config.RGB_565)
+                .build();
     }
 
     private void loadAlreadyPlaying() {

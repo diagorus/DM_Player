@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.AsyncTask;
+import android.os.Environment;
 import android.provider.MediaStore;
 import android.app.DialogFragment;
 import android.content.Context;
@@ -34,15 +35,11 @@ import com.bumptech.glide.request.animation.GlideAnimation;
 import com.bumptech.glide.request.target.SimpleTarget;
 import com.dmplayer.R;
 import com.dmplayer.fragments.FragmentSettings;
-import com.dmplayer.internetservices.VkAPIService;
 import com.dmplayer.models.ExternalMusicAccount;
 import com.dmplayer.models.VkAccount;
-import com.dmplayer.models.VkAlbumsResponse.VkAlbumsWrapper;
-import com.dmplayer.models.VkProfileUserDataResponse.VkUserDataCollection;
 import com.dmplayer.phonemidea.DMPlayerUtility;
 import com.dmplayer.uicomponent.CircleImageView;
 import com.dmplayer.uicomponent.SwappingLayout.ExternalProfileLayout;
-import com.dmplayer.utility.VkSettings;
 import com.vk.sdk.VKAccessToken;
 import com.vk.sdk.VKCallback;
 import com.vk.sdk.VKScope;
@@ -55,12 +52,6 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
-
-import okhttp3.ResponseBody;
-import retrofit2.Call;
-import retrofit2.Response;
-import retrofit2.Retrofit;
-import retrofit2.converter.gson.GsonConverterFactory;
 
 
 public class ProfileDialog extends DialogFragment implements View.OnClickListener {
@@ -248,7 +239,6 @@ public class ProfileDialog extends DialogFragment implements View.OnClickListene
                 isJustLoggedViaVk = false;
                 isVkRefreshed = false;
 
-                vkProfile.setFirstLayout();
                 initForVkProfileFirst();
             }
         });
@@ -272,7 +262,6 @@ public class ProfileDialog extends DialogFragment implements View.OnClickListene
             nickName.setText(R.string.profile_defult_name);
 
         if (isLoggedViaVk) {
-            vkProfile.setSecondLayout();
             initForVkProfileSecond();
 
             setVkData();
@@ -282,7 +271,6 @@ public class ProfileDialog extends DialogFragment implements View.OnClickListene
             vkAlbums.setText("Albums: " + vkData.get("vkalbumscount"));
             DMPlayerUtility.settingPicture(vkAvatar, Uri.parse(vkData.get("vkphotouri")));
         } else {
-            vkProfile.setFirstLayout();
             initForVkProfileFirst();
         }
 
@@ -331,23 +319,23 @@ public class ProfileDialog extends DialogFragment implements View.OnClickListene
     }
 
     @NonNull
-    public static String checkPhotoDirectory(Context context) {
+    public static String getPhotoDirectory(Context context) {
         photoDirectory = new File(
-                context.getExternalCacheDir() + "/DMPlayer/",
-                "DMPlayer_photos");
+                Environment.getExternalStorageDirectory() + "/.DM_Player/",
+                "DM_Player_photos");
         if (!photoDirectory.exists())
             photoDirectory.mkdirs();
         return photoDirectory.getPath();
     }
 
     private Uri generateAvatarUri(Context context, boolean isTemp) {
-        File file = new File(checkPhotoDirectory(context) + "/" + "photo_avatar" + ((isTemp)? "_new" : "") +".jpg");
+        File file = new File(getPhotoDirectory(context) + "/" + "photo_avatar" + ((isTemp)? "_new" : "") +".jpg");
 
         return Uri.fromFile(file);
     }
 
     private Uri generateVkAvatarUri() {
-        File file = new File(checkPhotoDirectory(getActivity()) + "/" + "vk_photo" +".jpg");
+        File file = new File(getPhotoDirectory(getActivity()) + "/" + "vk_photo" +".jpg");
 
         return Uri.fromFile(file);
     }
@@ -474,8 +462,8 @@ public class ProfileDialog extends DialogFragment implements View.OnClickListene
                             new AsyncTask<Void, Void, Void>() {
                                 @Override
                                 protected Void doInBackground(Void... params) {
-                                    File dir = new File(checkPhotoDirectory(context));
-                                    File file = new File(checkPhotoDirectory(context) + "/" + "vk_photo" +".jpg");
+                                    File dir = new File(getPhotoDirectory(context));
+                                    File file = new File(getPhotoDirectory(context) + "/" + "vk_photo" +".jpg");
                                     try {
                                         if (!dir.mkdirs() && (!dir.exists() || !dir.isDirectory())) {
                                             throw new IOException("Cannot ensure parent directory for file " + file);

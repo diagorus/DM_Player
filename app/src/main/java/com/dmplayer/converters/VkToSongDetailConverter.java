@@ -1,7 +1,7 @@
 package com.dmplayer.converters;
 
 import com.dmplayer.models.SongDetail;
-import com.dmplayer.models.VkAudioObject;
+import com.dmplayer.models.VkObjects.VkAudioObject;
 
 import java.io.IOException;
 

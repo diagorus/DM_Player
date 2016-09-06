@@ -46,7 +46,6 @@ public class FragmentLibrary extends Fragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-
         View v = inflater.inflate(R.layout.fragment_library, null);
         setupView(v);
         return v;
@@ -114,7 +113,7 @@ public class FragmentLibrary extends Fragment {
                     return ChildFragmentMostPlay.newInstance(position, getActivity());
 
                 case 5:
-                    return ChildFragmentPlaylists.newInstance(position,getActivity());
+                    return ChildFragmentPlaylists.newInstance(position, getActivity());
             }
             return null;
         }

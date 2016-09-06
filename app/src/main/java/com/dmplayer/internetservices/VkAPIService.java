@@ -1,9 +1,9 @@
 package com.dmplayer.internetservices;
 
-import com.dmplayer.models.VkAlbumsResponse.VkAlbumsWrapper;
-import com.dmplayer.models.VkAudioGetResponce.VkAudioWrapper;
-import com.dmplayer.models.VkPopularAudioResponce.VkPopularCollection;
-import com.dmplayer.models.VkProfileUserDataResponse.VkUserDataCollection;
+import com.dmplayer.models.VkObjects.VkAlbumsResponse.VkAlbumsWrapper;
+import com.dmplayer.models.VkObjects.VkAudioGetResponce.VkAudioWrapper;
+import com.dmplayer.models.VkObjects.VkPopularAudioResponce.VkPopularCollection;
+import com.dmplayer.models.VkObjects.VkProfileUserDataResponse.VkUserDataCollection;
 
 import java.util.Map;
 
