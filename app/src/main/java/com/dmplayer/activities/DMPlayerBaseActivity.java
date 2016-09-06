@@ -35,6 +35,7 @@ import android.widget.TextView;
 
 import com.dmplayer.R;
 import com.dmplayer.adapter.DrawerAdapter;
+import com.dmplayer.fragments.FragmentChat;
 import com.dmplayer.fragments.FragmentEqualizer;
 import com.dmplayer.fragments.FragmentFavorite;
 import com.dmplayer.fragments.FragmentStream;
@@ -51,6 +52,7 @@ import com.dmplayer.slidinguppanelhelper.SlidingUpPanelLayout;
 import com.dmplayer.uicomponent.CircleImageView;
 import com.dmplayer.uicomponent.PlayPauseView;
 import com.dmplayer.uicomponent.Slider;
+import com.dmplayer.utility.AssetsCopier;
 import com.dmplayer.utility.LogWriter;
 import com.dmplayer.utility.SystemBarTintManager;
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
@@ -114,6 +116,7 @@ public class DMPlayerBaseActivity extends AppCompatActivity implements View.OnCl
         //Set your theme first
         context = DMPlayerBaseActivity.this;
         theme();
+        new AssetsCopier(this).execute();
 
         //Set your Layout view
         super.onCreate(savedInstanceState);
@@ -551,13 +554,21 @@ public class DMPlayerBaseActivity extends AppCompatActivity implements View.OnCl
 
             case 3:
                 sharedPreferences.edit().putInt("FRAGMENT", position).apply();
+                FragmentChat fragmentChat = new FragmentChat();
+                fragmentTransaction.replace(R.id.fragment,fragmentChat);
+                fragmentTransaction.commit();
+                toolbar.setTitle("Chat");
+                break;
+
+            case 4:
+                sharedPreferences.edit().putInt("FRAGMENT", position).apply();
                 FragmentEqualizer fragmentequalizer = new FragmentEqualizer();
                 fragmentTransaction.replace(R.id.fragment, fragmentequalizer);
                 fragmentTransaction.commit();
                 toolbar.setTitle("Equilizer");
                 break;
 
-            case 4:
+            case 5:
                 sharedPreferences.edit().putInt("FRAGMENT", position).apply();
                 FragmentSettings fragmentsettings = new FragmentSettings();
                 fragmentTransaction.replace(R.id.fragment, fragmentsettings);
