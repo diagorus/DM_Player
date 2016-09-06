@@ -65,6 +65,7 @@ public class ObservableScrollView extends ScrollView implements Scrollable {
 		}
 		mScrollY = t;
 
+
 		dispatchOnScrollChanged(t, mFirstScroll, mDragging);
 		if (mFirstScroll) {
 			mFirstScroll = false;
@@ -194,7 +195,7 @@ public class ObservableScrollView extends ScrollView implements Scrollable {
 	@Override
 	public void addScrollViewCallbacks(ObservableScrollViewCallbacks listener) {
 		if (mCallbackCollection == null) {
-			mCallbackCollection = new ArrayList<ObservableScrollViewCallbacks>();
+			mCallbackCollection = new ArrayList<>();
 		}
 		mCallbackCollection.add(listener);
 	}

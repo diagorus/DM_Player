@@ -31,7 +31,7 @@ import com.dmplayer.manager.MediaController;
 import com.dmplayer.models.SongDetail;
 import com.dmplayer.phonemidea.DMPlayerUtility;
 import com.dmplayer.phonemidea.PhoneMediaControl;
-import com.dmplayer.phonemidea.PhoneMediaControl.PhoneMediaControlINterface;
+import com.dmplayer.phonemidea.PhoneMediaControl.PhoneMediaControlInterface;
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.ImageLoader;
 
@@ -49,8 +49,7 @@ public class ChildFragmentAllSongs extends Fragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-
-        View v = inflater.inflate(R.layout.fragment_allsongs, null);
+        View v = inflater.inflate(R.layout.fragment_child_allsongs, null);
         setupInitialViews(v);
         loadAllSongs();
         return v;
@@ -62,7 +61,7 @@ public class ChildFragmentAllSongs extends Fragment {
     }
 
     private void setupInitialViews(View inflatreView) {
-        ListView recyclerSongsList = (ListView) inflatreView.findViewById(R.id.recycler_allSongs);
+        ListView recyclerSongsList = (ListView) inflatreView.findViewById(R.id.listView_songs);
         mAllSongsListAdapter = new AllSongsListAdapter(getActivity());
         recyclerSongsList.setAdapter(mAllSongsListAdapter);
         recyclerSongsList.setFastScrollEnabled(true);
@@ -70,7 +69,7 @@ public class ChildFragmentAllSongs extends Fragment {
 
     private void loadAllSongs() {
         PhoneMediaControl mPhoneMediaControl = PhoneMediaControl.getInstance();
-        PhoneMediaControl.setPhonemediacontrolinterface(new PhoneMediaControlINterface() {
+        PhoneMediaControl.setPhoneMediaControlInterface(new PhoneMediaControlInterface() {
 
             @Override
             public void loadSongsComplete(ArrayList<SongDetail> songsList_) {
@@ -78,7 +77,7 @@ public class ChildFragmentAllSongs extends Fragment {
                 mAllSongsListAdapter.notifyDataSetChanged();
             }
         });
-        mPhoneMediaControl.loadMusicList(getActivity(), -1, PhoneMediaControl.SonLoadFor.All, "");
+        mPhoneMediaControl.loadMusicList(getActivity(), -1, PhoneMediaControl.SongsLoadFor.All, "");
     }
 
     public class AllSongsListAdapter extends BaseAdapter {
@@ -114,7 +113,7 @@ public class ChildFragmentAllSongs extends Fragment {
                 convertView = layoutInflater.inflate(R.layout.inflate_allsongsitem, null);
                 mViewHolder.song_row = (LinearLayout) convertView.findViewById(R.id.inflate_allsong_row);
                 mViewHolder.textViewSongName = (TextView) convertView.findViewById(R.id.inflate_allsong_textsongname);
-                mViewHolder.textViewSongArtisNameAndDuration = (TextView) convertView.findViewById(R.id.inflate_allsong_textsongArtisName_duration);
+                mViewHolder.textViewSongArtistNameAndDuration = (TextView) convertView.findViewById(R.id.inflate_allsong_textsongArtisName_duration);
                 mViewHolder.imageSongThm = (ImageView) convertView.findViewById(R.id.inflate_allsong_imgSongThumb);
                 mViewHolder.imagemore = (ImageView) convertView.findViewById(R.id.img_moreicon);
                 convertView.setTag(mViewHolder);
@@ -130,7 +129,7 @@ public class ChildFragmentAllSongs extends Fragment {
                 e.printStackTrace();
             }
 
-            mViewHolder.textViewSongArtisNameAndDuration.setText((audioDuration.isEmpty() ? "" : audioDuration + " | ") + mDetail.getArtist());
+            mViewHolder.textViewSongArtistNameAndDuration.setText((audioDuration.isEmpty() ? "" : audioDuration + " | ") + mDetail.getArtist());
             mViewHolder.textViewSongName.setText(mDetail.getTitle());
             String contentURI = "content://media/external/audio/media/" + mDetail.getId() + "/albumart";
             imageLoader.displayImage(contentURI, mViewHolder.imageSongThm, options);
@@ -150,7 +149,7 @@ public class ChildFragmentAllSongs extends Fragment {
                         if (MediaController.getInstance().isPlayingAudio(mDetail) && !MediaController.getInstance().isAudioPaused()) {
                             MediaController.getInstance().pauseAudio(mDetail);
                         } else {
-                            MediaController.getInstance().setPlaylist(songList, mDetail, PhoneMediaControl.SonLoadFor.All.ordinal(), -1);
+                            MediaController.getInstance().setPlaylist(songList, mDetail, PhoneMediaControl.SongsLoadFor.All.ordinal(), -1);
                         }
                     }
 
@@ -213,7 +212,7 @@ public class ChildFragmentAllSongs extends Fragment {
         class ViewHolder {
             TextView textViewSongName;
             ImageView imageSongThm, imagemore;
-            TextView textViewSongArtisNameAndDuration;
+            TextView textViewSongArtistNameAndDuration;
             LinearLayout song_row;
         }
     }

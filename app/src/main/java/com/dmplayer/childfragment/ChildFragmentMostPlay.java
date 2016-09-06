@@ -49,7 +49,7 @@ public class ChildFragmentMostPlay extends Fragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View rootview = inflater.inflate(R.layout.fragmentchild_mostplay, null);
+        View rootview = inflater.inflate(R.layout.fragment_child_mostplay, null);
         setupInitialViews(rootview);
         loadAllSongs();
         return rootview;
@@ -61,14 +61,14 @@ public class ChildFragmentMostPlay extends Fragment {
     }
 
     private void setupInitialViews(View inflatreView) {
-        recycler_songslist = (ListView) inflatreView.findViewById(R.id.recycler_allSongs);
+        recycler_songslist = (ListView) inflatreView.findViewById(R.id.listView_songs);
         mAllSongsListAdapter = new AllSongsListAdapter(getActivity());
         recycler_songslist.setAdapter(mAllSongsListAdapter);
     }
 
     private void loadAllSongs() {
         PhoneMediaControl mPhoneMediaControl = PhoneMediaControl.getInstance();
-        PhoneMediaControl.setPhonemediacontrolinterface(new PhoneMediaControl.PhoneMediaControlINterface() {
+        PhoneMediaControl.setPhoneMediaControlInterface(new PhoneMediaControl.PhoneMediaControlInterface() {
 
             @Override
             public void loadSongsComplete(ArrayList<SongDetail> songsList_) {
@@ -76,7 +76,7 @@ public class ChildFragmentMostPlay extends Fragment {
                 mAllSongsListAdapter.notifyDataSetChanged();
             }
         });
-        mPhoneMediaControl.loadMusicList(getActivity(), -1, PhoneMediaControl.SonLoadFor.MostPlay, "");
+        mPhoneMediaControl.loadMusicList(getActivity(), -1, PhoneMediaControl.SongsLoadFor.MostPlay, "");
     }
 
     public class AllSongsListAdapter extends BaseAdapter {
@@ -146,7 +146,7 @@ public class ChildFragmentMostPlay extends Fragment {
                         if (MediaController.getInstance().isPlayingAudio(mDetail) && !MediaController.getInstance().isAudioPaused()) {
                             MediaController.getInstance().pauseAudio(mDetail);
                         } else {
-                            MediaController.getInstance().setPlaylist(songList, mDetail, PhoneMediaControl.SonLoadFor.MostPlay.ordinal(), -1);
+                            MediaController.getInstance().setPlaylist(songList, mDetail, PhoneMediaControl.SongsLoadFor.MostPlay.ordinal(), -1);
                         }
                     }
 

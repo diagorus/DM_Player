@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="app_name">DM Player</string>
+    <string name="app_name">DM_Player</string>
 
     <!-- DataBase Name And Version -->
     <string name="DataBaseName_Version">1</string>
@@ -55,7 +55,11 @@
     </array>
 
     <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
+
+    <string name="profile_defult_name">Anonymous</string>
+
+    <string name="loading_message">Loading…</string>
+    <string name="log_in">Log in</string>
 
 
     <string name="enabled">Enabled</string>

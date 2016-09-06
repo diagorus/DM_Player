@@ -12,6 +12,7 @@ import android.content.Context;
 import android.content.res.Configuration;
 import android.graphics.Point;
 import android.os.Handler;
+import android.util.Log;
 import android.view.Display;
 import android.view.WindowManager;
 
@@ -25,11 +26,12 @@ import com.vk.sdk.VKSdk;
 
 public class ApplicationDMPlayer extends Application {
 
-    public ArrayList<SongDetail> songsList = new ArrayList<SongDetail>();
     public static Context applicationContext = null;
     public static volatile Handler applicationHandler = null;
     public static Point displaySize = new Point();
     public static float density = 1;
+
+    private static final String TAG = "ApplicationDMPlayer";
 
     @Override
     public void onCreate() {
@@ -93,14 +95,11 @@ public class ApplicationDMPlayer extends Application {
             if (manager != null) {
                 Display display = manager.getDefaultDisplay();
                 if (display != null) {
-                    if (android.os.Build.VERSION.SDK_INT < 13) {
-                        displaySize.set(display.getWidth(), display.getHeight());
-                    } else {
                         display.getSize(displaySize);
-                    }
                 }
             }
         } catch (Exception e) {
+            Log.e(TAG, e.toString());
         }
     }
 

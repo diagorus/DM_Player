@@ -67,6 +67,8 @@ public class MediaController implements NotificationManager.NotificationCenterDe
 
     private static volatile MediaController Instance = null;
 
+    private String TAG = "MediaController";
+
     public static MediaController getInstance() {
         MediaController localInstance = Instance;
         if (localInstance == null) {
@@ -172,7 +174,9 @@ public class MediaController implements NotificationManager.NotificationCenterDe
         if (mSongDetail == null) {
             return false;
         }
-        if ((audioTrackPlayer != null || audioPlayer != null) && MusicPreferance.playingSongDetail != null && mSongDetail.getId() == MusicPreferance.playingSongDetail.getId()) {
+        if ((audioTrackPlayer != null || audioPlayer != null) &&
+                MusicPreferance.playingSongDetail != null &&
+                mSongDetail.getId() == MusicPreferance.playingSongDetail.getId()) {
             if (isPaused) {
                 resumeAudio(mSongDetail);
             }
@@ -329,7 +333,6 @@ public class MediaController implements NotificationManager.NotificationCenterDe
         return true;
     }
 
-
     public boolean resumeAudio(SongDetail messageObject) {
         if (audioTrackPlayer == null && audioPlayer == null || messageObject == null || MusicPreferance.playingSongDetail == null || MusicPreferance.playingSongDetail != null
                 && MusicPreferance.playingSongDetail.getId() != messageObject.getId()) {
@@ -438,7 +441,6 @@ public class MediaController implements NotificationManager.NotificationCenterDe
         }
     }
 
-
     public boolean setPlaylist(ArrayList<SongDetail> allSongsList, SongDetail current, int type_, int id_) {
         type = type_;
         id = id_;
@@ -528,9 +530,8 @@ public class MediaController implements NotificationManager.NotificationCenterDe
         }
     }
 
-
     /**
-     * Store Rcent Play Data
+     * Store Recent Play Data
      */
     public synchronized void storeResendPlay(final Context context, final SongDetail mDetail) {
 

@@ -92,17 +92,17 @@ public class MusicPreferance {
             MediaController.getInstance().id = id;
             MediaController.getInstance().currentPlaylistNum = getLastPosition(context);
             MediaController.getInstance().path = path;
-            playlist = PhoneMediaControl.getInstance().getList(context, id, PhoneMediaControl.SonLoadFor.values()[type], path);
+            playlist = PhoneMediaControl.getInstance().getList(context, id, PhoneMediaControl.SongsLoadFor.values()[type], path);
         }
         return playlist;
     }
 
     public static ArrayList<SongDetail> getPlaylist(Context context, String path) {
-        MediaController.getInstance().type = PhoneMediaControl.SonLoadFor.Musicintent.ordinal();
+        MediaController.getInstance().type = PhoneMediaControl.SongsLoadFor.MusicIntent.ordinal();
         MediaController.getInstance().id = -1;
         MediaController.getInstance().currentPlaylistNum = 0;
         MediaController.getInstance().path = path;
-        playlist = PhoneMediaControl.getInstance().getList(context, -1, PhoneMediaControl.SonLoadFor.Musicintent, path);
+        playlist = PhoneMediaControl.getInstance().getList(context, -1, PhoneMediaControl.SongsLoadFor.MusicIntent, path);
         if (playlist != null && !playlist.isEmpty())
             playingSongDetail = playlist.get(0);
         return playlist;

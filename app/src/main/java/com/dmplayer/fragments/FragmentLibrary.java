@@ -112,6 +112,7 @@ public class FragmentLibrary extends Fragment {
 
                 case 4:
                     return ChildFragmentMostPlay.newInstance(position, getActivity());
+
                 case 5:
                     return ChildFragmentPlaylists.newInstance(position,getActivity());
             }

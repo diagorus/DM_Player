@@ -31,7 +31,7 @@ import android.widget.ImageView.ScaleType;
 import android.widget.TextView;
 
 import com.dmplayer.R;
-import com.dmplayer.activities.AlbumAndArtistDetailsActivity;
+import com.dmplayer.activities.PlaylistActivity;
 import com.dmplayer.adapter.CursorRecyclerViewAdapter;
 import com.dmplayer.utility.LogWriter;
 import com.dmplayer.phonemidea.DMPlayerUtility;
@@ -60,13 +60,13 @@ public class ChildFragmentAlbum extends Fragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragmentchild_album, null);
+        View view = inflater.inflate(R.layout.fragment_child_album, null);
         setupView(view, savedInstanceState);
         return view;
     }
 
     private void setupView(View v, Bundle icicle) {
-        recyclerView = (RecyclerView) v.findViewById(R.id.recyclerview_grid);
+        recyclerView = (RecyclerView) v.findViewById(R.id.recyclerView_playlists);
         recyclerView.setLayoutManager(new GridLayoutManager(getActivity(), 2));
         populateData(icicle);
     }
@@ -243,8 +243,8 @@ public class ChildFragmentAlbum extends Fragment {
 
             public ViewHolder(View itemView) {
                 super(itemView);
-                albumName = (TextView) itemView.findViewById(R.id.line1);
-                artistName = (TextView) itemView.findViewById(R.id.line2);
+                albumName = (TextView) itemView.findViewById(R.id.line_1);
+                artistName = (TextView) itemView.findViewById(R.id.line_2);
                 icon = (ImageView) itemView.findViewById(R.id.icon);
                 icon.setScaleType(ScaleType.CENTER_CROP);
                 itemView.setOnClickListener(this);
@@ -255,12 +255,12 @@ public class ChildFragmentAlbum extends Fragment {
                 try {
                     long albumID = getAlbumID(getPosition());
 
-                    Intent mIntent = new Intent(context, AlbumAndArtistDetailsActivity.class);
+                    Intent mIntent = new Intent(context, PlaylistActivity.class);
                     Bundle mBundle = new Bundle();
                     mBundle.putLong("id", albumID);
-                    mBundle.putLong("tagfor", PhoneMediaControl.SonLoadFor.Album.ordinal());
-                    mBundle.putString("albumname", ((TextView) view.findViewById(R.id.line1)).getText().toString().trim());
-                    mBundle.putString("title_one", ((TextView) view.findViewById(R.id.line2)).getText().toString().trim());
+                    mBundle.putLong("tagfor", PhoneMediaControl.SongsLoadFor.Album.ordinal());
+                    mBundle.putString("albumname", ((TextView) view.findViewById(R.id.line_1)).getText().toString().trim());
+                    mBundle.putString("title_one", ((TextView) view.findViewById(R.id.line_2)).getText().toString().trim());
                     mBundle.putString("title_sec", "");
                     mIntent.putExtras(mBundle);
                     ((Activity) context).startActivity(mIntent);

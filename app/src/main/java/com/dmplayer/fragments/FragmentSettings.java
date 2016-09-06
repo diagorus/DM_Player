@@ -10,11 +10,10 @@ import com.dmplayer.activities.DMPlayerBaseActivity;
 import com.dmplayer.activities.MusicChooserActivity;
 import com.dmplayer.models.SongDetail;
 import com.dmplayer.phonemidea.DMPlayerUtility;
-import com.dmplayer.phonemidea.PhoneMediaControl;
-import com.dmplayer.playlist.Playlist;
+import com.dmplayer.models.Playlist;
 import com.dmplayer.utility.LogWriter;
-import com.dmplayer.utility.ProfileDialog;
-import com.dmplayer.utility.ThemeDialog;
+import com.dmplayer.utility.dialogs.ProfileDialog;
+import com.dmplayer.utility.dialogs.ThemeDialog;
 
 import android.content.Context;
 import android.content.Intent;
@@ -22,14 +21,13 @@ import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
+import android.app.Fragment;
+import android.app.FragmentManager;
 import android.app.Activity;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.RelativeLayout;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -71,26 +69,25 @@ public class FragmentSettings extends Fragment implements View.OnClickListener {
     private void setupInitialViews(View rootview) {
         sharedPreferences = getActivity().getSharedPreferences("VALUES", Context.MODE_PRIVATE);
 
-        ((RelativeLayout) rootview.findViewById(R.id.relativeLayoutChooseTheme)).setOnClickListener(this);
-        ((RelativeLayout) rootview.findViewById(R.id.relativeLayoutCustomizeProfile)).setOnClickListener(this);
-        ((RelativeLayout) rootview.findViewById(R.id.relativeLayoutChangeHeaderBackground)).setOnClickListener(this);
-        ((RelativeLayout) rootview.findViewById(R.id.relativeLayoutCreatePlaylist)).setOnClickListener(this);
-        ((RelativeLayout) rootview.findViewById(R.id.relativeLayoutMusicChooser)).setOnClickListener(this);
-
+        rootview.findViewById(R.id.relativeLayout_choose_theme).setOnClickListener(this);
+        rootview.findViewById(R.id.relativeLayout_customize_profile).setOnClickListener(this);
+        rootview.findViewById(R.id.relativeLayout_change_header_back).setOnClickListener(this);
+        rootview.findViewById(R.id.relativeLayoutCreatePlaylist).setOnClickListener(this);
+        rootview.findViewById(R.id.relativeLayoutMusicChooser).setOnClickListener(this);
     }
 
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
-            case R.id.relativeLayoutChooseTheme:
+            case R.id.relativeLayout_choose_theme:
                 showColorChooseDialog();
                 break;
 
-            case R.id.relativeLayoutCustomizeProfile:
+            case R.id.relativeLayout_customize_profile:
                 showColorProfileDialog();
                 break;
 
-            case R.id.relativeLayoutChangeHeaderBackground:
+            case R.id.relativeLayout_change_header_back:
                 Intent toGallery = new Intent(Intent.ACTION_PICK);
                 toGallery.setType("image/*");
                 startActivityForResult(toGallery, GALLERY_REQUEST);
@@ -101,7 +98,7 @@ public class FragmentSettings extends Fragment implements View.OnClickListener {
                     final Playlist a = new Playlist();
 //                    if(mSongUri!=null) {
 //                        PhoneMediaControl mPhoneMediaControl = PhoneMediaControl.getInstance();
-//                        PhoneMediaControl.setPhonemediacontrolinterface(new PhoneMediaControl.PhoneMediaControlINterface() {
+//                        PhoneMediaControl.setPhoneMediaControlInterface(new PhoneMediaControl.PhoneMediaControlInterface() {
 //
 //                            @Override
 //                            public void loadSongsComplete(ArrayList<SongDetail> songsList_) {
@@ -112,7 +109,7 @@ public class FragmentSettings extends Fragment implements View.OnClickListener {
 //                        for (Uri uri :
 //                                mSongUri) {
 //                            mPhoneMediaControl.loadMusicList(getActivity(), -1, PhoneMediaControl
-//                                            .SonLoadFor.Playlist,
+//                                            .SongsLoadFor.Playlist,
 //                                    uri.getPath());
 //
 //                        }
@@ -145,7 +142,7 @@ public class FragmentSettings extends Fragment implements View.OnClickListener {
                 break;
 
             case R.id.relativeLayoutMusicChooser:
-                Intent picker = new Intent(getContext(), MusicChooserActivity.class);
+                Intent picker = new Intent(getActivity(), MusicChooserActivity.class);
                 startActivityForResult(picker,PICKER_REQUEST);
                 break;
         }
@@ -195,7 +192,7 @@ public class FragmentSettings extends Fragment implements View.OnClickListener {
     }
 
     private void showColorChooseDialog() {
-        FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
+        FragmentManager fragmentManager = getActivity().getFragmentManager();
         ThemeDialog dialog = new ThemeDialog();
         dialog.setOnItemChoose(new ThemeDialog.OnItemChoose() {
             @Override
@@ -214,14 +211,27 @@ public class FragmentSettings extends Fragment implements View.OnClickListener {
     }
 
     private void showColorProfileDialog() {
-        FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
+        FragmentManager fragmentManager = getActivity().getFragmentManager();
         ProfileDialog dialog = new ProfileDialog();
+        dialog.setOnWorkDone(new ProfileDialog.OnWorkDone() {
+            @Override
+            public void onPositiveAnswer() {
+                startActivity(new Intent(getActivity(), DMPlayerBaseActivity.class));
+                getActivity().finish();
+                getActivity().overridePendingTransition(0, 0);
+            }
+
+            @Override
+            public void onNegativeAnswer() {
+            }
+        });
+        dialog.setCancelable(false);
         dialog.show(fragmentManager, "fragment_profile");
     }
 
     private String copyBackgroundToStorage(Uri picture) {
         File backgroundSource = new File(DMPlayerUtility.getRealPathFromURI(getActivity(), picture));
-        File backgroundDest = new File(ProfileDialog.checkPhotoDirectory() + "/" + "header_background" +
+        File backgroundDest = new File(ProfileDialog.checkPhotoDirectory(getActivity()) + "/" + "header_background" +
                 backgroundSource
                         .getPath()
                         .substring(backgroundSource

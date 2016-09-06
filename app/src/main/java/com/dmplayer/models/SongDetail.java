@@ -8,7 +8,6 @@ package com.dmplayer.models;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.FileDescriptor;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.ObjectInput;
 import java.io.ObjectInputStream;
@@ -21,24 +20,27 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.ParcelFileDescriptor;
+import android.support.annotation.Nullable;
 import android.text.TextUtils;
 import android.util.Log;
 
 public class SongDetail implements Serializable {
-	public int id;
-	public int album_id;
-	public String artist;
-	public String title;
-	public String display_name;
-	public String duration;
-	public String path;
+	private int id;
+	private int album_id;
+	private String artist;
+	private String title;
+	private String display_name;
+	private String duration;
+	private String path;
+
 	public float audioProgress = 0.0f;
 	public int audioProgressSec = 0;
 
+	private static final String TAG = "SongDetail";
 
-	public SongDetail(int _id, int aLBUM_ID, String _artist, String _title, String _path, String _display_name, String _duration) {
+	public SongDetail(int _id, int _album_id, String _artist, String _title, String _path, String _display_name, String _duration) {
 		this.id = _id;
-		this.album_id = aLBUM_ID;
+		this.album_id = _album_id;
 		this.artist = _artist;
 		this.title = _title;
 		this.path = _path;
@@ -102,25 +104,6 @@ public class SongDetail implements Serializable {
 		this.path = path;
 	}
 
-	public Bitmap getSmallCover(Context context) {
-
-		// ImageLoader.getInstance().getDiskCache().g
-		BitmapFactory.Options options = new BitmapFactory.Options();
-		options.inSampleSize = 1;
-		Bitmap curThumb = null;
-		try {
-			Uri uri = Uri.parse("content://media/external/audio/media/" + getId() + "/albumart");
-			ParcelFileDescriptor pfd = context.getContentResolver().openFileDescriptor(uri, "r");
-			if (pfd != null) {
-				FileDescriptor fd = pfd.getFileDescriptor();
-				curThumb = BitmapFactory.decodeFileDescriptor(fd);
-			}
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		return curThumb;
-	}
-
 	public Bitmap getCover(Context context) {
 
 		// ImageLoader.getInstance().getDiskCache().g
@@ -135,7 +118,7 @@ public class SongDetail implements Serializable {
 				curThumb = BitmapFactory.decodeFileDescriptor(fd);
 			}
 		} catch (IOException e) {
-			e.printStackTrace();
+			Log.e(TAG, e.getMessage());
 		}
 		return curThumb;
 	}
@@ -147,46 +130,42 @@ public class SongDetail implements Serializable {
             out = new ObjectOutputStream(bos);
             out.writeObject(this);
             return bos.toByteArray();
-        }
-        catch(Exception ex) {return null;}
+        } catch (Exception ex) {
+			Log.e(TAG, ex.getMessage());
+			return null;
+		}
         finally {
             try {
                 if (out != null) {
                     out.close();
                 }
-            } catch (Exception ex) {
-                // ignore close exception
-            }
-            try {
                 bos.close();
             } catch (Exception ex) {
-                // ignore close exception
+				Log.e(TAG, ex.getMessage());
             }
         }
     }
 
-    public static SongDetail getSongDetail(byte[] songDetail){
+    @Nullable
+	public static SongDetail getSongDetail(byte[] songDetail){
         ByteArrayInputStream bis = new ByteArrayInputStream(songDetail);
         ObjectInput in = null;
         try {
             in = new ObjectInputStream(bis);
             return (SongDetail) in.readObject();
         } catch (Exception ex) {
+			Log.e(TAG, ex.getMessage());
             return null;
         }
         finally
 		{
             try {
                 bis.close();
-            } catch (Exception ex) {
-                // ignore close exception
-            }
-            try {
                 if (in != null) {
                     in.close();
                 }
             } catch (Exception ex) {
-                // ignore close exception
+				Log.e(TAG, ex.getMessage());
             }
         }
     }

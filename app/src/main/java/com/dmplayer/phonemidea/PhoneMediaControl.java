@@ -5,27 +5,42 @@
  */
 package com.dmplayer.phonemidea;
 
+import java.io.File;
 import java.io.FileInputStream;
+import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 
 import android.app.Activity;
 import android.content.Context;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.AsyncTask;
-import android.os.Build;
 import android.provider.MediaStore;
 import android.util.Log;
-import android.util.StringBuilderPrinter;
 
 import com.dmplayer.ApplicationDMPlayer;
+import com.dmplayer.converters.VkToSongDetailConverter;
 import com.dmplayer.dbhandler.FavoritePlayTableHelper;
 import com.dmplayer.dbhandler.MostAndRecentPlayTableHelper;
+import com.dmplayer.internetservices.VkAPIService;
 import com.dmplayer.manager.MediaController;
 import com.dmplayer.models.SongDetail;
-import com.dmplayer.playlist.Playlist;
-import com.dmplayer.utility.LogWriter;
+import com.dmplayer.models.Playlist;
+import com.dmplayer.models.VkAlbumObject;
+import com.dmplayer.models.VkAlbumsResponse.VkAlbumsWrapper;
+import com.dmplayer.models.VkAudioGetResponce.VkAudioWrapper;
+import com.dmplayer.models.VkAudioObject;
+import com.dmplayer.models.VkPopularAudioResponce.VkPopularCollection;
+import com.dmplayer.utility.VkSettings;
+
+import retrofit2.Call;
+import retrofit2.Response;
+import retrofit2.Retrofit;
+import retrofit2.converter.gson.GsonConverterFactory;
 
 public class PhoneMediaControl {
 
@@ -33,8 +48,10 @@ public class PhoneMediaControl {
     private Cursor cursor = null;
     private static volatile PhoneMediaControl Instance = null;
 
-    public static enum SonLoadFor {
-        All, Gener, Artis, Album, Musicintent, MostPlay, Favorite, ResecntPlay, Playlist
+    private static final String TAG = "PhoneMediaControl";
+
+    public enum SongsLoadFor {
+        All, Genre, Artist, Album, MusicIntent, MostPlay, Favorite, ResentPlay, Playlist, VkPlaylist
     }
 
     public static PhoneMediaControl getInstance() {
@@ -50,16 +67,14 @@ public class PhoneMediaControl {
         return localInstance;
     }
 
-    public void loadMusicList(final Context context, final long id, final SonLoadFor sonloadfor, final String path) {
-
-        AsyncTask<Void, Void, Void> task = new AsyncTask<Void, Void, Void>() {
+    public void loadMusicList(final Context context, final long id, final SongsLoadFor songsloadfor, final String path) {
+        new AsyncTask<Void, Void, Void>() {
             ArrayList<SongDetail> songsList = null;
 
             @Override
             protected Void doInBackground(Void... voids) {
-
                 try {
-                    songsList = getList(context, id, sonloadfor, path);
+                    songsList = getList(context, id, songsloadfor, path);
                 } catch (Exception e) {
                     closeCrs();
                     e.printStackTrace();
@@ -74,53 +89,56 @@ public class PhoneMediaControl {
                     phonemediacontrolinterface.loadSongsComplete(songsList);
                 }
             }
-        };
+        }.execute();
+    }
 
-        if (Build.VERSION.SDK_INT > Build.VERSION_CODES.HONEYCOMB_MR1) {
-            task.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
-        } else {
-            task.execute();
+    public void loadMusicList(ArrayList<SongDetail> songsList) {
+        if (phonemediacontrolinterface != null) {
+            phonemediacontrolinterface.loadSongsComplete(songsList);
+        }
+    }
+    public void addMusicToList(ArrayList<SongDetail> songsList) {
+        if (phonemediacontrolinterface != null) {
+            phonemediacontrolinterface.loadSongsComplete(songsList);
         }
     }
 
-
-    public ArrayList<SongDetail> getList(final Context context, final long id, final SonLoadFor sonloadfor, final String path) {
+    public ArrayList<SongDetail> getList(final Context context, final long id, final SongsLoadFor songsLoadFor, final String path) {
         ArrayList<SongDetail> songsList = new ArrayList<>();
-        String sortOrder = "";
-        switch (sonloadfor) {
+        String sortOrder;
+        switch (songsLoadFor) {
             case All:
                 String selection = MediaStore.Audio.Media.IS_MUSIC + " != 0";
-//                sortOrder = MediaStore.Audio.Media.DATE_ADDED + " desc";
                 sortOrder = MediaStore.Audio.Media.DEFAULT_SORT_ORDER;
-                cursor = ((Activity) context).getContentResolver().query(MediaStore.Audio.Media.EXTERNAL_CONTENT_URI, projectionSongs, selection, null, sortOrder);
+                cursor = context.getContentResolver().query(MediaStore.Audio.Media.EXTERNAL_CONTENT_URI, projectionSongs, selection, null, sortOrder);
                 songsList = getSongsFromCursor(cursor);
                 break;
 
-            case Gener:
+            case Genre:
                 Uri uri = MediaStore.Audio.Genres.Members.getContentUri("external", id);
                 sortOrder = MediaStore.Audio.Media.DEFAULT_SORT_ORDER;
-                cursor = ((Activity) context).getContentResolver().query(uri, projectionSongs, null, null, null);
+                cursor = context.getContentResolver().query(uri, projectionSongs, null, null, sortOrder);
                 songsList = getSongsFromCursor(cursor);
                 break;
 
-            case Artis:
+            case Artist:
                 String where = MediaStore.Audio.Media.ARTIST_ID + "=" + id + " AND " + MediaStore.Audio.Media.IS_MUSIC + "=1";
                 sortOrder = MediaStore.Audio.Media.DEFAULT_SORT_ORDER;
-                cursor = ((Activity) context).getContentResolver().query(MediaStore.Audio.Media.EXTERNAL_CONTENT_URI, projectionSongs, where, null, sortOrder);
+                cursor = context.getContentResolver().query(MediaStore.Audio.Media.EXTERNAL_CONTENT_URI, projectionSongs, where, null, sortOrder);
                 songsList = getSongsFromCursor(cursor);
                 break;
 
             case Album:
                 String wherecls = MediaStore.Audio.Media.ALBUM_ID + "=" + id + " AND " + MediaStore.Audio.Media.IS_MUSIC + "=1";
                 sortOrder = MediaStore.Audio.Media.DEFAULT_SORT_ORDER;
-                cursor = ((Activity) context).getContentResolver().query(MediaStore.Audio.Media.EXTERNAL_CONTENT_URI, projectionSongs, wherecls, null, sortOrder);
+                cursor = context.getContentResolver().query(MediaStore.Audio.Media.EXTERNAL_CONTENT_URI, projectionSongs, wherecls, null, sortOrder);
                 songsList = getSongsFromCursor(cursor);
                 break;
 
-            case Musicintent:
+            case MusicIntent:
                 String condition = MediaStore.Audio.Media.DATA + "='" + path + "' AND " + MediaStore.Audio.Media.IS_MUSIC + "=1";
                 sortOrder = MediaStore.Audio.Media.DEFAULT_SORT_ORDER;
-                cursor = ((Activity) context).getContentResolver().query(MediaStore.Audio.Media.EXTERNAL_CONTENT_URI, projectionSongs, condition, null, sortOrder);
+                cursor = context.getContentResolver().query(MediaStore.Audio.Media.EXTERNAL_CONTENT_URI, projectionSongs, condition, null, sortOrder);
                 songsList = getSongsFromCursor(cursor);
                 break;
 
@@ -136,7 +154,7 @@ public class PhoneMediaControl {
 
             case Playlist:
                 StringBuilder plCondition = new StringBuilder(MediaStore.Audio.Media.DATA);
-                if(path.endsWith(".dpl")){
+                if (path.endsWith(".dpl")){
                     try {
                         ObjectInputStream fin = new ObjectInputStream(new FileInputStream
                                 (path));
@@ -150,7 +168,9 @@ public class PhoneMediaControl {
                         }
                         plCondition.append(sList.get(sList.size()));
                     }
-                    catch (Exception e) {e.printStackTrace();}
+                    catch (Exception e) {
+                        e.printStackTrace();
+                    }
                 }
                 else {
                     plCondition.append("='");
@@ -158,17 +178,19 @@ public class PhoneMediaControl {
                     plCondition.append("'");
                 }
                 sortOrder = MediaStore.Audio.Media.DEFAULT_SORT_ORDER;
-                cursor = ((Activity) context).getContentResolver().query(MediaStore.Audio
-                        .Media.EXTERNAL_CONTENT_URI,projectionSongs,plCondition.toString
-                        (),null,sortOrder);
+                cursor = context.getContentResolver().query(MediaStore.Audio
+                        .Media.EXTERNAL_CONTENT_URI, projectionSongs, plCondition.toString(),
+                        null, sortOrder);
                 songsList = getSongsFromCursor(cursor);
                 break;
+
         }
+
         return songsList;
     }
 
     private ArrayList<SongDetail> getSongsFromCursor(Cursor cursor) {
-        ArrayList<SongDetail> generassongsList = new ArrayList<SongDetail>();
+        ArrayList<SongDetail> genreAsSongsList = new ArrayList<>();
         try {
             if (cursor != null && cursor.getCount() >= 1) {
                 int _id = cursor.getColumnIndex(MediaStore.Audio.Media._ID);
@@ -182,22 +204,22 @@ public class PhoneMediaControl {
                 while (cursor.moveToNext()) {
 
                     int ID = cursor.getInt(_id);
-                    String ARTIST = cursor.getString(artist);
-                    String TITLE = cursor.getString(title);
-                    String DISPLAY_NAME = cursor.getString(display_name);
-                    String DURATION = cursor.getString(duration);
-                    String Path = cursor.getString(data);
+                    final String ARTIST = cursor.getString(artist);
+                    final String TITLE = cursor.getString(title);
+                    final String DISPLAY_NAME = cursor.getString(display_name);
+                    final String DURATION = cursor.getString(duration);
+                    final String PATH = cursor.getString(data);
 
-                    SongDetail mSongDetail = new SongDetail(ID, album_id, ARTIST, TITLE, Path, DISPLAY_NAME, DURATION);
-                    generassongsList.add(mSongDetail);
+                    SongDetail mSongDetail = new SongDetail(ID, album_id, ARTIST, TITLE, PATH, DISPLAY_NAME, DURATION);
+                    genreAsSongsList.add(mSongDetail);
                 }
             }
-            closeCrs();
         } catch (Exception e) {
+            Log.e(TAG, e.getMessage());
+        } finally {
             closeCrs();
-            e.printStackTrace();
         }
-        return generassongsList;
+        return genreAsSongsList;
     }
 
     private ArrayList<SongDetail> getSongsFromSQLDBCursor(Cursor cursor) {
@@ -236,10 +258,6 @@ public class PhoneMediaControl {
         }
     }
 
-    public static void runOnUIThread(Runnable runnable) {
-        runOnUIThread(runnable, 0);
-    }
-
     public static void runOnUIThread(Runnable runnable, long delay) {
         if (delay == 0) {
             ApplicationDMPlayer.applicationHandler.post(runnable);
@@ -251,18 +269,18 @@ public class PhoneMediaControl {
     private final String[] projectionSongs = {MediaStore.Audio.Media._ID, MediaStore.Audio.Media.ARTIST, MediaStore.Audio.Media.TITLE,
             MediaStore.Audio.Media.DATA, MediaStore.Audio.Media.DISPLAY_NAME, MediaStore.Audio.Media.DURATION};
 
-    public static PhoneMediaControlINterface phonemediacontrolinterface;
+    public static PhoneMediaControlInterface phonemediacontrolinterface;
 
-    public static PhoneMediaControlINterface getPhonemediacontrolinterface() {
+    public static PhoneMediaControlInterface getPhoneMediaControlInterface() {
         return phonemediacontrolinterface;
     }
 
-    public static void setPhonemediacontrolinterface(PhoneMediaControlINterface phonemediacontrolinterface) {
+    public static void setPhoneMediaControlInterface(PhoneMediaControlInterface phonemediacontrolinterface) {
         PhoneMediaControl.phonemediacontrolinterface = phonemediacontrolinterface;
     }
 
-    public interface PhoneMediaControlINterface {
-        public void loadSongsComplete(ArrayList<SongDetail> songsList);
+    public interface PhoneMediaControlInterface {
+        void loadSongsComplete(ArrayList<SongDetail> songsList);
     }
 
 }

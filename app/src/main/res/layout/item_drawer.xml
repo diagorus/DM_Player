@@ -5,14 +5,12 @@
     android:layout_height="48dp"
     android:background="?attr/selectableItemBackground"
     android:gravity="start">
-
     <FrameLayout
         android:id="@+id/item_row"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="?selectableItemBackground"
         android:clickable="true">
-
         <ImageView
             android:id="@+id/imageViewDrawerIcon"
             android:layout_width="24dp"
@@ -47,5 +45,4 @@
         android:layout_marginBottom="1dp"
         android:layout_marginTop="1dp"
         android:background="@color/md_divider" />
-
 </RelativeLayout>
