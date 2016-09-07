@@ -52,7 +52,6 @@ import com.dmplayer.uicomponent.PlayPauseView;
 import com.dmplayer.uicomponent.Slider;
 import com.dmplayer.utility.AssetsCopier;
 import com.dmplayer.utility.LogWriter;
-import com.dmplayer.utility.SystemBarTintManager;
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.display.FadeInBitmapDisplayer;
@@ -119,11 +118,6 @@ public class DMPlayerBaseActivity extends AppCompatActivity implements View.OnCl
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_dmplayerbase);
 
-        //System bar color set(HUYOUVO)
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-//            setSystemBarTint();
-        }
-
         toolbarStatusBar();
         navigationDrawer();
 
@@ -177,7 +171,6 @@ public class DMPlayerBaseActivity extends AppCompatActivity implements View.OnCl
 
     @Override
     public void onClick(View v) {
-
         switch (v.getId()) {
             case R.id.bottombar_play:
             case R.id.btn_play:
@@ -693,9 +686,7 @@ public class DMPlayerBaseActivity extends AppCompatActivity implements View.OnCl
 
     private void updateTitle(boolean shutdown) {
         SongDetail mSongDetail = MediaController.getInstance().getPlayingSongDetail();
-        if (mSongDetail == null && shutdown) {
-            return;
-        } else {
+        if (mSongDetail != null && !shutdown) {
             updateProgress(mSongDetail);
             if (MediaController.getInstance().isAudioPaused()) {
                 btn_playpausePanel.Pause();
@@ -741,21 +732,6 @@ public class DMPlayerBaseActivity extends AppCompatActivity implements View.OnCl
         MediaController.getInstance().seekToProgress(MediaController.getInstance().getPlayingSongDetail(), (float) value / 100);
     }
 
-    private void setSystemBarTint() {
-        try {
-            setTranslucentStatus(true);
-            TypedValue typedValueStatusBarColor = new TypedValue();
-            getTheme().resolveAttribute(R.attr.colorPrimaryDark, typedValueStatusBarColor, true);
-            final int colorStatusBar = typedValueStatusBarColor.data;
-
-            SystemBarTintManager tintManager = new SystemBarTintManager(this);
-            tintManager.setStatusBarTintEnabled(true);
-            tintManager.setStatusBarTintColor(colorStatusBar);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
     private void setTranslucentStatus(boolean on) {
         Window win = getWindow();
         WindowManager.LayoutParams winParams = win.getAttributes();
@@ -769,7 +745,6 @@ public class DMPlayerBaseActivity extends AppCompatActivity implements View.OnCl
     }
 
     private static class AnimateFirstDisplayListener extends SimpleImageLoadingListener {
-
         static final List<String> displayedImages = Collections.synchronizedList(new LinkedList<String>());
 
         @Override

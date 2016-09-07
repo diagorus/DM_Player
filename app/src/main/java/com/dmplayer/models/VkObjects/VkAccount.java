@@ -1,7 +1,5 @@
 package com.dmplayer.models.VkObjects;
 
-import android.os.AsyncTask;
-import android.os.NetworkOnMainThreadException;
 import android.util.Log;
 
 import com.dmplayer.internetservices.VkAPIService;
@@ -9,18 +7,13 @@ import com.dmplayer.models.ExternalMusicAccount;
 import com.dmplayer.models.ExternalProfileObject;
 import com.dmplayer.models.Playlist;
 import com.dmplayer.models.VkObjects.VkAlbumsResponse.VkAlbumsWrapper;
+import com.dmplayer.models.VkObjects.VkProfileUserDataResponse.VkUserData;
 import com.dmplayer.models.VkObjects.VkProfileUserDataResponse.VkUserDataCollection;
-import com.dmplayer.uicomponent.PlaylistsLoadingController;
-import com.dmplayer.uicomponent.SwappingLayout.SwappingLayoutController;
-import com.dmplayer.utility.VkSettings;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import okhttp3.ResponseBody;
 import retrofit2.Call;
@@ -34,7 +27,9 @@ public class VkAccount implements ExternalMusicAccount {
 
     private VkAPIService service;
 
-    private static final String TAG = "VkAccount";
+    public final static String VK_API_URL = "https://api.vk.com/method/";
+
+    private final static String TAG = "VkAccount";
 
     private VkAccount(String userId, String token) {
         this.userId = userId;
@@ -86,7 +81,7 @@ public class VkAccount implements ExternalMusicAccount {
 
     private void createApiService() {
         Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl(VkSettings.VK_API_URL)
+                .baseUrl(VK_API_URL)
                 .addConverterFactory(GsonConverterFactory.create())
                 .build();
 
@@ -94,14 +89,7 @@ public class VkAccount implements ExternalMusicAccount {
     }
 
     private void loadVkUserAlbums(List<Playlist> playlistsToShow) throws IOException {
-        Map<String, String> optionsForAlbums = new HashMap<>();
-        optionsForAlbums.put("offset", "0");
-        optionsForAlbums.put("count", "100");
-        optionsForAlbums.put("owner_id", userId);
-        optionsForAlbums.put("access_token", token);
-        optionsForAlbums.put("v", "5.53");
-
-        Call<VkAlbumsWrapper> callForAlbums = service.loadAlbums(optionsForAlbums);
+        Call<VkAlbumsWrapper> callForAlbums = service.loadAlbums("0", "100", userId, token);
 
         Response<VkAlbumsWrapper> responseAlbums = callForAlbums.execute();
 
@@ -120,21 +108,9 @@ public class VkAccount implements ExternalMusicAccount {
     }
 
     private void loadVkMusicData(ExternalProfileObject.Builder profileObjectBuilder) {
-        Map<String, String> optionsForSongsCount = new HashMap<>();
-        optionsForSongsCount.put("owner_id", userId);
-        optionsForSongsCount.put("access_token", token);
-        optionsForSongsCount.put("v", "5.53");
+        Call<ResponseBody> callForSongsCount = service.loadSongsCount(userId, token);
 
-        Call<ResponseBody> callForSongsCount = service.loadSongsCount(optionsForSongsCount);
-
-        Map<String, String> optionsForAlbumsCount = new HashMap<>();
-        optionsForAlbumsCount.put("offset", "0");
-        optionsForAlbumsCount.put("count", "100");
-        optionsForAlbumsCount.put("owner_id", userId);
-        optionsForAlbumsCount.put("access_token", token);
-        optionsForAlbumsCount.put("v", "5.53");
-
-        Call<VkAlbumsWrapper> callForAlbumsCount = service.loadAlbums(optionsForAlbumsCount);
+        Call<VkAlbumsWrapper> callForAlbumsCount = service.loadAlbums("0", "100", userId, token);
 
         try {
             Response<ResponseBody> responseSongsCount = callForSongsCount.execute();
@@ -152,19 +128,16 @@ public class VkAccount implements ExternalMusicAccount {
     }
 
     private void loadVkUserData(ExternalProfileObject.Builder profileObjectBuilder) {
-        Map<String, String> optionsForUserData = new HashMap<>();
-        optionsForUserData.put("fields", "photo_100");
-        optionsForUserData.put("access_token", token);
-        optionsForUserData.put("v", "5.53");
+        Call<VkUserDataCollection> callForUserData = service.loadUserData("photo_100", token);
 
-        Call<VkUserDataCollection> callForUserData = service.loadUserData(optionsForUserData);
         try {
             Response<VkUserDataCollection> responseUserData = callForUserData.execute();
 
-            String[] userData = responseUserData.body().getStringValues();
-            profileObjectBuilder.addNicknamePart(userData[1]);
-            profileObjectBuilder.addNicknamePart(" " + userData[2]);
-            profileObjectBuilder.setPhotoUrl(userData[3]);
+            VkUserData userData = responseUserData.body().getResponse()[0];
+
+            profileObjectBuilder.addNicknamePart(userData.getFirst_name());
+            profileObjectBuilder.addNicknamePart(" " + userData.getLast_name());
+            profileObjectBuilder.setPhotoUrl(userData.getPhoto_100());
         } catch (IOException e) {
             Log.e(TAG, Log.getStackTraceString(e));
         }

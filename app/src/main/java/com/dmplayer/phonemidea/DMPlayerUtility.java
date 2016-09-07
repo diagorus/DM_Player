@@ -5,25 +5,16 @@
  */
 package com.dmplayer.phonemidea;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.net.URI;
-import java.util.Formatter;
-import java.util.Locale;
-
 import android.app.Activity;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.content.res.Resources;
 import android.database.Cursor;
+import android.graphics.Bitmap;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Environment;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
@@ -34,8 +25,13 @@ import android.view.View;
 import android.view.animation.AccelerateInterpolator;
 import android.view.animation.DecelerateInterpolator;
 import android.view.animation.OvershootInterpolator;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.ImageView;
+import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.animation.GlideAnimation;
+import com.bumptech.glide.request.target.SimpleTarget;
 import com.dmplayer.ApplicationDMPlayer;
 import com.dmplayer.R;
 import com.nineoldandroids.animation.Animator;
@@ -43,10 +39,19 @@ import com.nineoldandroids.animation.AnimatorListenerAdapter;
 import com.nineoldandroids.animation.AnimatorSet;
 import com.nineoldandroids.animation.ObjectAnimator;
 
+import java.io.BufferedOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.util.Formatter;
+import java.util.Locale;
+
 public abstract class DMPlayerUtility {
 
     private static final String TAG = "MusicUtils";
-
 
     private static StringBuilder sFormatBuilder = new StringBuilder();
     private static Formatter sFormatter = new Formatter(sFormatBuilder, Locale.getDefault());
@@ -338,7 +343,7 @@ public abstract class DMPlayerUtility {
         return false;
     }
 
-    private static final DecelerateInterpolator DECCELERATE_INTERPOLATOR = new DecelerateInterpolator();
+    private static final DecelerateInterpolator DECELERATE_INTERPOLATOR = new DecelerateInterpolator();
     private static final AccelerateInterpolator ACCELERATE_INTERPOLATOR = new AccelerateInterpolator();
     private static final OvershootInterpolator OVERSHOOT_INTERPOLATOR = new OvershootInterpolator(4);
 
@@ -384,21 +389,21 @@ public abstract class DMPlayerUtility {
 
         android.animation.ObjectAnimator bgScaleYAnim = android.animation.ObjectAnimator.ofFloat(vBgLike, "scaleY", 0.1f, 1f);
         bgScaleYAnim.setDuration(200);
-        bgScaleYAnim.setInterpolator(DECCELERATE_INTERPOLATOR);
+        bgScaleYAnim.setInterpolator(DECELERATE_INTERPOLATOR);
         android.animation.ObjectAnimator bgScaleXAnim = android.animation.ObjectAnimator.ofFloat(vBgLike, "scaleX", 0.1f, 1f);
         bgScaleXAnim.setDuration(200);
-        bgScaleXAnim.setInterpolator(DECCELERATE_INTERPOLATOR);
+        bgScaleXAnim.setInterpolator(DECELERATE_INTERPOLATOR);
         android.animation.ObjectAnimator bgAlphaAnim = android.animation.ObjectAnimator.ofFloat(vBgLike, "alpha", 1f, 0f);
         bgAlphaAnim.setDuration(200);
         bgAlphaAnim.setStartDelay(150);
-        bgAlphaAnim.setInterpolator(DECCELERATE_INTERPOLATOR);
+        bgAlphaAnim.setInterpolator(DECELERATE_INTERPOLATOR);
 
         android.animation.ObjectAnimator imgScaleUpYAnim = android.animation.ObjectAnimator.ofFloat(ivLike, "scaleY", 0.1f, 1f);
         imgScaleUpYAnim.setDuration(300);
-        imgScaleUpYAnim.setInterpolator(DECCELERATE_INTERPOLATOR);
+        imgScaleUpYAnim.setInterpolator(DECELERATE_INTERPOLATOR);
         android.animation.ObjectAnimator imgScaleUpXAnim = android.animation.ObjectAnimator.ofFloat(ivLike, "scaleX", 0.1f, 1f);
         imgScaleUpXAnim.setDuration(300);
-        imgScaleUpXAnim.setInterpolator(DECCELERATE_INTERPOLATOR);
+        imgScaleUpXAnim.setInterpolator(DECELERATE_INTERPOLATOR);
 
         android.animation.ObjectAnimator imgScaleDownYAnim = android.animation.ObjectAnimator.ofFloat(ivLike, "scaleY", 1f, 0f);
         imgScaleDownYAnim.setDuration(300);
@@ -420,4 +425,55 @@ public abstract class DMPlayerUtility {
         animatorSet.start();
     }
 
+    public static void downloadImage(Context context, final String url,
+                               final String destDir, final String name, final String format) {
+        Glide.with(context)
+                .load(url)
+                .asBitmap()
+                .toBytes(Bitmap.CompressFormat.JPEG, 100)
+                .into(new SimpleTarget<byte[]>() {
+                    @Override
+                    public void onResourceReady(final byte[] resource, GlideAnimation<? super byte[]> glideAnimation) {
+                        new AsyncTask<Void, Void, Void>() {
+                            @Override
+                            protected Void doInBackground(Void... params) {
+                                File dir = new File(destDir);
+                                File file = new File(destDir + "/" + name + "." + format);
+                                try {
+                                    if (!dir.mkdirs() && (!dir.exists() || !dir.isDirectory())) {
+                                        throw new IOException("Cannot ensure parent directory for file " + file);
+                                    }
+                                    BufferedOutputStream s = new BufferedOutputStream(new FileOutputStream(file));
+                                    s.write(resource);
+                                    s.flush();
+                                    s.close();
+                                } catch (IOException e) {
+                                    e.printStackTrace();
+                                }
+                                return null;
+                            }
+                        }.execute();
+                    }
+                });
+    }
+
+    public static Uri getUriFromPath(final String path) {
+        File file = new File(path);
+
+        return Uri.fromFile(file);
+    }
+
+    public static boolean deleteFile(final String path) {
+        File photo = new File(path);
+
+        return photo.delete();
+    }
+
+    public static void hideKeys(Context context, TextView textView) {
+        textView.setCursorVisible(false);
+
+        InputMethodManager imm = (InputMethodManager) context.getSystemService(Context.INPUT_METHOD_SERVICE);
+        imm.hideSoftInputFromWindow(textView.getWindowToken(),
+                InputMethodManager.HIDE_NOT_ALWAYS);
+    }
 }

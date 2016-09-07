@@ -6,7 +6,7 @@
     android:layout_height="100dp"
     android:gravity="center">
     <Button
-        android:id="@+id/button_login_vk"
+        android:id="@+id/external_login"
         android:layout_width="100dp"
         android:layout_height="50dp"
         android:text="@string/log_in" />

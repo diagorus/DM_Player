@@ -5,29 +5,41 @@ import com.dmplayer.models.VkObjects.VkAudioGetResponce.VkAudioWrapper;
 import com.dmplayer.models.VkObjects.VkPopularAudioResponce.VkPopularCollection;
 import com.dmplayer.models.VkObjects.VkProfileUserDataResponse.VkUserDataCollection;
 
-import java.util.Map;
-
 import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.http.GET;
-import retrofit2.http.QueryMap;
+import retrofit2.http.Query;
 
 public interface VkAPIService {
-        @GET("users.get")
-        Call<VkUserDataCollection> loadUserData(@QueryMap Map<String, String> options);
+        @GET("users.get?v=5.53")
+        Call<VkUserDataCollection> loadUserData(@Query("fields") String fieldList,
+                                                @Query("access_token") String token);
 
-        @GET("audio.getCount")
-        Call<ResponseBody> loadSongsCount(@QueryMap Map<String, String> options);
+        @GET("audio.getCount?v=5.53")
+        Call<ResponseBody> loadSongsCount(@Query("owner_id") String userId,
+                                          @Query("access_token") String token);
 
-        @GET("audio.getAlbums")
-        Call<VkAlbumsWrapper> loadAlbums(@QueryMap Map<String, String> options);
+        @GET("audio.getAlbums?v=5.53")
+        Call<VkAlbumsWrapper> loadAlbums(@Query("offset") String offset,
+                                         @Query("count") String count,
+                                         @Query("owner_id") String userId,
+                                         @Query("access_token") String token);
 
-        @GET("audio.get")
-        Call<VkAudioWrapper> loadAudio(@QueryMap Map<String, String> options);
+        @GET("audio.get?need_user=0&v=5.53")
+        Call<VkAudioWrapper> loadAudio(@Query("album_id") String albumId,
+                                       @Query("offset") String offset,
+                                       @Query("count") String count,
+                                       @Query("owner_id") String userId,
+                                       @Query("access_token") String token);
 
-        @GET("audio.getPopular")
-        Call<VkPopularCollection> loadPopularAudio(@QueryMap Map<String, String> options);
+        @GET("audio.getPopular?only_eng=1&v=5.53")
+        Call<VkPopularCollection> loadPopularAudio(@Query("offset") String offset,
+                                                   @Query("count") String count,
+                                                   @Query("access_token") String token);
 
-        @GET("audio.getRecommendations")
-        Call<VkAudioWrapper> loadRecommendedAudio(@QueryMap Map<String, String> options);
+        @GET("audio.getRecommendations?shuffle=1&v=5.53")
+        Call<VkAudioWrapper> loadRecommendedAudio(@Query("offset") String offset,
+                                                  @Query("count") String count,
+                                                  @Query("owner_id") String userId,
+                                                  @Query("access_token") String token);
 }

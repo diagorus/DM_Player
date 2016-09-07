@@ -5,29 +5,29 @@
  */
 package com.dmplayer.fragments;
 
-import com.dmplayer.R;
-import com.dmplayer.activities.DMPlayerBaseActivity;
-import com.dmplayer.activities.MusicChooserActivity;
-import com.dmplayer.models.SongDetail;
-import com.dmplayer.phonemidea.DMPlayerUtility;
-import com.dmplayer.models.Playlist;
-import com.dmplayer.utility.LogWriter;
-import com.dmplayer.utility.dialogs.ProfileDialog;
-import com.dmplayer.utility.dialogs.ThemeDialog;
-
+import android.app.Activity;
+import android.app.Fragment;
+import android.app.FragmentManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
-import android.app.Fragment;
-import android.app.FragmentManager;
-import android.app.Activity;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+
+import com.dmplayer.R;
+import com.dmplayer.activities.DMPlayerBaseActivity;
+import com.dmplayer.activities.MusicChooserActivity;
+import com.dmplayer.models.Playlist;
+import com.dmplayer.models.SongDetail;
+import com.dmplayer.phonemidea.DMPlayerUtility;
+import com.dmplayer.utility.LogWriter;
+import com.dmplayer.utility.dialogs.ProfileDialog;
+import com.dmplayer.utility.dialogs.ThemeDialog;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -166,7 +166,7 @@ public class FragmentSettings extends Fragment implements View.OnClickListener {
                 break;
 
             case PICKER_REQUEST:
-                if(resultCode==Activity.RESULT_OK){
+                if(resultCode == Activity.RESULT_OK){
                     try {
                         songList = (ArrayList<SongDetail>) returnedIntent.getExtras()
                                 .getSerializable("songs");
@@ -188,7 +188,7 @@ public class FragmentSettings extends Fragment implements View.OnClickListener {
 
     public void setHeaderBackground(String picture) {
         editor = sharedPreferences.edit();
-        editor.putString(HEADER_BACKGROUND, picture.toString()).apply();
+        editor.putString(HEADER_BACKGROUND, picture).apply();
     }
 
     private void showColorChooseDialog() {
@@ -231,7 +231,7 @@ public class FragmentSettings extends Fragment implements View.OnClickListener {
 
     private String copyBackgroundToStorage(Uri picture) {
         File backgroundSource = new File(DMPlayerUtility.getRealPathFromURI(getActivity(), picture));
-        File backgroundDest = new File(ProfileDialog.getPhotoDirectory(getActivity()) + "/" + "header_background" +
+        File backgroundDest = new File(ProfileDialog.PHOTO_DIR_PATH + "/" + "header_background" +
                 backgroundSource
                         .getPath()
                         .substring(backgroundSource

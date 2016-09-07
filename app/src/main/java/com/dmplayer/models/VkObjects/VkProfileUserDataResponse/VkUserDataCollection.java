@@ -17,13 +17,4 @@ public class VkUserDataCollection {
                 "response=" + response +
                 '}';
     }
-
-    public String[] getStringValues() {
-        return new String[] {
-            response[0].getId(),
-            response[0].getFirst_name(),
-            response[0].getLast_name(),
-            response[0].getPhoto_100()
-        };
-    }
 }

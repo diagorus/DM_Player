@@ -9,8 +9,7 @@ import com.dmplayer.R;
 import com.dmplayer.models.ExternalProfileObject;
 
 public class ExternalProfileLayout extends LinearLayout implements SwappingLayoutController {
-
-    private ChildForSwapping startingLayout;
+    private LogInViewChild startingLayout;
     private ProfileViewChild swappingLayout;
     private ChildForSwapping loadingLayout;
 
@@ -46,7 +45,7 @@ public class ExternalProfileLayout extends LinearLayout implements SwappingLayou
             a.recycle();
         }
 
-        startingLayout = new ChildForSwapping(getContext(), startingLayoutRes);
+        startingLayout = new LogInViewChild(getContext(), startingLayoutRes);
         loadingLayout = new ChildForSwapping(getContext(), loadingLayoutRes);
         swappingLayout = new ProfileViewChild(getContext(), swappingLayoutRes);
         if (!isSwapped)
@@ -80,20 +79,28 @@ public class ExternalProfileLayout extends LinearLayout implements SwappingLayou
 
     @Override
     public void onLogInFinished(ExternalProfileObject profile) {
+        isSwapped = true;
+
         setSecondLayout();
         swappingLayout.setProfile(profile);
     }
 
     @Override
     public void onLoggedOut() {
+        isSwapped = false;
+
         setFirstLayout();
     }
 
-//    public void setOnRefreshButtonListener(OnClickListener onClickListener) {
-//        swappingLayout.setOnRefreshListener(onClickListener);
-//    }
-//
-//    public void setOnLogOutButtonListener(OnClickListener onClickListener) {
-//        swappingLayout.setOnLogOutListener(onClickListener);
-//    }
+    public void setOnLogInListener(OnClickListener l) {
+        startingLayout.setOnLogInListener(l);
+    }
+
+    public void setOnRefreshListener(OnClickListener l) {
+        swappingLayout.setOnRefreshListener(l);
+    }
+
+    public void setOnLogOutListener(OnClickListener l) {
+        swappingLayout.setOnLogOutListener(l);
+    }
 }

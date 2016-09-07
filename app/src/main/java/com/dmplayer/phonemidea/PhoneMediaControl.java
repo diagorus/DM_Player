@@ -5,16 +5,6 @@
  */
 package com.dmplayer.phonemidea;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
-
-import android.app.Activity;
 import android.content.Context;
 import android.database.Cursor;
 import android.net.Uri;
@@ -23,24 +13,15 @@ import android.provider.MediaStore;
 import android.util.Log;
 
 import com.dmplayer.ApplicationDMPlayer;
-import com.dmplayer.converters.VkToSongDetailConverter;
 import com.dmplayer.dbhandler.FavoritePlayTableHelper;
 import com.dmplayer.dbhandler.MostAndRecentPlayTableHelper;
-import com.dmplayer.internetservices.VkAPIService;
 import com.dmplayer.manager.MediaController;
-import com.dmplayer.models.SongDetail;
 import com.dmplayer.models.Playlist;
-import com.dmplayer.models.VkAlbumObject;
-import com.dmplayer.models.VkObjects.VkAlbumsResponse.VkAlbumsWrapper;
-import com.dmplayer.models.VkObjects.VkAudioGetResponce.VkAudioWrapper;
-import com.dmplayer.models.VkObjects.VkAudioObject;
-import com.dmplayer.models.VkObjects.VkPopularAudioResponce.VkPopularCollection;
-import com.dmplayer.utility.VkSettings;
+import com.dmplayer.models.SongDetail;
 
-import retrofit2.Call;
-import retrofit2.Response;
-import retrofit2.Retrofit;
-import retrofit2.converter.gson.GsonConverterFactory;
+import java.io.FileInputStream;
+import java.io.ObjectInputStream;
+import java.util.ArrayList;
 
 public class PhoneMediaControl {
 

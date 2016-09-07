@@ -45,6 +45,7 @@ import com.dmplayer.manager.MediaController;
 import com.dmplayer.manager.NotificationManager;
 import com.dmplayer.models.Playlist;
 import com.dmplayer.models.SongDetail;
+import com.dmplayer.models.VkObjects.VkAccount;
 import com.dmplayer.models.VkObjects.VkAudioGetResponce.VkAudioWrapper;
 import com.dmplayer.models.VkObjects.VkAudioObject;
 import com.dmplayer.models.VkObjects.VkPlaylist;
@@ -59,7 +60,6 @@ import com.dmplayer.slidinguppanelhelper.SlidingUpPanelLayout;
 import com.dmplayer.uicomponent.ExpandableHeightListView;
 import com.dmplayer.uicomponent.PlayPauseView;
 import com.dmplayer.uicomponent.Slider;
-import com.dmplayer.utility.VkSettings;
 import com.nineoldandroids.animation.AnimatorSet;
 import com.nineoldandroids.animation.ObjectAnimator;
 import com.nineoldandroids.view.ViewHelper;
@@ -73,10 +73,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 
 import retrofit2.Call;
 import retrofit2.Response;
@@ -435,16 +433,9 @@ public class PlaylistActivity extends AppCompatActivity implements View.OnClickL
 
             @Override
             protected ArrayList<SongDetail> doInBackground(Void... voids) {
-                Map<String, String> optionsForAlbum = new HashMap<>();
-                optionsForAlbum.put("owner_id", vkUserId);
-                optionsForAlbum.put("album_id", albumId);
-                optionsForAlbum.put("need_user", "0");
-                optionsForAlbum.put("offset", String.valueOf(offset));
-                optionsForAlbum.put("count", String.valueOf(count));
-                optionsForAlbum.put("access_token", vkAccessToken);
-                optionsForAlbum.put("v", "5.53");
 
-                Call<VkAudioWrapper> callForAlbum = service.loadAudio(optionsForAlbum);
+                Call<VkAudioWrapper> callForAlbum = service.loadAudio(albumId, String.valueOf(offset),
+                        String.valueOf(count), vkUserId, vkAccessToken);
 
                 Response<VkAudioWrapper> responseAlbum = null;
                 try {
@@ -496,15 +487,8 @@ public class PlaylistActivity extends AppCompatActivity implements View.OnClickL
 
             @Override
             protected ArrayList<SongDetail> doInBackground(Void... voids) {
-                Map<String, String> optionsForPopular = new HashMap<>();
-                optionsForPopular.put("only_eng", "1");
-                optionsForPopular.put("genre_id", "");
-                optionsForPopular.put("offset", String.valueOf(offset));
-                optionsForPopular.put("count", String.valueOf(count));
-                optionsForPopular.put("access_token", vkAccessToken);
-                optionsForPopular.put("v", "5.53");
-
-                Call<VkPopularCollection> callForPopular = service.loadPopularAudio(optionsForPopular);
+                Call<VkPopularCollection> callForPopular = service.loadPopularAudio(String.valueOf(offset),
+                        String.valueOf(count), vkAccessToken);
 
                 Response<VkPopularCollection> responsePopular = null;
                 try {
@@ -558,16 +542,8 @@ public class PlaylistActivity extends AppCompatActivity implements View.OnClickL
 
             @Override
             protected ArrayList<SongDetail> doInBackground(Void... voids) {
-                Map<String, String> optionsForRecommended = new HashMap<>();
-                optionsForRecommended.put("target_audio", "");
-                optionsForRecommended.put("user_id", vkUserId);
-                optionsForRecommended.put("offset", String.valueOf(offset));
-                optionsForRecommended.put("count", String.valueOf(count));
-                optionsForRecommended.put("shuffle", "1");
-                optionsForRecommended.put("access_token", vkAccessToken);
-                optionsForRecommended.put("v", "5.53");
-
-                Call<VkAudioWrapper> callForRecommended = service.loadRecommendedAudio(optionsForRecommended);
+                Call<VkAudioWrapper> callForRecommended = service.loadRecommendedAudio(String.valueOf(offset),
+                        String.valueOf(count), vkUserId, vkAccessToken);
 
                 Response<VkAudioWrapper> responseRecommended = null;
                 try {
@@ -608,7 +584,7 @@ public class PlaylistActivity extends AppCompatActivity implements View.OnClickL
 
     private void createApiService() {
         Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl(VkSettings.VK_API_URL)
+                .baseUrl(VkAccount.VK_API_URL)
                 .addConverterFactory(GsonConverterFactory.create())
                 .build();
 

@@ -2,18 +2,17 @@ package com.dmplayer.utility.dialogs;
 
 import android.app.Activity;
 import android.app.AlertDialog;
-import android.content.DialogInterface;
-import android.content.Intent;
-import android.graphics.Bitmap;
-import android.net.Uri;
-import android.os.AsyncTask;
-import android.os.Environment;
-import android.provider.MediaStore;
 import android.app.DialogFragment;
 import android.content.Context;
+import android.content.DialogInterface;
+import android.content.DialogInterface.OnClickListener;
+import android.content.Intent;
 import android.content.SharedPreferences;
+import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
+import android.os.Environment;
+import android.provider.MediaStore;
 import android.text.InputType;
 import android.util.Log;
 import android.view.KeyEvent;
@@ -22,21 +21,15 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.view.inputmethod.EditorInfo;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
-import android.content.DialogInterface.OnClickListener;
-import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.bumptech.glide.Glide;
-import com.bumptech.glide.request.animation.GlideAnimation;
-import com.bumptech.glide.request.target.SimpleTarget;
 import com.dmplayer.R;
 import com.dmplayer.fragments.FragmentSettings;
 import com.dmplayer.models.ExternalMusicAccount;
-import com.dmplayer.models.VkAccount;
+import com.dmplayer.models.VkObjects.VkAccount;
 import com.dmplayer.phonemidea.DMPlayerUtility;
 import com.dmplayer.uicomponent.CircleImageView;
 import com.dmplayer.uicomponent.SwappingLayout.ExternalProfileLayout;
@@ -46,32 +39,29 @@ import com.vk.sdk.VKScope;
 import com.vk.sdk.VKSdk;
 import com.vk.sdk.api.VKError;
 
-import java.io.BufferedOutputStream;
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
 
-public class ProfileDialog extends DialogFragment implements View.OnClickListener {
+public class ProfileDialog extends DialogFragment {
     private Button buttonOK, buttonCancel;
-    private Button buttonLoginVk;
-    private ImageView imageViewLogOut, imageViewRefresh;
-    private TextView vkName;
-    private TextView vkSongs;
-    private TextView vkAlbums;
     private EditText nickName;
     private CircleImageView avatar;
-    private CircleImageView vkAvatar;
     private View view;
     private ExternalProfileLayout vkProfile;
+
+    ExternalMusicAccount vkAccount;
 
     private SharedPreferences sharedPreferences;
     private SharedPreferences.Editor editor;
     private Uri photoFromGallery;
 
-    private static File photoDirectory;
+    public final static String PHOTO_DIR_PATH = Environment.getExternalStorageDirectory() + "/.DM_Player/DM_Player_photos";
+    public final static String AVATAR_FILE_PATH = PHOTO_DIR_PATH + "/photo_avatar.jpg";
+    public final static String AVATAR_TEMP_FILE_PATH = PHOTO_DIR_PATH + "/photo_avatar_temp.jpg";
+    public final static String AVATAR_VK_FILE_PATH = PHOTO_DIR_PATH + "/vk_photo.jpg";
 
     private String TAG = "ProfileDialog_Error";
     public final static String VK_DATA = "VK_DATA";
@@ -95,33 +85,10 @@ public class ProfileDialog extends DialogFragment implements View.OnClickListene
         view = inflater.inflate(R.layout.profile_dialog, null);
 
         getDialog().requestWindowFeature(Window.FEATURE_NO_TITLE);
+
         init();
 
         return view;
-    }
-
-    @Override
-    public void onClick(View v) {
-        switch (v.getId()) {
-            case R.id.buttonOK:
-                new SaveDataTask(getActivity()).execute();
-                if (getOnWorkDone() != null)
-                    getOnWorkDone().onPositiveAnswer();
-                break;
-            case R.id.buttonCancel:
-                deletePhoto(generateAvatarUri(getActivity(), true).getPath());
-                if (getOnWorkDone() != null)
-                    getOnWorkDone().onNegativeAnswer();
-                getDialog().dismiss();
-                break;
-            case  R.id.profile_dialog_name:
-                nickName.setCursorVisible(true);
-                nickName.setInputType(InputType.TYPE_CLASS_TEXT);
-                break;
-            case R.id.profile_dialog_avatar:
-                setupAndRunAvatarDialog();
-                break;
-        }
     }
 
     @Override
@@ -136,10 +103,10 @@ public class ProfileDialog extends DialogFragment implements View.OnClickListene
             public void onResult(VKAccessToken res) {
                 isJustLoggedViaVk = true;
                 isVkLoggedOut = false;
-                ExternalMusicAccount vkAccount = new VkAccount.Builder()
+
+                vkAccount = new VkAccount.Builder()
                         .setToken(res.accessToken)
                         .setUserId(res.userId)
-                        .setSwappingLayoutController(vkProfile)
                         .build();
                 vkAccount.loadProfile();
             }
@@ -171,7 +138,7 @@ public class ProfileDialog extends DialogFragment implements View.OnClickListene
                 if (resultCode == Activity.RESULT_OK) {
                     isAvatarChanged = true;
 
-                    Uri tempAvatarUri = generateAvatarUri(getActivity(), true);
+                    Uri tempAvatarUri = DMPlayerUtility.getUriFromPath(AVATAR_TEMP_FILE_PATH);
                     DMPlayerUtility.settingPicture(avatar, tempAvatarUri);
                 }
                 break;
@@ -183,16 +150,45 @@ public class ProfileDialog extends DialogFragment implements View.OnClickListene
         buttonCancel = (Button) view.findViewById(R.id.buttonCancel);
         nickName = (EditText) view.findViewById(R.id.profile_dialog_name);
         avatar = (CircleImageView) view.findViewById(R.id.profile_dialog_avatar);
+
         vkProfile = (ExternalProfileLayout) view.findViewById(R.id.vk_profile);
 
-        buttonOK.setOnClickListener(this);
-        buttonCancel.setOnClickListener(this);
-        nickName.setOnClickListener(this);
+        buttonOK.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                new SaveDataTask(getActivity()).execute();
+
+                if (getOnWorkDone() != null) {
+                    getOnWorkDone().onPositiveAnswer();
+                }
+            }
+        });
+
+        buttonCancel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                DMPlayerUtility.deleteFile(DMPlayerUtility.getUriFromPath(AVATAR_TEMP_FILE_PATH).getPath());
+
+                if (getOnWorkDone() != null)
+                    getOnWorkDone().onNegativeAnswer();
+
+                getDialog().dismiss();
+            }
+        });
+
+        nickName.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                nickName.setCursorVisible(true);
+                nickName.setInputType(InputType.TYPE_CLASS_TEXT);
+            }
+        });
+
         nickName.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
             public boolean onEditorAction(TextView textView, int i, KeyEvent keyEvent) {
                 if (i == EditorInfo.IME_ACTION_DONE) {
-                    hideKeys();
+                    DMPlayerUtility.hideKeys(ProfileDialog.this.getActivity(), nickName);
 
                     return true;
                 }
@@ -200,81 +196,81 @@ public class ProfileDialog extends DialogFragment implements View.OnClickListene
             }
         });
 
-        avatar.setOnClickListener(this);
+        avatar.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                showAvatarDialog();
+            }
+        });
 
-        setDefaultSettings();
-    }
-
-    void initForVkProfileFirst() {
-        buttonLoginVk = (Button) view.findViewById(R.id.button_login_vk);
-        buttonLoginVk.setOnClickListener(new View.OnClickListener() {
+        vkProfile.setOnLogInListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 VKSdk.login(ProfileDialog.this, VKScope.AUDIO, VKScope.OFFLINE);
             }
         });
-    }
 
-    void initForVkProfileSecond() {
-        vkAvatar = (CircleImageView) view.findViewById(R.id.external_avatar);
-        vkName = (TextView) view.findViewById(R.id.external_nickname);
-        vkSongs = (TextView) view.findViewById(R.id.external_songsCount);
-        vkAlbums = (TextView) view.findViewById(R.id.external_albumsCount);
-        imageViewLogOut = (ImageView) view.findViewById(R.id.external_logout);
-        imageViewRefresh = (ImageView) view.findViewById(R.id.external_refresh);
-
-        imageViewRefresh.setOnClickListener(new View.OnClickListener() {
+        vkProfile.setOnRefreshListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 isVkRefreshed = true;
-
-                String accessToken = sharedPreferences.getString("VKACCESSTOKEN", "");
-                String userId = sharedPreferences.getString("VKUSERID", "");
+                vkAccount.loadProfile();
             }
         });
-        imageViewLogOut.setOnClickListener(new View.OnClickListener() {
+
+        vkProfile.setOnLogOutListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 isVkLoggedOut = true;
                 isJustLoggedViaVk = false;
                 isVkRefreshed = false;
 
-                initForVkProfileFirst();
+                vkProfile.onLoggedOut();
             }
         });
+
+        setDefaultSettings();
     }
 
     private void setDefaultSettings() {
-        String avatarPhoto =  sharedPreferences.getString(FragmentSettings.AVATAR, "");
-        String nameText = sharedPreferences.getString(FragmentSettings.NAME, "");
-        boolean isLoggedViaVk = sharedPreferences.getBoolean(LOGGED_VK, false);
+        setAvatar();
+        setName();
+        setVk();
+    }
 
+    private void setAvatar() {
+        String avatarPhoto =  sharedPreferences.getString(FragmentSettings.AVATAR, "");
         Uri avatarPhotoUri = Uri.parse(avatarPhoto);
+
         if (DMPlayerUtility.isURIExists(avatarPhotoUri)) {
             DMPlayerUtility.settingPicture(avatar, avatarPhotoUri);
         } else {
             DMPlayerUtility.settingPicture(avatar, R.drawable.profile_default_avatar);
         }
+    }
+
+    private void setName() {
+        String nameText = sharedPreferences.getString(FragmentSettings.NAME, "");
 
         if (!nameText.equals(""))
             nickName.setText(nameText);
         else
             nickName.setText(R.string.profile_defult_name);
 
-        if (isLoggedViaVk) {
-            initForVkProfileSecond();
+        initialName = nickName.getText().toString();
+    }
 
+    private void setVk() {
+        boolean isLoggedViaVk = sharedPreferences.getBoolean(LOGGED_VK, false);
+
+        if (isLoggedViaVk) {
             setVkData();
 
-            vkName.setText(vkData.get("vkname") + " " + vkData.get("vksurname"));
-            vkSongs.setText("Songs: " + vkData.get("vksongscount"));
-            vkAlbums.setText("Albums: " + vkData.get("vkalbumscount"));
-            DMPlayerUtility.settingPicture(vkAvatar, Uri.parse(vkData.get("vkphotouri")));
-        } else {
-            initForVkProfileFirst();
+//            vkName.setText(vkData.get("vkname") + " " + vkData.get("vksurname"));
+//            vkSongs.setText("Songs: " + vkData.get("vksongscount"));
+//            vkAlbums.setText("Albums: " + vkData.get("vkalbumscount"));
+//            DMPlayerUtility.settingPicture(vkAvatar, Uri.parse(vkData.get("vkphotouri")));
         }
-
-        initialName = nickName.getText().toString();
     }
 
     private void setVkData() {
@@ -289,7 +285,7 @@ public class ProfileDialog extends DialogFragment implements View.OnClickListene
         vkData.put("vkalbumscount", sharedPreferences.getString("VKALBUMSCOUNT", ""));
     }
 
-    void setupAndRunAvatarDialog() {
+    void showAvatarDialog() {
         AlertDialog.Builder adb = new AlertDialog.Builder(getActivity());
         adb.setTitle("Photo");
         String[] titles = {"Take photo from camera", "Choose from gallery"};
@@ -299,7 +295,7 @@ public class ProfileDialog extends DialogFragment implements View.OnClickListene
                 switch (i) {
                     case 0:
                         Intent toCamera = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-                        toCamera.putExtra(MediaStore.EXTRA_OUTPUT, generateAvatarUri(getActivity(), true));
+                        toCamera.putExtra(MediaStore.EXTRA_OUTPUT, DMPlayerUtility.getUriFromPath(AVATAR_TEMP_FILE_PATH));
                         startActivityForResult(toCamera, FragmentSettings.CAMERA_REQUEST);
 
                         isAvatarChanged = true;
@@ -316,41 +312,6 @@ public class ProfileDialog extends DialogFragment implements View.OnClickListene
         };
         adb.setItems(titles, ocl);
         adb.show();
-    }
-
-    @NonNull
-    public static String getPhotoDirectory(Context context) {
-        photoDirectory = new File(
-                Environment.getExternalStorageDirectory() + "/.DM_Player/",
-                "DM_Player_photos");
-        if (!photoDirectory.exists())
-            photoDirectory.mkdirs();
-        return photoDirectory.getPath();
-    }
-
-    private Uri generateAvatarUri(Context context, boolean isTemp) {
-        File file = new File(getPhotoDirectory(context) + "/" + "photo_avatar" + ((isTemp)? "_new" : "") +".jpg");
-
-        return Uri.fromFile(file);
-    }
-
-    private Uri generateVkAvatarUri() {
-        File file = new File(getPhotoDirectory(getActivity()) + "/" + "vk_photo" +".jpg");
-
-        return Uri.fromFile(file);
-    }
-
-    private boolean deletePhoto(String path) {
-        File photo = new File(path);
-        return photo.delete();
-    }
-
-    private void hideKeys() {
-        nickName.setCursorVisible(false);
-
-        InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
-        imm.hideSoftInputFromWindow(nickName.getWindowToken(),
-                InputMethodManager.HIDE_NOT_ALWAYS);
     }
 
     private void rememberVkUser(String accessToken, String userId) {
@@ -381,9 +342,8 @@ public class ProfileDialog extends DialogFragment implements View.OnClickListene
 
         @Override
         protected Void doInBackground(Void... voids) {
-
             if (isAvatarChanged) {
-                File avatarPhoto = new File(generateAvatarUri(context ,false).getPath());
+                File avatarPhoto = new File(DMPlayerUtility.getUriFromPath(AVATAR_FILE_PATH).getPath());
                 switch (where) {
                     case FragmentSettings.GALLERY_REQUEST:
                         File pictureToCopy = new File(
@@ -394,10 +354,10 @@ public class ProfileDialog extends DialogFragment implements View.OnClickListene
                             Log.e(TAG, e.getMessage());
                         }
 
-                        deletePhoto(generateAvatarUri(context, true).getPath());
+                        DMPlayerUtility.deleteFile(DMPlayerUtility.getUriFromPath(AVATAR_TEMP_FILE_PATH).getPath());
                         break;
                     case FragmentSettings.CAMERA_REQUEST:
-                        File photoTaken = new File(generateAvatarUri(context, true).getPath());
+                        File photoTaken = new File(DMPlayerUtility.getUriFromPath(AVATAR_TEMP_FILE_PATH).getPath());
                         photoTaken.renameTo(avatarPhoto);
 
                         break;
@@ -405,11 +365,9 @@ public class ProfileDialog extends DialogFragment implements View.OnClickListene
 
                 editor.putString(FragmentSettings.AVATAR, avatarPhoto.toURI().toString());
             }
-
             if (isNameChanged) {
                 editor.putString(FragmentSettings.NAME, currentName);
             }
-
             if (isVkLoggedOut) {
                 editor.putBoolean(LOGGED_VK, false);
 
@@ -419,11 +377,10 @@ public class ProfileDialog extends DialogFragment implements View.OnClickListene
 
                 vkData = null;
             }
-
             if (isJustLoggedViaVk || isVkRefreshed) {
                 editor.putBoolean(LOGGED_VK, true);
 
-                vkData.put("vkphotouri", generateVkAvatarUri().toString());
+                vkData.put("vkphotouri", DMPlayerUtility.getUriFromPath(AVATAR_VK_FILE_PATH).toString());
 
                 for (String key : vkData.keySet()) {
                     editor.putString(key.toUpperCase(), vkData.get(key));
@@ -439,47 +396,16 @@ public class ProfileDialog extends DialogFragment implements View.OnClickListene
 
             if (isJustLoggedViaVk || isVkRefreshed) {
                 String vkAvatarUrl = vkData.get("vkphotourl");
-                downloadVkAvatar(context, vkAvatarUrl);
+                DMPlayerUtility.downloadImage(context, vkAvatarUrl, PHOTO_DIR_PATH, "vk_photo", "jpg");
             }
 
             if (isVkLoggedOut) {
-                deletePhoto(generateVkAvatarUri().getPath());
+                DMPlayerUtility.deleteFile(DMPlayerUtility.getUriFromPath(AVATAR_VK_FILE_PATH).getPath());
             }
 
             if (isDataChanged() || isVkRefreshed || isVkLoggedOut) {
                 editor.apply();
             }
-        }
-
-        private void downloadVkAvatar(final Context context, String url) {
-            Glide.with(context)
-                    .load(url)
-                    .asBitmap()
-                    .toBytes(Bitmap.CompressFormat.JPEG, 100)
-                    .into(new SimpleTarget<byte[]>() {
-                        @Override
-                        public void onResourceReady(final byte[] resource, GlideAnimation<? super byte[]> glideAnimation) {
-                            new AsyncTask<Void, Void, Void>() {
-                                @Override
-                                protected Void doInBackground(Void... params) {
-                                    File dir = new File(getPhotoDirectory(context));
-                                    File file = new File(getPhotoDirectory(context) + "/" + "vk_photo" +".jpg");
-                                    try {
-                                        if (!dir.mkdirs() && (!dir.exists() || !dir.isDirectory())) {
-                                            throw new IOException("Cannot ensure parent directory for file " + file);
-                                        }
-                                        BufferedOutputStream s = new BufferedOutputStream(new FileOutputStream(file));
-                                        s.write(resource);
-                                        s.flush();
-                                        s.close();
-                                    } catch (IOException e) {
-                                        e.printStackTrace();
-                                    }
-                                    return null;
-                                }
-                            }.execute();
-                        }
-                    });
         }
 
         private boolean isDataChanged() {
