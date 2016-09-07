@@ -29,6 +29,7 @@ import android.widget.Toast;
 import com.dmplayer.R;
 import com.dmplayer.fragments.FragmentSettings;
 import com.dmplayer.models.ExternalMusicAccount;
+import com.dmplayer.models.ExternalProfileObject;
 import com.dmplayer.models.VkObjects.VkAccount;
 import com.dmplayer.phonemidea.DMPlayerUtility;
 import com.dmplayer.uicomponent.CircleImageView;
@@ -266,10 +267,10 @@ public class ProfileDialog extends DialogFragment {
         if (isLoggedViaVk) {
             setVkData();
 
-//            vkName.setText(vkData.get("vkname") + " " + vkData.get("vksurname"));
-//            vkSongs.setText("Songs: " + vkData.get("vksongscount"));
-//            vkAlbums.setText("Albums: " + vkData.get("vkalbumscount"));
-//            DMPlayerUtility.settingPicture(vkAvatar, Uri.parse(vkData.get("vkphotouri")));
+            ExternalProfileObject profileObject = new ExternalProfileObject(vkData.get("vkphotourl"),
+                    vkData.get("vknickname"), vkData.get("vksongscount"), vkData.get("vkalbumscount"));
+
+            vkProfile.onLogInFinished(profileObject);
         }
     }
 
@@ -277,8 +278,7 @@ public class ProfileDialog extends DialogFragment {
         vkData = new HashMap<>();
         vkData.put("vkaccesstoken", sharedPreferences.getString("VKACCESSTOKEN", ""));
         vkData.put("vkuserid", sharedPreferences.getString("VKUSERID", ""));
-        vkData.put("vkname", sharedPreferences.getString("VKNAME", ""));
-        vkData.put("vksurname", sharedPreferences.getString("VKSURNAME", ""));
+        vkData.put("vknickname", sharedPreferences.getString("VKNICKNAME", ""));
         vkData.put("vkphotourl", sharedPreferences.getString("VKPHOTOURL", ""));
         vkData.put("vkphotouri", sharedPreferences.getString("VKPHOTOURI", ""));
         vkData.put("vksongscount", sharedPreferences.getString("VKSONGSCOUNT", ""));
@@ -312,13 +312,6 @@ public class ProfileDialog extends DialogFragment {
         };
         adb.setItems(titles, ocl);
         adb.show();
-    }
-
-    private void rememberVkUser(String accessToken, String userId) {
-        sharedPreferences.edit()
-                .putString("VKACCESSTOKEN", accessToken)
-                .putString("VKUSERID", userId)
-                .apply();
     }
 
     private class SaveDataTask extends AsyncTask<Void, Void, Void> {

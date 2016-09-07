@@ -17,8 +17,6 @@ public class ProfileViewChild extends ChildForSwapping implements ExternalProfil
     ImageView refresh;
     ImageView logOut;
 
-    ExternalProfileObject loggedProfile;
-
     public ProfileViewChild(Context context, int layoutId) {
         super(context, layoutId);
         init();
@@ -46,8 +44,6 @@ public class ProfileViewChild extends ChildForSwapping implements ExternalProfil
 
     @Override
     public void setProfile(ExternalProfileObject profile) {
-        loggedProfile = profile;
-
         nickname.setText(profile.getNickname());
         Glide.with(getContext()).load(profile.getPhotoUrl()).into(avatar);
         songsCount.setText("Songs: " + profile.getSongsCount());
