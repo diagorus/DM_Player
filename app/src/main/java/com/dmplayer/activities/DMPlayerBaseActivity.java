@@ -1,6 +1,8 @@
 package com.dmplayer.activities;
 
 import android.annotation.TargetApi;
+import android.app.FragmentManager;
+import android.app.FragmentTransaction;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
@@ -10,8 +12,6 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
-import android.app.FragmentManager;
-import android.app.FragmentTransaction;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
@@ -27,7 +27,6 @@ import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 import android.view.Window;
 import android.view.WindowManager;
-import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -37,9 +36,9 @@ import com.dmplayer.adapter.DrawerAdapter;
 import com.dmplayer.fragments.FragmentChat;
 import com.dmplayer.fragments.FragmentEqualizer;
 import com.dmplayer.fragments.FragmentFavorite;
-import com.dmplayer.fragments.FragmentStream;
 import com.dmplayer.fragments.FragmentLibrary;
 import com.dmplayer.fragments.FragmentSettings;
+import com.dmplayer.fragments.FragmentStream;
 import com.dmplayer.manager.MediaController;
 import com.dmplayer.manager.MusicPreferance;
 import com.dmplayer.manager.NotificationManager;
@@ -59,7 +58,6 @@ import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.display.FadeInBitmapDisplayer;
 import com.nostra13.universalimageloader.core.listener.ImageLoadingListener;
 import com.nostra13.universalimageloader.core.listener.SimpleImageLoadingListener;
-import com.vk.sdk.util.VKUtil;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -132,6 +130,7 @@ public class DMPlayerBaseActivity extends AppCompatActivity implements View.OnCl
         sharedPreferences = getSharedPreferences("VALUES", Context.MODE_PRIVATE);
 
         initSlidingUpPanel();
+        header();
 
         setFragment(0);
 
@@ -178,6 +177,7 @@ public class DMPlayerBaseActivity extends AppCompatActivity implements View.OnCl
 
     @Override
     public void onClick(View v) {
+
         switch (v.getId()) {
             case R.id.bottombar_play:
             case R.id.btn_play:
