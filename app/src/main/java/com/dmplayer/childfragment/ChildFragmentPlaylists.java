@@ -6,12 +6,12 @@
 package com.dmplayer.childfragment;
 
 import android.app.Activity;
+import android.app.Fragment;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.os.Bundle;
-import android.app.Fragment;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -23,15 +23,12 @@ import android.widget.TextView;
 import com.dmplayer.R;
 import com.dmplayer.activities.PlaylistActivity;
 import com.dmplayer.internetservices.VkAPIService;
-import com.dmplayer.models.ExternalMusicAccount;
 import com.dmplayer.models.Playlist;
-import com.dmplayer.models.VkObjects.VkAccount;
 import com.dmplayer.utility.LogWriter;
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.ImageLoader;
 
 import java.util.ArrayList;
-import java.util.List;
 
 public class ChildFragmentPlaylists extends Fragment {
 
@@ -45,8 +42,6 @@ public class ChildFragmentPlaylists extends Fragment {
     private SharedPreferences sharedPreferences;
 
     private static final String TAG = "ChildFragmentPlaylists";
-
-    ExternalMusicAccount vkAccount;
 
     public static ChildFragmentPlaylists newInstance(int position, Context mContext) {
         ChildFragmentPlaylists f = new ChildFragmentPlaylists();
@@ -79,20 +74,13 @@ public class ChildFragmentPlaylists extends Fragment {
     private void loadVkPlaylists() {
         setupVkAccount();
 
-        List<Playlist> vkPlaylists = vkAccount.loadMusicListsToShow();
-
-        playlists.addAll(vkPlaylists);
-        playlistsAdapter.notifyDataSetChanged();
+//        playlists.addAll();
+//        playlistsAdapter.notifyDataSetChanged();
     }
 
     private void setupVkAccount() {
         String userId = sharedPreferences.getString("VKUSERID", "");
         String token = sharedPreferences.getString("VKACCESSTOKEN", "");
-
-        vkAccount = new VkAccount.Builder()
-                .setUserId(userId)
-                .setToken(token)
-                .build();
     }
 
     public class PlaylistsAdapter extends RecyclerView.Adapter<PlaylistsAdapter.ViewHolder> {

@@ -11,8 +11,9 @@ import retrofit2.http.GET;
 import retrofit2.http.Query;
 
 public interface VkAPIService {
-        @GET("users.get?v=5.53")
+        @GET("users.get?v=5.53&name_case=nom")
         Call<VkUserDataCollection> loadUserData(@Query("fields") String fieldList,
+                                                @Query("user_ids") String userIds,
                                                 @Query("access_token") String token);
 
         @GET("audio.getCount?v=5.53")

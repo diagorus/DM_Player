@@ -49,13 +49,17 @@ import java.io.OutputStream;
 import java.util.Formatter;
 import java.util.Locale;
 
-public abstract class DMPlayerUtility {
+public class DMPlayerUtility {
 
     private static final String TAG = "MusicUtils";
 
     private static StringBuilder sFormatBuilder = new StringBuilder();
     private static Formatter sFormatter = new Formatter(sFormatBuilder, Locale.getDefault());
     private static final Object[] sTimeArgs = new Object[5];
+
+    private DMPlayerUtility() {
+        throw new AssertionError();
+    }
 
     @NonNull
     public static String makeAlbumsLabel(Context context, int numalbums, int numsongs, boolean isUnknown) {
@@ -426,7 +430,7 @@ public abstract class DMPlayerUtility {
     }
 
     public static void downloadImage(Context context, final String url,
-                               final String destDir, final String name, final String format) {
+                               final String destDir, final String name) {
         Glide.with(context)
                 .load(url)
                 .asBitmap()
@@ -438,7 +442,7 @@ public abstract class DMPlayerUtility {
                             @Override
                             protected Void doInBackground(Void... params) {
                                 File dir = new File(destDir);
-                                File file = new File(destDir + "/" + name + "." + format);
+                                File file = new File(destDir + "/" + name + ".jpg");
                                 try {
                                     if (!dir.mkdirs() && (!dir.exists() || !dir.isDirectory())) {
                                         throw new IOException("Cannot ensure parent directory for file " + file);
@@ -455,6 +459,32 @@ public abstract class DMPlayerUtility {
                         }.execute();
                     }
                 });
+    }
+
+    public static void saveBitmap(Bitmap btm, final String destDir, final String name) {
+        File dir = new File(destDir);
+        File file = new File(destDir + "/" + name + ".png");
+
+        FileOutputStream out = null;
+        try {
+            if (!dir.mkdirs() && (!dir.exists() || !dir.isDirectory())) {
+                throw new IOException("Cannot ensure parent directory for file " + file);
+            }
+
+            out = new FileOutputStream(file);
+            btm.compress(Bitmap.CompressFormat.PNG, 100, out);
+            // PNG is a lossless format, the compression factor (100) is ignored
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                if (out != null) {
+                    out.close();
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
     }
 
     public static Uri getUriFromPath(final String path) {

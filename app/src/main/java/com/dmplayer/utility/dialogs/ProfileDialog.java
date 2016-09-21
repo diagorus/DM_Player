@@ -28,12 +28,11 @@ import android.widget.Toast;
 
 import com.dmplayer.R;
 import com.dmplayer.fragments.FragmentSettings;
-import com.dmplayer.models.ExternalMusicAccount;
-import com.dmplayer.models.ExternalProfileObject;
-import com.dmplayer.models.VkObjects.VkAccount;
 import com.dmplayer.phonemidea.DMPlayerUtility;
 import com.dmplayer.uicomponent.CircleImageView;
-import com.dmplayer.uicomponent.SwappingLayout.ExternalProfileLayout;
+import com.dmplayer.utility.ExternalAccount.core.ExternalAccountViewInternalCallbacks;
+import com.dmplayer.utility.ExternalAccount.implementation.VkAccountPresenter;
+import com.dmplayer.utility.ExternalAccount.implementation.VkAccountView;
 import com.vk.sdk.VKAccessToken;
 import com.vk.sdk.VKCallback;
 import com.vk.sdk.VKScope;
@@ -42,41 +41,30 @@ import com.vk.sdk.api.VKError;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
-
 
 public class ProfileDialog extends DialogFragment {
-    private Button buttonOK, buttonCancel;
-    private EditText nickName;
-    private CircleImageView avatar;
-    private View view;
-    private ExternalProfileLayout vkProfile;
-
-    ExternalMusicAccount vkAccount;
-
-    private SharedPreferences sharedPreferences;
-    private SharedPreferences.Editor editor;
-    private Uri photoFromGallery;
-
     public final static String PHOTO_DIR_PATH = Environment.getExternalStorageDirectory() + "/.DM_Player/DM_Player_photos";
     public final static String AVATAR_FILE_PATH = PHOTO_DIR_PATH + "/photo_avatar.jpg";
     public final static String AVATAR_TEMP_FILE_PATH = PHOTO_DIR_PATH + "/photo_avatar_temp.jpg";
     public final static String AVATAR_VK_FILE_PATH = PHOTO_DIR_PATH + "/vk_photo.jpg";
 
     private String TAG = "ProfileDialog_Error";
-    public final static String VK_DATA = "VK_DATA";
-    public final static String LOGGED_VK = "LOGGED_VK";
 
-    private int where = 0;
+    private Button buttonOK, buttonCancel;
+    private EditText nickName;
+    private CircleImageView avatar;
+    private View view;
+
+    VkAccountPresenter vkProfilePresenter;
+    VkAccountView vkProfileView;
+
+    private SharedPreferences sharedPreferences;
+    private SharedPreferences.Editor editor;
+    private Uri photoFromGallery;
+
+    private int where;
     private String initialName;
-    private boolean isAvatarChanged = false;
-
-    private boolean isJustLoggedViaVk = false;
-    private boolean isVkRefreshed = false;
-    private boolean isVkLoggedOut = false;
-
-    private Map<String, String> vkData;
+    private boolean isAvatarChanged;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -93,23 +81,11 @@ public class ProfileDialog extends DialogFragment {
     }
 
     @Override
-    public void onDismiss(DialogInterface dialog) {
-        super.onDismiss(dialog);
-    }
-
-    @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (!VKSdk.onActivityResult(requestCode, resultCode, data, new VKCallback<VKAccessToken>() {
             @Override
             public void onResult(VKAccessToken res) {
-                isJustLoggedViaVk = true;
-                isVkLoggedOut = false;
-
-                vkAccount = new VkAccount.Builder()
-                        .setToken(res.accessToken)
-                        .setUserId(res.userId)
-                        .build();
-                vkAccount.loadProfile();
+                vkProfilePresenter.onLogIn(res.accessToken, res.userId);
             }
 
             @Override
@@ -151,8 +127,6 @@ public class ProfileDialog extends DialogFragment {
         buttonCancel = (Button) view.findViewById(R.id.buttonCancel);
         nickName = (EditText) view.findViewById(R.id.profile_dialog_name);
         avatar = (CircleImageView) view.findViewById(R.id.profile_dialog_avatar);
-
-        vkProfile = (ExternalProfileLayout) view.findViewById(R.id.vk_profile);
 
         buttonOK.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -204,39 +178,52 @@ public class ProfileDialog extends DialogFragment {
             }
         });
 
-        vkProfile.setOnLogInListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                VKSdk.login(ProfileDialog.this, VKScope.AUDIO, VKScope.OFFLINE);
-            }
-        });
-
-        vkProfile.setOnRefreshListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                isVkRefreshed = true;
-                vkAccount.loadProfile();
-            }
-        });
-
-        vkProfile.setOnLogOutListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                isVkLoggedOut = true;
-                isJustLoggedViaVk = false;
-                isVkRefreshed = false;
-
-                vkProfile.onLoggedOut();
-            }
-        });
-
         setDefaultSettings();
+
+        setVkProfile();
     }
 
     private void setDefaultSettings() {
         setAvatar();
         setName();
-        setVk();
+    }
+
+    private  void setVkProfile() {
+        vkProfileView = (VkAccountView) view.findViewById(R.id.vk_profile_view);
+        vkProfileView.setInternalButtonsCallbacks(new ExternalAccountViewInternalCallbacks() {
+            @Override
+            public View.OnClickListener onLogInListener() {
+                return new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        VKSdk.login(ProfileDialog.this, VKScope.AUDIO, VKScope.OFFLINE);
+                    }
+                };
+            }
+
+            @Override
+            public View.OnClickListener onRefreshListener() {
+                return new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        vkProfilePresenter.onRefresh();
+                    }
+                };
+            }
+
+            @Override
+            public View.OnClickListener onLogOutListener() {
+                return new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        vkProfilePresenter.onLogOut();
+                    }
+                };
+            }
+        });
+
+        vkProfilePresenter = new VkAccountPresenter(vkProfileView);
+        vkProfilePresenter.onCreate(this);
     }
 
     private void setAvatar() {
@@ -259,30 +246,6 @@ public class ProfileDialog extends DialogFragment {
             nickName.setText(R.string.profile_defult_name);
 
         initialName = nickName.getText().toString();
-    }
-
-    private void setVk() {
-        boolean isLoggedViaVk = sharedPreferences.getBoolean(LOGGED_VK, false);
-
-        if (isLoggedViaVk) {
-            setVkData();
-
-            ExternalProfileObject profileObject = new ExternalProfileObject(vkData.get("vkphotourl"),
-                    vkData.get("vknickname"), vkData.get("vksongscount"), vkData.get("vkalbumscount"));
-
-            vkProfile.onLogInFinished(profileObject);
-        }
-    }
-
-    private void setVkData() {
-        vkData = new HashMap<>();
-        vkData.put("vkaccesstoken", sharedPreferences.getString("VKACCESSTOKEN", ""));
-        vkData.put("vkuserid", sharedPreferences.getString("VKUSERID", ""));
-        vkData.put("vknickname", sharedPreferences.getString("VKNICKNAME", ""));
-        vkData.put("vkphotourl", sharedPreferences.getString("VKPHOTOURL", ""));
-        vkData.put("vkphotouri", sharedPreferences.getString("VKPHOTOURI", ""));
-        vkData.put("vksongscount", sharedPreferences.getString("VKSONGSCOUNT", ""));
-        vkData.put("vkalbumscount", sharedPreferences.getString("VKALBUMSCOUNT", ""));
     }
 
     void showAvatarDialog() {
@@ -361,25 +324,6 @@ public class ProfileDialog extends DialogFragment {
             if (isNameChanged) {
                 editor.putString(FragmentSettings.NAME, currentName);
             }
-            if (isVkLoggedOut) {
-                editor.putBoolean(LOGGED_VK, false);
-
-                for (String key : vkData.keySet()) {
-                    editor.remove(key.toUpperCase());
-                }
-
-                vkData = null;
-            }
-            if (isJustLoggedViaVk || isVkRefreshed) {
-                editor.putBoolean(LOGGED_VK, true);
-
-                vkData.put("vkphotouri", DMPlayerUtility.getUriFromPath(AVATAR_VK_FILE_PATH).toString());
-
-                for (String key : vkData.keySet()) {
-                    editor.putString(key.toUpperCase(), vkData.get(key));
-                }
-            }
-
             return null;
         }
 
@@ -387,24 +331,14 @@ public class ProfileDialog extends DialogFragment {
         protected void onPostExecute(Void aVoid) {
             super.onPostExecute(aVoid);
 
-            if (isJustLoggedViaVk || isVkRefreshed) {
-                String vkAvatarUrl = vkData.get("vkphotourl");
-                DMPlayerUtility.downloadImage(context, vkAvatarUrl, PHOTO_DIR_PATH, "vk_photo", "jpg");
-            }
-
-            if (isVkLoggedOut) {
-                DMPlayerUtility.deleteFile(DMPlayerUtility.getUriFromPath(AVATAR_VK_FILE_PATH).getPath());
-            }
-
-            if (isDataChanged() || isVkRefreshed || isVkLoggedOut) {
+            if (isDataChanged()) {
                 editor.apply();
             }
         }
 
         private boolean isDataChanged() {
             return (!initialName.equals(nickName.getText().toString()))
-                    || isAvatarChanged
-                    || isJustLoggedViaVk;
+                    || isAvatarChanged;
         }
     }
 

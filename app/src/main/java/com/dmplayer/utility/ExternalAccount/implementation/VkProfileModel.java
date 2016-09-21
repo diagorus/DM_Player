@@ -1,20 +1,22 @@
-package com.dmplayer.models;
+package com.dmplayer.utility.ExternalAccount.implementation;
 
-public class ExternalProfileObject {
-    private final String photoUrl;
+import android.graphics.Bitmap;
+
+public class VkProfileModel {
+    private final Bitmap photo;
     private final String nickname;
     private final String songsCount;
     private final String albumsCount;
 
-    public ExternalProfileObject(String photoUrl, String nickname, String songsCount, String albumsCount) {
-        this.photoUrl = photoUrl;
+    public VkProfileModel(Bitmap photo, String nickname, String songsCount, String albumsCount) {
+        this.photo = photo;
         this.nickname = nickname;
         this.songsCount = songsCount;
         this.albumsCount = albumsCount;
     }
 
-    public String getPhotoUrl() {
-        return photoUrl;
+    public Bitmap getPhoto() {
+        return photo;
     }
 
     public String getNickname() {
@@ -30,13 +32,13 @@ public class ExternalProfileObject {
     }
 
     public static class Builder {
-        private String photoUrl;
+        private Bitmap photoResource;
         private String nickname;
         private String songsCount;
         private String albumsCount;
 
-        public Builder setPhotoUrl(String photoUrl) {
-            this.photoUrl = photoUrl;
+        public Builder setPhotoResource(Bitmap photoResource) {
+            this.photoResource = photoResource;
 
             return this;
         }
@@ -48,9 +50,7 @@ public class ExternalProfileObject {
         }
 
         public void addNicknamePart(String part) {
-            StringBuilder stringBuilder = new StringBuilder((nickname==null) ? "": nickname);
-            stringBuilder.append(part);
-            nickname = stringBuilder.toString();
+            nickname = ((nickname == null) ? "" : nickname) + part;
         }
 
         public Builder setSongsCount(String songsCount) {
@@ -65,8 +65,8 @@ public class ExternalProfileObject {
             return this;
         }
 
-        public ExternalProfileObject build() {
-            return new ExternalProfileObject(photoUrl, nickname, songsCount, albumsCount);
+        public VkProfileModel build() {
+            return new VkProfileModel(photoResource, nickname, songsCount, albumsCount);
         }
     }
 }

@@ -45,7 +45,6 @@ import com.dmplayer.manager.MediaController;
 import com.dmplayer.manager.NotificationManager;
 import com.dmplayer.models.Playlist;
 import com.dmplayer.models.SongDetail;
-import com.dmplayer.models.VkObjects.VkAccount;
 import com.dmplayer.models.VkObjects.VkAudioGetResponce.VkAudioWrapper;
 import com.dmplayer.models.VkObjects.VkAudioObject;
 import com.dmplayer.models.VkObjects.VkPlaylist;
@@ -60,6 +59,7 @@ import com.dmplayer.slidinguppanelhelper.SlidingUpPanelLayout;
 import com.dmplayer.uicomponent.ExpandableHeightListView;
 import com.dmplayer.uicomponent.PlayPauseView;
 import com.dmplayer.uicomponent.Slider;
+import com.dmplayer.utility.ExternalAccount.implementation.VkProfileHelper;
 import com.nineoldandroids.animation.AnimatorSet;
 import com.nineoldandroids.animation.ObjectAnimator;
 import com.nineoldandroids.view.ViewHelper;
@@ -377,9 +377,7 @@ public class PlaylistActivity extends AppCompatActivity implements View.OnClickL
         mPhoneMediaControl.loadMusicList(context, id, PhoneMediaControl.SongsLoadFor.Genre, "");
     }
 
-    private void loadSongsLocalPlaylist(long id) {
-
-    }
+    private void loadSongsLocalPlaylist(long id) {}
 
     private void loadVkPlaylist(final int type, final String id, final String name){
         PhoneMediaControl.setPhoneMediaControlInterface(new PhoneMediaControl.PhoneMediaControlInterface() {
@@ -584,7 +582,7 @@ public class PlaylistActivity extends AppCompatActivity implements View.OnClickL
 
     private void createApiService() {
         Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl(VkAccount.VK_API_URL)
+                .baseUrl(VkProfileHelper.VK_API_URL)
                 .addConverterFactory(GsonConverterFactory.create())
                 .build();
 
@@ -712,10 +710,9 @@ public class PlaylistActivity extends AppCompatActivity implements View.OnClickL
         }
     }
 
-
     /*-----------------All Work Related to Slide Panel-----------------*/
 
-    private static final String TAG = "ActivityDMPlayerBase";
+    private static final String TAG = "ActivityPlaylist";
     private SlidingUpPanelLayout mLayout;
     private RelativeLayout slidepanelchildtwo_topviewone;
     private RelativeLayout slidepanelchildtwo_topviewtwo;

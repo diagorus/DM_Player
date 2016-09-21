@@ -1,13 +1,13 @@
-package com.dmplayer.uicomponent.SwappingLayout;
+package com.dmplayer.utility.ExternalAccount.implementation.SwappingLayout.child.implementation;
 
 import android.content.Context;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.bumptech.glide.Glide;
 import com.dmplayer.R;
-import com.dmplayer.models.ExternalProfileObject;
 import com.dmplayer.uicomponent.CircleImageView;
+import com.dmplayer.utility.ExternalAccount.implementation.SwappingLayout.child.core.ExternalProfileSettable;
+import com.dmplayer.utility.ExternalAccount.implementation.VkProfileModel;
 
 public class ProfileViewChild extends ChildForSwapping implements ExternalProfileSettable {
     CircleImageView avatar;
@@ -43,20 +43,20 @@ public class ProfileViewChild extends ChildForSwapping implements ExternalProfil
     }
 
     @Override
-    public void setProfile(ExternalProfileObject profile) {
+    public void setProfile(VkProfileModel profile) {
+        avatar.setImageBitmap(profile.getPhoto());
         nickname.setText(profile.getNickname());
-        Glide.with(getContext()).load(profile.getPhotoUrl()).into(avatar);
         songsCount.setText("Songs: " + profile.getSongsCount());
         albumsCount.setText("Albums: " + profile.getAlbumsCount());
     }
 
     @Override
-    public void setOnRefreshListener(OnClickListener l) {
+    public void onRefreshListener(OnClickListener l) {
         refresh.setOnClickListener(l);
     }
 
     @Override
-    public void setOnLogOutListener(OnClickListener l) {
+    public void onLogOutListener(OnClickListener l) {
         logOut.setOnClickListener(l);
     }
 }

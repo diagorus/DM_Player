@@ -1,4 +1,4 @@
-package com.dmplayer.uicomponent.SwappingLayout;
+package com.dmplayer.utility.ExternalAccount.implementation.SwappingLayout;
 
 import android.content.Context;
 import android.content.res.TypedArray;
@@ -6,14 +6,27 @@ import android.util.AttributeSet;
 import android.widget.LinearLayout;
 
 import com.dmplayer.R;
-import com.dmplayer.models.ExternalProfileObject;
+import com.dmplayer.utility.ExternalAccount.core.ExternalAccountView;
+import com.dmplayer.utility.ExternalAccount.implementation.SwappingLayout.child.implementation.ChildForSwapping;
+import com.dmplayer.utility.ExternalAccount.implementation.SwappingLayout.child.implementation.LogInViewChild;
+import com.dmplayer.utility.ExternalAccount.implementation.SwappingLayout.child.implementation.ProfileViewChild;
 
-public class ExternalProfileLayout extends LinearLayout implements SwappingLayoutController {
+public abstract class ExternalProfileLayout extends LinearLayout implements ExternalProfileView, ExternalAccountView {
     private LogInViewChild startingLayout;
     private ProfileViewChild swappingLayout;
     private ChildForSwapping loadingLayout;
 
-    private boolean isSwapped = false;
+    public LogInViewChild getStartingLayout() {
+        return startingLayout;
+    }
+
+    public ProfileViewChild getSwappingLayout() {
+        return swappingLayout;
+    }
+
+    public ChildForSwapping getLoadingLayout() {
+        return loadingLayout;
+    }
 
     public ExternalProfileLayout(Context context) {
         super(context);
@@ -48,59 +61,23 @@ public class ExternalProfileLayout extends LinearLayout implements SwappingLayou
         startingLayout = new LogInViewChild(getContext(), startingLayoutRes);
         loadingLayout = new ChildForSwapping(getContext(), loadingLayoutRes);
         swappingLayout = new ProfileViewChild(getContext(), swappingLayoutRes);
-        if (!isSwapped)
-            setFirstLayout();
-        else
-            setSecondLayout();
     }
 
-    private void setSecondLayout() {
+    @Override
+    public void setLogInLayout() {
         removeAllViews();
-        isSwapped = true;
-        addView(swappingLayout);
-    }
-
-    private void setFirstLayout() {
-        removeAllViews();
-        isSwapped = false;
         addView(startingLayout);
     }
 
-    private void setLoadingLayout() {
+    @Override
+    public void setLoadingLayout() {
         removeAllViews();
-        isSwapped = !isSwapped;
         addView(loadingLayout);
     }
 
     @Override
-    public void onLogInStarted() {
-        setLoadingLayout();
-    }
-
-    @Override
-    public void onLogInFinished(ExternalProfileObject profile) {
-        isSwapped = true;
-
-        setSecondLayout();
-        swappingLayout.setProfile(profile);
-    }
-
-    @Override
-    public void onLoggedOut() {
-        isSwapped = false;
-
-        setFirstLayout();
-    }
-
-    public void setOnLogInListener(OnClickListener l) {
-        startingLayout.setOnLogInListener(l);
-    }
-
-    public void setOnRefreshListener(OnClickListener l) {
-        swappingLayout.setOnRefreshListener(l);
-    }
-
-    public void setOnLogOutListener(OnClickListener l) {
-        swappingLayout.setOnLogOutListener(l);
+    public void setProfileLayout() {
+        removeAllViews();
+        addView(swappingLayout);
     }
 }
