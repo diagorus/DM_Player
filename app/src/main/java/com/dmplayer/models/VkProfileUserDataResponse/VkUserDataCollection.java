@@ -1,5 +1,7 @@
 package com.dmplayer.models.VkProfileUserDataResponse;
 
+import com.dmplayer.models.VkObjects.VkProfileUserDataResponse.VkUserData;
+
 public class VkUserDataCollection {
 
     private VkUserData[] response;
