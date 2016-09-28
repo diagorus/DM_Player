@@ -40,6 +40,7 @@ import android.widget.TextView;
 
 import com.dmplayer.R;
 import com.dmplayer.converters.VkToSongDetailConverter;
+import com.dmplayer.externalaccount.vkprofile.VkProfileHelper;
 import com.dmplayer.internetservices.VkApiService;
 import com.dmplayer.manager.MediaController;
 import com.dmplayer.manager.NotificationManager;
@@ -59,7 +60,6 @@ import com.dmplayer.slidinguppanelhelper.SlidingUpPanelLayout;
 import com.dmplayer.uicomponent.ExpandableHeightListView;
 import com.dmplayer.uicomponent.PlayPauseView;
 import com.dmplayer.uicomponent.Slider;
-import com.dmplayer.utility.vkprofile.VkProfileHelper;
 import com.nineoldandroids.animation.AnimatorSet;
 import com.nineoldandroids.animation.ObjectAnimator;
 import com.nineoldandroids.view.ViewHelper;

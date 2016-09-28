@@ -1,4 +1,4 @@
-package com.dmplayer.utility.vkprofile;
+package com.dmplayer.externalaccount.vkprofile;
 
 import android.content.Context;
 import android.content.SharedPreferences;

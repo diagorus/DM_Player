@@ -1,4 +1,4 @@
-package com.dmplayer.utility.vkprofile;
+package com.dmplayer.externalaccount.vkprofile;
 
 import android.util.Log;
 
