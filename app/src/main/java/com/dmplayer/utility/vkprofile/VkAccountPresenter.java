@@ -1,11 +1,11 @@
-package com.dmplayer.utility.ExternalAccount.implementation;
+package com.dmplayer.utility.vkprofile;
 
 import android.app.Fragment;
 import android.content.Context;
 import android.os.AsyncTask;
 
-import com.dmplayer.utility.ExternalAccount.core.ExternalAccountPresenter;
-import com.dmplayer.utility.ExternalAccount.core.ExternalAccountView;
+import com.dmplayer.externalaccount.ExternalAccountPresenter;
+import com.dmplayer.externalaccount.ExternalAccountView;
 
 public class VkAccountPresenter implements ExternalAccountPresenter {
     private final ExternalAccountView view;
@@ -34,7 +34,7 @@ public class VkAccountPresenter implements ExternalAccountPresenter {
     }
 
     @Override
-    public void onLogIn(String token, String userId) {
+    public void logIn(String token, String userId) {
         profileHelper = new VkProfileHelper.Builder(context)
                 .setLogged(true)
                 .setToken(token)
@@ -45,12 +45,12 @@ public class VkAccountPresenter implements ExternalAccountPresenter {
     }
 
     @Override
-    public void onRefresh() {
+    public void refresh() {
         new LoadProfileTask().execute();
     }
 
     @Override
-    public void onLogOut() {
+    public void logOut() {
         profileHelper.logOut();
         view.getBehaviorCallbacks().onLoggedOut();
     }

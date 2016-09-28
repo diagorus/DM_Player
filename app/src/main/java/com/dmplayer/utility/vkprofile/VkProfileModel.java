@@ -1,8 +1,10 @@
-package com.dmplayer.utility.ExternalAccount.implementation;
+package com.dmplayer.utility.vkprofile;
 
 import android.graphics.Bitmap;
 
-public class VkProfileModel {
+import com.dmplayer.externalaccount.ExternalProfileModel;
+
+public class VkProfileModel implements ExternalProfileModel {
     private final Bitmap photo;
     private final String nickname;
     private final String songsCount;
@@ -32,13 +34,13 @@ public class VkProfileModel {
     }
 
     public static class Builder {
-        private Bitmap photoResource;
+        private Bitmap photo;
         private String nickname;
         private String songsCount;
         private String albumsCount;
 
-        public Builder setPhotoResource(Bitmap photoResource) {
-            this.photoResource = photoResource;
+        public Builder setPhoto(Bitmap photo) {
+            this.photo = photo;
 
             return this;
         }
@@ -66,7 +68,7 @@ public class VkProfileModel {
         }
 
         public VkProfileModel build() {
-            return new VkProfileModel(photoResource, nickname, songsCount, albumsCount);
+            return new VkProfileModel(photo, nickname, songsCount, albumsCount);
         }
     }
 }

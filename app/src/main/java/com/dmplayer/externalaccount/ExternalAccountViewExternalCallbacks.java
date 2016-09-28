@@ -1,4 +1,4 @@
-package com.dmplayer.utility.ExternalAccount.core;
+package com.dmplayer.externalaccount;
 
 public interface ExternalAccountViewExternalCallbacks {
     void onLoadingStarted();

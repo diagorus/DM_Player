@@ -1,10 +1,8 @@
-package com.dmplayer.utility.ExternalAccount.core;
-
-import com.dmplayer.utility.ExternalAccount.implementation.VkProfileModel;
+package com.dmplayer.externalaccount;
 
 public interface ExternalAccountView {
     ExternalAccountViewExternalCallbacks getBehaviorCallbacks();
     void setInternalButtonsCallbacks(ExternalAccountViewInternalCallbacks callbacks);
-    void showProfile(VkProfileModel profile);
+    void showProfile(ExternalProfileModel profile);
     void showLogIn();
 }

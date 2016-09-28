@@ -1,12 +1,13 @@
-package com.dmplayer.utility.ExternalAccount.implementation;
+package com.dmplayer.utility.vkprofile;
 
 
 import android.content.Context;
 import android.util.AttributeSet;
 
-import com.dmplayer.utility.ExternalAccount.core.ExternalAccountViewExternalCallbacks;
-import com.dmplayer.utility.ExternalAccount.core.ExternalAccountViewInternalCallbacks;
-import com.dmplayer.utility.ExternalAccount.implementation.SwappingLayout.ExternalProfileLayout;
+import com.dmplayer.externalaccount.ExternalAccountViewExternalCallbacks;
+import com.dmplayer.externalaccount.ExternalAccountViewInternalCallbacks;
+import com.dmplayer.externalaccount.ExternalProfileModel;
+import com.dmplayer.uicomponent.swappinglayout.ExternalProfileLayout;
 
 public class VkAccountView extends ExternalProfileLayout {
     private ExternalAccountViewExternalCallbacks behaviorCallbacks;
@@ -48,16 +49,16 @@ public class VkAccountView extends ExternalProfileLayout {
     public ExternalAccountViewExternalCallbacks getBehaviorCallbacks() {
         return behaviorCallbacks;
     }
-    //TODO: change this bullshit!!
+
     @Override
     public void setInternalButtonsCallbacks(ExternalAccountViewInternalCallbacks callbacks) {
-        getStartingLayout().onLogInListener(callbacks.onLogInListener());
-        getSwappingLayout().onRefreshListener(callbacks.onRefreshListener());
-        getSwappingLayout().onLogOutListener(callbacks.onLogOutListener());
+        getStartingLayout().setOnLogInListener(callbacks.onLogInListener());
+        getSwappingLayout().setOnRefreshListener(callbacks.onRefreshListener());
+        getSwappingLayout().setOnLogOutListener(callbacks.onLogOutListener());
     }
 
     @Override
-    public void showProfile(VkProfileModel profile) {
+    public void showProfile(ExternalProfileModel profile) {
         setProfileLayout();
         getSwappingLayout().setProfile(profile);
     }

@@ -40,7 +40,7 @@ import android.widget.TextView;
 
 import com.dmplayer.R;
 import com.dmplayer.converters.VkToSongDetailConverter;
-import com.dmplayer.internetservices.VkAPIService;
+import com.dmplayer.internetservices.VkApiService;
 import com.dmplayer.manager.MediaController;
 import com.dmplayer.manager.NotificationManager;
 import com.dmplayer.models.Playlist;
@@ -59,7 +59,7 @@ import com.dmplayer.slidinguppanelhelper.SlidingUpPanelLayout;
 import com.dmplayer.uicomponent.ExpandableHeightListView;
 import com.dmplayer.uicomponent.PlayPauseView;
 import com.dmplayer.uicomponent.Slider;
-import com.dmplayer.utility.ExternalAccount.implementation.VkProfileHelper;
+import com.dmplayer.utility.vkprofile.VkProfileHelper;
 import com.nineoldandroids.animation.AnimatorSet;
 import com.nineoldandroids.animation.ObjectAnimator;
 import com.nineoldandroids.view.ViewHelper;
@@ -100,7 +100,7 @@ public class PlaylistActivity extends AppCompatActivity implements View.OnClickL
     private String title_one = "";
     private String title_sec = "";
 
-    private VkAPIService service;
+    private VkApiService service;
     private int vkType = -1;
     private String vkAlbumId;
     private String vkAccessToken;
@@ -586,7 +586,7 @@ public class PlaylistActivity extends AppCompatActivity implements View.OnClickL
                 .addConverterFactory(GsonConverterFactory.create())
                 .build();
 
-        service = retrofit.create(VkAPIService.class);
+        service = retrofit.create(VkApiService.class);
     }
 
     public class AllSongsListAdapter extends BaseAdapter {

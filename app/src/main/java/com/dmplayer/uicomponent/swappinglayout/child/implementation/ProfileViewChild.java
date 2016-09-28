@@ -1,13 +1,13 @@
-package com.dmplayer.utility.ExternalAccount.implementation.SwappingLayout.child.implementation;
+package com.dmplayer.uicomponent.swappinglayout.child.implementation;
 
 import android.content.Context;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.dmplayer.R;
+import com.dmplayer.externalaccount.ExternalProfileModel;
 import com.dmplayer.uicomponent.CircleImageView;
-import com.dmplayer.utility.ExternalAccount.implementation.SwappingLayout.child.core.ExternalProfileSettable;
-import com.dmplayer.utility.ExternalAccount.implementation.VkProfileModel;
+import com.dmplayer.uicomponent.swappinglayout.child.core.ExternalProfileSettable;
 
 public class ProfileViewChild extends ChildForSwapping implements ExternalProfileSettable {
     CircleImageView avatar;
@@ -43,7 +43,7 @@ public class ProfileViewChild extends ChildForSwapping implements ExternalProfil
     }
 
     @Override
-    public void setProfile(VkProfileModel profile) {
+    public void setProfile(ExternalProfileModel profile) {
         avatar.setImageBitmap(profile.getPhoto());
         nickname.setText(profile.getNickname());
         songsCount.setText("Songs: " + profile.getSongsCount());
@@ -51,12 +51,12 @@ public class ProfileViewChild extends ChildForSwapping implements ExternalProfil
     }
 
     @Override
-    public void onRefreshListener(OnClickListener l) {
+    public void setOnRefreshListener(OnClickListener l) {
         refresh.setOnClickListener(l);
     }
 
     @Override
-    public void onLogOutListener(OnClickListener l) {
+    public void setOnLogOutListener(OnClickListener l) {
         logOut.setOnClickListener(l);
     }
 }

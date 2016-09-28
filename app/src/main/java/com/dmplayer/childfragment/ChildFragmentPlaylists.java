@@ -22,7 +22,7 @@ import android.widget.TextView;
 
 import com.dmplayer.R;
 import com.dmplayer.activities.PlaylistActivity;
-import com.dmplayer.internetservices.VkAPIService;
+import com.dmplayer.internetservices.VkApiService;
 import com.dmplayer.models.Playlist;
 import com.dmplayer.utility.LogWriter;
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
@@ -37,7 +37,7 @@ public class ChildFragmentPlaylists extends Fragment {
 
     private static Context context;
 
-    private static VkAPIService service;
+    private static VkApiService service;
 
     private SharedPreferences sharedPreferences;
 

@@ -1,9 +1,10 @@
-package com.dmplayer.utility.ExternalAccount.implementation;
+package com.dmplayer.utility.vkprofile;
 
 import android.util.Log;
 
 import com.dmplayer.converters.VkToSongDetailConverter;
-import com.dmplayer.internetservices.VkAPIService;
+import com.dmplayer.externalaccount.ExternalMusicLoader;
+import com.dmplayer.internetservices.VkApiService;
 import com.dmplayer.models.Playlist;
 import com.dmplayer.models.VkObjects.VkAlbumObject;
 import com.dmplayer.models.VkObjects.VkAlbumsResponse.VkAlbumsWrapper;
@@ -11,7 +12,6 @@ import com.dmplayer.models.VkObjects.VkAudioGetResponce.VkAudioWrapper;
 import com.dmplayer.models.VkObjects.VkAudioObject;
 import com.dmplayer.models.VkObjects.VkPlaylist;
 import com.dmplayer.models.VkObjects.VkPopularAudioResponce.VkPopularCollection;
-import com.dmplayer.utility.ExternalAccount.core.ExternalMusicLoader;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -26,8 +26,6 @@ import retrofit2.converter.gson.GsonConverterFactory;
 public class VkMusicHelper implements ExternalMusicLoader {
     private String userId;
     private String token;
-
-    private VkAPIService service;
 
     private final static String TAG = "VkMusicHelper";
 
@@ -46,12 +44,13 @@ public class VkMusicHelper implements ExternalMusicLoader {
 
     @Override
     public List<Playlist> loadMusicListsToShow() {
-        createApiService();
         List<Playlist> playlistsToShow = new ArrayList<>();
+
+        VkApiService service = createApiService();
 
         loadVkDefaultAlbums(playlistsToShow);
         try {
-            loadVkUserAlbums(playlistsToShow);
+            loadVkUserAlbums(service, playlistsToShow);
         } catch (IOException e) {
             Log.e(TAG, Log.getStackTraceString(e));
         }
@@ -61,12 +60,12 @@ public class VkMusicHelper implements ExternalMusicLoader {
 
     @Override
     public Playlist loadMusicList(int type, String id, String name) {
-        createApiService();
+        VkApiService service = createApiService();
 
-        return loadVkPlaylist(type, id, name);
+        return loadVkPlaylist(service, type, id, name);
     }
 
-    private void loadVkUserAlbums(List<Playlist> playlistsToShow) throws IOException {
+    private void loadVkUserAlbums(VkApiService service, List<Playlist> playlistsToShow) throws IOException {
         Call<VkAlbumsWrapper> callForAlbums = service.loadAlbums("0", "100", userId, token);
 
         Response<VkAlbumsWrapper> responseAlbums = callForAlbums.execute();
@@ -86,27 +85,26 @@ public class VkMusicHelper implements ExternalMusicLoader {
     }
 
     //TODO: use strategy pattern to resolve this code more gracefully
-    private Playlist loadVkPlaylist(int type, String id, String name){
+    private Playlist loadVkPlaylist(VkApiService service, int type, String id, String name){
         switch (type) {
             case VkPlaylist.ALL:
-                return loadAlbum(0, 16, "", "My audios");
+                return loadAlbum(service, 0, 16, "", "My audios");
 
             case VkPlaylist.POPULAR:
-                return loadPopular(0, 16);
+                return loadPopular(service, 0, 16);
 
             case VkPlaylist.RECOMMENDED:
-                return loadRecommended(0, 16);
+                return loadRecommended(service, 0, 16);
 
             case VkPlaylist.ALBUM:
-                return loadAlbum(0, 16, id, name);
+                return loadAlbum(service, 0, 16, id, name);
 
             default:
                 return null;
         }
     }
 
-    private Playlist loadAlbum(int offset, int count, String id, String name) {
-
+    private Playlist loadAlbum(VkApiService service, int offset, int count, String id, String name) {
         Call<VkAudioWrapper> callForAlbum =
                 service.loadAudio(id, String.valueOf(offset), String.valueOf(count), userId, token);
 
@@ -135,7 +133,7 @@ public class VkMusicHelper implements ExternalMusicLoader {
         return playlistAlbum;
     }
 
-    private Playlist loadPopular(int offset, int count) {
+    private Playlist loadPopular(VkApiService service, int offset, int count) {
         Call<VkPopularCollection> callForPopular =
                 service.loadPopularAudio(String.valueOf(offset), String.valueOf(count), token);
 
@@ -166,7 +164,7 @@ public class VkMusicHelper implements ExternalMusicLoader {
         return playlistPopular;
     }
 
-    private Playlist loadRecommended(int offset, int count) {
+    private Playlist loadRecommended(VkApiService service, int offset, int count) {
         Call<VkAudioWrapper> callForRecommended =
                 service.loadRecommendedAudio(String.valueOf(offset), String.valueOf(count), userId, token);
 
@@ -197,13 +195,13 @@ public class VkMusicHelper implements ExternalMusicLoader {
         return playlistRecommended;
     }
 
-    private void createApiService() {
+    private VkApiService createApiService() {
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl(VkProfileHelper.VK_API_URL)
                 .addConverterFactory(GsonConverterFactory.create())
                 .build();
 
-        service = retrofit.create(VkAPIService.class);
+        return retrofit.create(VkApiService.class);
     }
 
     public static class Builder {

@@ -1,4 +1,4 @@
-package com.dmplayer.utility.ExternalAccount.implementation.SwappingLayout.child.implementation;
+package com.dmplayer.uicomponent.swappinglayout.child.implementation;
 
 
 import android.content.Context;

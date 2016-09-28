@@ -1,17 +1,18 @@
-package com.dmplayer.utility.ExternalAccount.implementation;
+package com.dmplayer.utility.vkprofile;
 
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.util.Log;
 
-import com.dmplayer.internetservices.VkAPIService;
+import com.dmplayer.bitmaploader.UriLoader;
+import com.dmplayer.bitmaploader.UrlLoader;
+import com.dmplayer.externalaccount.ExternalProfileHelper;
+import com.dmplayer.externalaccount.ExternalProfileModel;
+import com.dmplayer.internetservices.VkApiService;
 import com.dmplayer.models.VkObjects.VkAlbumsResponse.VkAlbumsWrapper;
 import com.dmplayer.models.VkObjects.VkProfileUserDataResponse.VkUserData;
 import com.dmplayer.models.VkObjects.VkProfileUserDataResponse.VkUserDataCollection;
 import com.dmplayer.phonemidea.DMPlayerUtility;
-import com.dmplayer.utility.BtmLoader.UriLoader;
-import com.dmplayer.utility.BtmLoader.UrlLoader;
-import com.dmplayer.utility.ExternalAccount.core.ExternalProfileHelper;
 import com.dmplayer.utility.dialogs.ProfileDialog;
 
 import java.io.IOException;
@@ -31,8 +32,6 @@ public class VkProfileHelper implements ExternalProfileHelper {
     private Context context;
     private SharedPreferences prefs;
 
-    private VkAPIService service;
-
     public final static String VK_API_URL = "https://api.vk.com/method/";
     private final static String TAG = "VkProfileHelper";
 
@@ -49,20 +48,18 @@ public class VkProfileHelper implements ExternalProfileHelper {
     public void logOut() {
         userId = null;
         token = null;
-        service = null;
 
         eraseProfile();
         eraseAccessValues();
     }
 
     @Override
-    public Object loadProfileOnline() {
-        createApiService();
-
+    public ExternalProfileModel loadProfileOnline() {
         VkProfileModel.Builder profileObjectBuilder = new VkProfileModel.Builder();
+        VkApiService service = createApiService();
 
-        loadVkUserData(profileObjectBuilder);
-        loadVkMusicData(profileObjectBuilder);
+        loadVkUserData(service, profileObjectBuilder);
+        loadVkMusicData(service, profileObjectBuilder);
 
         VkProfileModel model = profileObjectBuilder.build();
 
@@ -73,26 +70,26 @@ public class VkProfileHelper implements ExternalProfileHelper {
     }
 
     @Override
-    public Object loadProfileOffline() {
+    public ExternalProfileModel loadProfileOffline() {
         return new VkProfileModel.Builder()
                 .setNickname(prefs.getString("VK_USER_NICKNAME", ""))
                 .setAlbumsCount(prefs.getString("VK_USER_ALBUMS_COUNT", ""))
                 .setSongsCount(prefs.getString("VK_USER_SONGS_COUNT", ""))
-                .setPhotoResource(new UriLoader().loadImage(context,
+                .setPhoto(new UriLoader().loadImage(context,
                         prefs.getString("VK_USER_PHOTO_URI", "")))
                 .build();
     }
 
-    private void createApiService() {
+    private VkApiService createApiService() {
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl(VK_API_URL)
                 .addConverterFactory(GsonConverterFactory.create())
                 .build();
 
-        service = retrofit.create(VkAPIService.class);
+        return retrofit.create(VkApiService.class);
     }
 
-    private void loadVkMusicData(VkProfileModel.Builder profileObjectBuilder) {
+    private void loadVkMusicData(VkApiService service, VkProfileModel.Builder profileObjectBuilder) {
         Call<ResponseBody> callForSongsCount = service.loadSongsCount(userId, token);
 
         Call<VkAlbumsWrapper> callForAlbumsCount = service.loadAlbums("0", "100", userId, token);
@@ -112,7 +109,7 @@ public class VkProfileHelper implements ExternalProfileHelper {
         }
     }
 
-    private void loadVkUserData(VkProfileModel.Builder profileObjectBuilder) {
+    private void loadVkUserData(VkApiService service, VkProfileModel.Builder profileObjectBuilder) {
         Call<VkUserDataCollection> callForUserData = service.loadUserData("photo_100", userId, token);
 
         try {
@@ -122,8 +119,8 @@ public class VkProfileHelper implements ExternalProfileHelper {
 
             profileObjectBuilder.addNicknamePart(userData.getFirst_name());
             profileObjectBuilder.addNicknamePart(" " + userData.getLast_name());
-            profileObjectBuilder.setPhotoResource(new UrlLoader().loadImage(context,
-                            userData.getPhoto_100()));
+            profileObjectBuilder.setPhoto(new UrlLoader().loadImage(context,
+                    userData.getPhoto_100()));
         } catch (IOException e) {
             Log.e(TAG, Log.getStackTraceString(e));
         }

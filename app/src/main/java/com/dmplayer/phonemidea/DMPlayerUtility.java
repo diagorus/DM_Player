@@ -49,7 +49,7 @@ import java.io.OutputStream;
 import java.util.Formatter;
 import java.util.Locale;
 
-public class DMPlayerUtility {
+public final class DMPlayerUtility {
 
     private static final String TAG = "MusicUtils";
 

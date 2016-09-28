@@ -1,4 +1,4 @@
-package com.dmplayer.utility.ExternalAccount.implementation.SwappingLayout;
+package com.dmplayer.uicomponent.swappinglayout;
 
 public interface ExternalProfileView {
     void setLogInLayout();

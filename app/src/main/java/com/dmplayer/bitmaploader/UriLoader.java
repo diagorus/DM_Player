@@ -1,4 +1,4 @@
-package com.dmplayer.utility.BtmLoader;
+package com.dmplayer.bitmaploader;
 
 import android.content.Context;
 import android.graphics.Bitmap;

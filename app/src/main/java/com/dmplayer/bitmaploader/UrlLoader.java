@@ -1,4 +1,4 @@
-package com.dmplayer.utility.BtmLoader;
+package com.dmplayer.bitmaploader;
 
 import android.content.Context;
 import android.graphics.Bitmap;
@@ -14,10 +14,10 @@ public class UrlLoader implements BitmapLoader {
     public Bitmap loadImage(Context context, String resource) throws IllegalArgumentException {
         try {
             return Glide.with(context)
-                    .load(resource)
-                    .asBitmap()
-                    .into(100, 100)
-                    .get();
+            .load(resource)
+            .asBitmap()
+            .into(100, 100)
+            .get();
         } catch (InterruptedException | ExecutionException e) {
             throw new IllegalArgumentException(TAG + " exception " + e.getMessage());
         }

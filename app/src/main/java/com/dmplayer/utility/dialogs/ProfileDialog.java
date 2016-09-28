@@ -27,12 +27,12 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.dmplayer.R;
+import com.dmplayer.externalaccount.ExternalAccountViewInternalCallbacks;
 import com.dmplayer.fragments.FragmentSettings;
 import com.dmplayer.phonemidea.DMPlayerUtility;
 import com.dmplayer.uicomponent.CircleImageView;
-import com.dmplayer.utility.ExternalAccount.core.ExternalAccountViewInternalCallbacks;
-import com.dmplayer.utility.ExternalAccount.implementation.VkAccountPresenter;
-import com.dmplayer.utility.ExternalAccount.implementation.VkAccountView;
+import com.dmplayer.utility.vkprofile.VkAccountPresenter;
+import com.dmplayer.utility.vkprofile.VkAccountView;
 import com.vk.sdk.VKAccessToken;
 import com.vk.sdk.VKCallback;
 import com.vk.sdk.VKScope;
@@ -85,7 +85,7 @@ public class ProfileDialog extends DialogFragment {
         if (!VKSdk.onActivityResult(requestCode, resultCode, data, new VKCallback<VKAccessToken>() {
             @Override
             public void onResult(VKAccessToken res) {
-                vkProfilePresenter.onLogIn(res.accessToken, res.userId);
+                vkProfilePresenter.logIn(res.accessToken, res.userId);
             }
 
             @Override
@@ -206,7 +206,7 @@ public class ProfileDialog extends DialogFragment {
                 return new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-                        vkProfilePresenter.onRefresh();
+                        vkProfilePresenter.refresh();
                     }
                 };
             }
@@ -216,7 +216,7 @@ public class ProfileDialog extends DialogFragment {
                 return new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-                        vkProfilePresenter.onLogOut();
+                        vkProfilePresenter.logOut();
                     }
                 };
             }

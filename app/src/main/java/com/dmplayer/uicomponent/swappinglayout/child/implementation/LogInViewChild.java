@@ -1,10 +1,10 @@
-package com.dmplayer.utility.ExternalAccount.implementation.SwappingLayout.child.implementation;
+package com.dmplayer.uicomponent.swappinglayout.child.implementation;
 
 import android.content.Context;
 import android.widget.Button;
 
 import com.dmplayer.R;
-import com.dmplayer.utility.ExternalAccount.implementation.SwappingLayout.child.core.ExternalLogInClickable;
+import com.dmplayer.uicomponent.swappinglayout.child.core.ExternalLogInClickable;
 
 public class LogInViewChild extends ChildForSwapping implements ExternalLogInClickable {
 
@@ -20,7 +20,7 @@ public class LogInViewChild extends ChildForSwapping implements ExternalLogInCli
     }
 
     @Override
-    public void onLogInListener(OnClickListener l) {
+    public void setOnLogInListener(OnClickListener l) {
         logIn.setOnClickListener(l);
     }
 }

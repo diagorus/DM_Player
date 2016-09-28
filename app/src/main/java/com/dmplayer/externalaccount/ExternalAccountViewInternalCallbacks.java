@@ -1,4 +1,4 @@
-package com.dmplayer.utility.ExternalAccount.core;
+package com.dmplayer.externalaccount;
 
 import android.view.View;
 
