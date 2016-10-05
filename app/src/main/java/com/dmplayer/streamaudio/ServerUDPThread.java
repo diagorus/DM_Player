@@ -18,14 +18,14 @@ import java.net.DatagramSocket;
 public class ServerUDPThread extends Thread {
     SendAudioSocket sendAudioSocket;
     public DatagramSocket sockett;
-    ProgressBar progressBar;
-    Context context;
 
-    SongDetail audioInfo;
-    public ServerUDPThread(SongDetail audioInfo,ProgressBar progressBar,Context context){
-        this.audioInfo=audioInfo;
-        this.context=context;
-        this.progressBar=progressBar;
+   // Context context;
+
+   // SongDetail audioInfo;
+    public ServerUDPThread(){
+       // this.audioInfo=audioInfo;
+       // this.context=context;
+       // this.progressBar=progressBar;
     }
     public void refresh()
     {
@@ -79,9 +79,9 @@ public class ServerUDPThread extends Thread {
                 sockett.send(sendPacket);
 
                // sockett.close();
-                if(audioInfo!=null){
+                if(MediaController.getInstance().getPlayingSongDetail()!=null){
 
-                    sendAudioSocket= new SendAudioSocket(sendPacket.getAddress().getHostAddress(),MediaController.getInstance().getPlayingSongDetail(),progressBar,context);
+                    sendAudioSocket= new SendAudioSocket(sendPacket.getAddress().getHostAddress(),MediaController.getInstance().getPlayingSongDetail());
                     sendAudioSocket.start();
                 }
                 System.out.println(  ">>>Sent packet to: " + sendPacket.getAddress().getHostAddress());

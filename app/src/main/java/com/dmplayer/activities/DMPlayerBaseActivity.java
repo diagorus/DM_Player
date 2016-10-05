@@ -119,11 +119,6 @@ public class DMPlayerBaseActivity extends AppCompatActivity implements View.OnCl
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_dmplayerbase);
 
-        //System bar color set(HUYOUVO)
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-//            setSystemBarTint();
-        }
-
         toolbarStatusBar();
         navigationDrawer();
 

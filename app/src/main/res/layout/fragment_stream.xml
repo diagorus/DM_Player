@@ -12,22 +12,34 @@
         android:layout_weight="1"
         android:background="@android:color/white"
         android:orientation="vertical">
-        <EditText
-            android:id="@+id/ip_stream_server"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="IP" />
-        <EditText
-            android:id="@+id/port_stream_server"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:inputType="numberPassword"
-            android:hint="Port" />
+        <!--<EditText-->
+            <!--android:id="@+id/ip_stream_server"-->
+            <!--android:layout_width="match_parent"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:hint="IP" />-->
+        <!--<EditText-->
+            <!--android:id="@+id/port_stream_server"-->
+            <!--android:layout_width="match_parent"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:inputType="numberPassword"-->
+            <!--android:hint="Port" />-->
+        <!--<Button-->
+            <!--android:id="@+id/send_stream_server"-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:text="Send" />-->
         <Button
-            android:id="@+id/send_stream_server"
+            android:id="@+id/connect_to_UDPServer"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Send" />
+            android:text="Listen Music" />
+
+        <ProgressBar
+            style="?android:attr/progressBarStyleHorizontal"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/client_progress_bar"
+            android:layout_gravity="center_horizontal" />
     </LinearLayout>
 
 
@@ -73,6 +85,18 @@
 
         </LinearLayout>
 
+        <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:background="@android:color/white"
+            android:orientation="vertical">
+            <ProgressBar
+                style="?android:attr/progressBarStyleHorizontal"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/server_progress_bar"
+                android:layout_gravity="center_horizontal" />
+        </LinearLayout>
 
 
         <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
@@ -80,23 +104,20 @@
             android:layout_height="match_parent"
             android:background="@android:color/white"
             android:orientation="horizontal">
-            <Button
-                android:id="@+id/pause_button"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+            <!--<Button-->
+                <!--android:id="@+id/pause_button"-->
+                <!--android:layout_width="wrap_content"-->
+                <!--android:layout_height="wrap_content"-->
+                <!--android:text="pause/resume" />-->
 
+            <!--<Button-->
+                <!--android:id="@+id/stop_button"-->
+                <!--android:layout_width="wrap_content"-->
+                <!--android:layout_height="wrap_content"-->
+                <!--android:text="Stop" />-->
 
-
-                android:text="pause/resume" />
-
-            <Button
-                android:id="@+id/stop_button"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-
-
-                android:text="Stop" />
         </LinearLayout>
+
     </LinearLayout>
 
 </LinearLayout>

@@ -18,14 +18,12 @@ import java.util.Enumeration;
  */
 public class ClientUDPThread extends Thread {
 
-    private static ClientUDPThread instance;
+
 
     DatagramSocket c;
-    ProgressBar progressBarClient;
     public ReciveAudioSocket reciveAudioSocket;
 
-    public ClientUDPThread(ProgressBar progressBarClient) {
-        this.progressBarClient = progressBarClient;
+    public ClientUDPThread() {
 
     }
 
@@ -35,13 +33,11 @@ public class ClientUDPThread extends Thread {
         {
             c.close();
         }
-        reciveAudioSocket.refresh();
         if (  reciveAudioSocket != null) {
-
+            reciveAudioSocket.refresh();
             Thread dummy =  reciveAudioSocket;
             reciveAudioSocket = null;
             dummy.interrupt();
-
         }
     }
 
@@ -104,7 +100,7 @@ public class ClientUDPThread extends Thread {
 //					}
 //				});
 
-            reciveAudioSocket=new ReciveAudioSocket(progressBarClient);
+            reciveAudioSocket=new ReciveAudioSocket();
             reciveAudioSocket.start();
             c.close();
 

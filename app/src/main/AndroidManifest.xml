@@ -108,6 +108,14 @@
             android:name=".manager.MusicPlayerService"
             android:enabled="true"
             android:exported="true" />
+        <service
+            android:name=".streamaudio.ClientStreamService"
+            android:enabled="true"
+            android:exported="true" />
+        <service
+            android:name=".streamaudio.ServerStreamService"
+            android:enabled="true"
+            android:exported="true" />
 
         <receiver android:name=".manager.MusicPlayerReceiver">
             <intent-filter>
