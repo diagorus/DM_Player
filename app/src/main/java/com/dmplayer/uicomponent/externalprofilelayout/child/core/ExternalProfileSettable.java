@@ -1,4 +1,4 @@
-package com.dmplayer.uicomponent.swappinglayout.child.core;
+package com.dmplayer.uicomponent.externalprofilelayout.child.core;
 
 import android.view.View;
 

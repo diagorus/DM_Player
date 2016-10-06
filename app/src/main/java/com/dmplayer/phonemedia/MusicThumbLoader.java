@@ -3,17 +3,7 @@
  * You should have received a copy of the license in this archive (see LICENSE).
  * Copyright @Dibakar_Mistry, 2015.
  */
-package com.dmplayer.phonemidea;
-
-import java.io.File;
-import java.io.FileDescriptor;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.util.Collections;
-import java.util.Map;
-import java.util.Stack;
-import java.util.WeakHashMap;
+package com.dmplayer.phonemedia;
 
 import android.app.Activity;
 import android.content.Context;
@@ -26,6 +16,16 @@ import android.widget.ImageView;
 import android.widget.ProgressBar;
 
 import com.dmplayer.R;
+
+import java.io.File;
+import java.io.FileDescriptor;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.util.Collections;
+import java.util.Map;
+import java.util.Stack;
+import java.util.WeakHashMap;
 
 public class MusicThumbLoader {
 	private Map<ImageView, String> imageViews = Collections.synchronizedMap(new WeakHashMap<ImageView, String>());

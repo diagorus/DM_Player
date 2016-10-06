@@ -11,6 +11,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -22,31 +23,27 @@ import android.widget.TextView;
 
 import com.dmplayer.R;
 import com.dmplayer.activities.PlaylistActivity;
-import com.dmplayer.internetservices.VkApiService;
+import com.dmplayer.helperservises.VkMusicHelper;
+import com.dmplayer.helperservises.VkProfileHelper;
 import com.dmplayer.models.Playlist;
 import com.dmplayer.utility.LogWriter;
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.ImageLoader;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class ChildFragmentPlaylists extends Fragment {
 
     private PlaylistsAdapter playlistsAdapter;
-    private ArrayList<Playlist> playlists = new ArrayList<>();
+    private List<Playlist> playlists = new ArrayList<>();
 
-    private static Context context;
-
-    private static VkApiService service;
-
-    private SharedPreferences sharedPreferences;
+    private VkMusicHelper vkMusicHelper;
 
     private static final String TAG = "ChildFragmentPlaylists";
 
-    public static ChildFragmentPlaylists newInstance(int position, Context mContext) {
-        ChildFragmentPlaylists f = new ChildFragmentPlaylists();
-        context = mContext;
-        return f;
+    public static ChildFragmentPlaylists newInstance(int position) {
+        return new ChildFragmentPlaylists();
     }
 
     @Override
@@ -54,6 +51,7 @@ public class ChildFragmentPlaylists extends Fragment {
         View v = inflater.inflate(R.layout.fragment_child_playlists, null);
         setupInitialViews(v);
 
+        setupVkMusicHelper();
         loadVkPlaylists();
 
         return v;
@@ -71,16 +69,20 @@ public class ChildFragmentPlaylists extends Fragment {
         recyclerView.setAdapter(playlistsAdapter);
     }
 
-    private void loadVkPlaylists() {
-        setupVkAccount();
+    private void setupVkMusicHelper() {
+        SharedPreferences sp = getActivity().getSharedPreferences("VALUES", Context.MODE_PRIVATE);
 
-//        playlists.addAll();
-//        playlistsAdapter.notifyDataSetChanged();
+        vkMusicHelper = new VkMusicHelper.Builder()
+                .setLogged(sp.getBoolean(VkProfileHelper.SP_LOGGED, false))
+                .setUserId(sp.getString(VkProfileHelper.SP_USER_ID, ""))
+                .setToken(sp.getString(VkProfileHelper.SP_ACCESS_TOKEN, ""))
+                .build();
     }
 
-    private void setupVkAccount() {
-        String userId = sharedPreferences.getString("VKUSERID", "");
-        String token = sharedPreferences.getString("VKACCESSTOKEN", "");
+    private void loadVkPlaylists() {
+        if (vkMusicHelper.isLogged()) {
+            new LoadPlaylistsTask().execute();
+        }
     }
 
     public class PlaylistsAdapter extends RecyclerView.Adapter<PlaylistsAdapter.ViewHolder> {
@@ -151,6 +153,22 @@ public class ChildFragmentPlaylists extends Fragment {
                     LogWriter.info(TAG, e.toString());
                 }
             }
+        }
+    }
+
+    private class LoadPlaylistsTask extends AsyncTask<Void, Void, List<Playlist>> {
+
+        @Override
+        protected List<Playlist> doInBackground(Void... params) {
+            return vkMusicHelper.loadMusicListsToShow();
+        }
+
+        @Override
+        protected void onPostExecute(List<Playlist> playlistsToShow) {
+            super.onPostExecute(playlistsToShow);
+
+            playlists.addAll(playlistsToShow);
+            playlistsAdapter.notifyDataSetChanged();
         }
     }
 }

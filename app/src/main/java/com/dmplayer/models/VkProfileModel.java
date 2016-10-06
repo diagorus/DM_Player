@@ -1,4 +1,4 @@
-package com.dmplayer.externalaccount.vkprofile;
+package com.dmplayer.models;
 
 import android.graphics.Bitmap;
 

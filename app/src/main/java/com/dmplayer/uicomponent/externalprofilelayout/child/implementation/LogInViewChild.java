@@ -1,14 +1,13 @@
-package com.dmplayer.uicomponent.swappinglayout.child.implementation;
+package com.dmplayer.uicomponent.externalprofilelayout.child.implementation;
 
 import android.content.Context;
 import android.widget.Button;
 
 import com.dmplayer.R;
-import com.dmplayer.uicomponent.swappinglayout.child.core.ExternalLogInClickable;
+import com.dmplayer.uicomponent.externalprofilelayout.child.core.ExternalLogInClickable;
 
 public class LogInViewChild extends ChildForSwapping implements ExternalLogInClickable {
-
-    Button logIn;
+    private Button logIn;
 
     public LogInViewChild(Context context, int layoutId) {
         super(context, layoutId);

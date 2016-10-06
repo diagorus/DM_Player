@@ -24,7 +24,7 @@ import com.dmplayer.activities.DMPlayerBaseActivity;
 import com.dmplayer.activities.MusicChooserActivity;
 import com.dmplayer.models.Playlist;
 import com.dmplayer.models.SongDetail;
-import com.dmplayer.phonemidea.DMPlayerUtility;
+import com.dmplayer.phonemedia.DMPlayerUtility;
 import com.dmplayer.utility.LogWriter;
 import com.dmplayer.utility.dialogs.ProfileDialog;
 import com.dmplayer.utility.dialogs.ThemeDialog;

@@ -4,7 +4,7 @@
  * Copyright @Dibakar_Mistry, 2015.
  */
 
-package com.dmplayer.phonemidea;
+package com.dmplayer.phonemedia;
 
 import android.database.Cursor;
 import android.provider.MediaStore;

@@ -5,10 +5,10 @@
  */
 package com.dmplayer.fragments;
 
-import android.os.Bundle;
-import android.os.Parcelable;
 import android.app.Fragment;
 import android.app.FragmentManager;
+import android.os.Bundle;
+import android.os.Parcelable;
 import android.support.v13.app.FragmentStatePagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.util.TypedValue;
@@ -17,13 +17,13 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.dmplayer.R;
-import com.dmplayer.childfragment.ChildFragmentAllSongs;
-import com.dmplayer.childfragment.ChildFragmentPlaylists;
-import com.dmplayer.tablayout.SlidingTabLayout;
 import com.dmplayer.childfragment.ChildFragmentAlbum;
+import com.dmplayer.childfragment.ChildFragmentAllSongs;
 import com.dmplayer.childfragment.ChildFragmentArtists;
 import com.dmplayer.childfragment.ChildFragmentGenres;
 import com.dmplayer.childfragment.ChildFragmentMostPlay;
+import com.dmplayer.childfragment.ChildFragmentPlaylists;
+import com.dmplayer.tablayout.SlidingTabLayout;
 
 public class FragmentLibrary extends Fragment {
 
@@ -113,7 +113,7 @@ public class FragmentLibrary extends Fragment {
                     return ChildFragmentMostPlay.newInstance(position, getActivity());
 
                 case 5:
-                    return ChildFragmentPlaylists.newInstance(position, getActivity());
+                    return ChildFragmentPlaylists.newInstance(position);
             }
             return null;
         }

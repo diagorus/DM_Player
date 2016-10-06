@@ -1,4 +1,4 @@
-package com.dmplayer.externalaccount.vkprofile;
+package com.dmplayer.presenters;
 
 import android.app.Fragment;
 import android.content.Context;
@@ -6,6 +6,8 @@ import android.os.AsyncTask;
 
 import com.dmplayer.externalaccount.ExternalAccountPresenter;
 import com.dmplayer.externalaccount.ExternalAccountView;
+import com.dmplayer.helperservises.VkProfileHelper;
+import com.dmplayer.models.VkProfileModel;
 
 public class VkAccountPresenter implements ExternalAccountPresenter {
     private final ExternalAccountView view;

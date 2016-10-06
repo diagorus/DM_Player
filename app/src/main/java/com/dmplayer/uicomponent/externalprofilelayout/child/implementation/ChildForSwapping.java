@@ -1,12 +1,12 @@
-package com.dmplayer.uicomponent.swappinglayout.child.implementation;
+package com.dmplayer.uicomponent.externalprofilelayout.child.implementation;
 
 
 import android.content.Context;
 import android.widget.LinearLayout;
 
 public class ChildForSwapping extends LinearLayout {
-    int layoutId;
-    Context context;
+    private int layoutId;
+    private Context context;
 
     public ChildForSwapping(Context context, int layoutId) {
         super(context);

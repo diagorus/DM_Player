@@ -5,7 +5,7 @@ import android.content.Context;
 import android.content.SharedPreferences;
 
 import com.dmplayer.models.SongDetail;
-import com.dmplayer.phonemidea.PhoneMediaControl;
+import com.dmplayer.phonemedia.PhoneMediaControl;
 import com.google.gson.Gson;
 
 import java.util.ArrayList;

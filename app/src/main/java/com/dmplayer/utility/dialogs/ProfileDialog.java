@@ -28,11 +28,11 @@ import android.widget.Toast;
 
 import com.dmplayer.R;
 import com.dmplayer.externalaccount.ExternalAccountViewInternalCallbacks;
-import com.dmplayer.externalaccount.vkprofile.VkAccountPresenter;
-import com.dmplayer.externalaccount.vkprofile.VkAccountView;
 import com.dmplayer.fragments.FragmentSettings;
-import com.dmplayer.phonemidea.DMPlayerUtility;
+import com.dmplayer.phonemedia.DMPlayerUtility;
+import com.dmplayer.presenters.VkAccountPresenter;
 import com.dmplayer.uicomponent.CircleImageView;
+import com.dmplayer.uicomponent.VkAccountView;
 import com.vk.sdk.VKAccessToken;
 import com.vk.sdk.VKCallback;
 import com.vk.sdk.VKScope;

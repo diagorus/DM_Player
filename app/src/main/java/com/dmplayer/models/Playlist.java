@@ -4,7 +4,7 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.util.Log;
 
-import com.dmplayer.phonemidea.PhoneMediaControl;
+import com.dmplayer.phonemedia.PhoneMediaControl;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;

@@ -23,22 +23,19 @@ import android.widget.TextView;
 
 import com.dmplayer.R;
 import com.dmplayer.models.SongDetail;
-import com.dmplayer.phonemidea.DMPlayerUtility;
-import com.dmplayer.phonemidea.PhoneMediaControl;
+import com.dmplayer.phonemedia.DMPlayerUtility;
+import com.dmplayer.phonemedia.PhoneMediaControl;
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.ImageLoader;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class MusicChooserActivity extends AppCompatActivity {
-
-    private SharedPreferences sharedPreferences;
-    private int color = 0xFFFFFF;
     private Context context;
 
-    private ListView recycler_songslist;
     private AllSongsListAdapter mAllSongsListAdapter;
-    private ArrayList<SongDetail> songList = new ArrayList<SongDetail>();
+    private List<SongDetail> songList = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -69,8 +66,8 @@ public class MusicChooserActivity extends AppCompatActivity {
 
     //Catch  theme changed from settings
     public void theme() {
-        sharedPreferences = getSharedPreferences("VALUES", Context.MODE_PRIVATE);
-        int theme = sharedPreferences.getInt("THEME", 0);
+        SharedPreferences sp = getSharedPreferences("VALUES", Context.MODE_PRIVATE);
+        int theme = sp.getInt("THEME", 0);
 
         DMPlayerUtility.settingTheme(context, theme);
     }
@@ -81,15 +78,13 @@ public class MusicChooserActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowTitleEnabled(true);
 
-        recycler_songslist = (ListView) findViewById(R.id.listView_songs);
+        ListView recyclerViewSongsList = (ListView) findViewById(R.id.listView_songs);
         mAllSongsListAdapter = new AllSongsListAdapter(context);
-        recycler_songslist.setAdapter(mAllSongsListAdapter);
-//        TypedValue primaryColor = new TypedValue();
-//        context.getTheme().resolveAttribute(R.attr.colorPrimary, primaryColor,true);
-//        recycler_songslist.setSelector(primaryColor.resourceId);
-        recycler_songslist.setFastScrollEnabled(true);
-        recycler_songslist.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE_MODAL);
-        recycler_songslist.setMultiChoiceModeListener(new MultiSongs(recycler_songslist));
+
+        recyclerViewSongsList.setAdapter(mAllSongsListAdapter);
+        recyclerViewSongsList.setFastScrollEnabled(true);
+        recyclerViewSongsList.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE_MODAL);
+        recyclerViewSongsList.setMultiChoiceModeListener(new MultiSongs(recyclerViewSongsList));
     }
 
     private void loadAllSongs() {
@@ -97,7 +92,7 @@ public class MusicChooserActivity extends AppCompatActivity {
         PhoneMediaControl.setPhoneMediaControlInterface(new PhoneMediaControl.PhoneMediaControlInterface() {
 
             @Override
-            public void loadSongsComplete(ArrayList<SongDetail> songsList_) {
+            public void loadSongsComplete(List<SongDetail> songsList_) {
                 songList = songsList_;
                 mAllSongsListAdapter.notifyDataSetChanged();
             }

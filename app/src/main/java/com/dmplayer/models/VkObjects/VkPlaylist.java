@@ -3,7 +3,7 @@ package com.dmplayer.models.VkObjects;
 import android.os.Bundle;
 
 import com.dmplayer.models.Playlist;
-import com.dmplayer.phonemidea.PhoneMediaControl;
+import com.dmplayer.phonemedia.PhoneMediaControl;
 
 public class VkPlaylist extends Playlist {
     private int type;

@@ -1,4 +1,4 @@
-package com.dmplayer.externalaccount.vkprofile;
+package com.dmplayer.helperservises;
 
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -12,7 +12,8 @@ import com.dmplayer.internetservices.VkApiService;
 import com.dmplayer.models.VkObjects.VkAlbumsResponse.VkAlbumsWrapper;
 import com.dmplayer.models.VkObjects.VkProfileUserDataResponse.VkUserData;
 import com.dmplayer.models.VkObjects.VkProfileUserDataResponse.VkUserDataCollection;
-import com.dmplayer.phonemidea.DMPlayerUtility;
+import com.dmplayer.models.VkProfileModel;
+import com.dmplayer.phonemedia.DMPlayerUtility;
 import com.dmplayer.utility.dialogs.ProfileDialog;
 
 import java.io.IOException;
@@ -32,8 +33,12 @@ public class VkProfileHelper implements ExternalProfileHelper {
     private Context context;
     private SharedPreferences prefs;
 
-    public final static String VK_API_URL = "https://api.vk.com/method/";
-    private final static String TAG = "VkProfileHelper";
+    public static final String VK_API_URL = "https://api.vk.com/method/";
+    private static final String TAG = "VkProfileHelper";
+
+    public static final String SP_LOGGED = "VK_LOGGED";
+    public static final String SP_ACCESS_TOKEN = "VK_ACCESS_TOKEN";
+    public static final String SP_USER_ID = "VK_USER_ID";
 
     private VkProfileHelper(Context context, boolean logged , String userId, String token) {
         prefs = context.getSharedPreferences("VALUES", Context.MODE_PRIVATE);
@@ -46,6 +51,7 @@ public class VkProfileHelper implements ExternalProfileHelper {
 
     @Override
     public void logOut() {
+        logged = false;
         userId = null;
         token = null;
 
@@ -139,9 +145,9 @@ public class VkProfileHelper implements ExternalProfileHelper {
 
     private void saveAccessValues(String token, String userId) {
         prefs.edit()
-                .putBoolean("VK_LOGGED", true)
-                .putString("VK_ACCESS_TOKEN", token)
-                .putString("VK_USER_ID", userId)
+                .putBoolean(SP_LOGGED, true)
+                .putString(SP_ACCESS_TOKEN, token)
+                .putString(SP_USER_ID, userId)
                 .apply();
     }
 
@@ -158,9 +164,9 @@ public class VkProfileHelper implements ExternalProfileHelper {
 
     private void eraseAccessValues() {
         prefs.edit()
-                .remove("VK_LOGGED")
-                .remove("VK_ACCESS_TOKEN")
-                .remove("VK_USER_ID")
+                .remove(SP_LOGGED)
+                .remove(SP_ACCESS_TOKEN)
+                .remove(SP_USER_ID)
                 .apply();
     }
 
@@ -200,9 +206,9 @@ public class VkProfileHelper implements ExternalProfileHelper {
             if (!logged && token == null && userId == null) {
                 SharedPreferences prefs = context.getSharedPreferences("VALUES", Context.MODE_PRIVATE);
 
-                boolean logged = prefs.getBoolean("VK_LOGGED", false);;
-                String token = prefs.getString("VK_ACCESS_TOKEN", "");
-                String userId = prefs.getString("VK_USER_ID", "");
+                boolean logged = prefs.getBoolean(SP_LOGGED, false);;
+                String token = prefs.getString(SP_ACCESS_TOKEN, "");
+                String userId = prefs.getString(SP_USER_ID, "");
 
                 return new VkProfileHelper(context, logged, userId, token);
             } else {

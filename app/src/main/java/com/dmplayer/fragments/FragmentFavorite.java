@@ -5,12 +5,12 @@
  */
 package com.dmplayer.fragments;
 
+import android.app.Fragment;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
-import android.app.Fragment;
 import android.support.v7.widget.PopupMenu;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
@@ -26,25 +26,23 @@ import com.dmplayer.R;
 import com.dmplayer.activities.DMPlayerBaseActivity;
 import com.dmplayer.manager.MediaController;
 import com.dmplayer.models.SongDetail;
-import com.dmplayer.phonemidea.DMPlayerUtility;
-import com.dmplayer.phonemidea.PhoneMediaControl;
+import com.dmplayer.phonemedia.DMPlayerUtility;
+import com.dmplayer.phonemedia.PhoneMediaControl;
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.ImageLoader;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class FragmentFavorite extends Fragment {
 
     private static final String TAG = "FragmentFavorite";
-    private static Context context;
     private ListView recycler_songslist;
     private AllSongsListAdapter mAllSongsListAdapter;
-    private ArrayList<SongDetail> songList = new ArrayList<SongDetail>();
+    private List<SongDetail> songList = new ArrayList<>();
 
     public static FragmentFavorite newInstance(int position, Context mContext) {
-        FragmentFavorite f = new FragmentFavorite();
-        context = mContext;
-        return f;
+        return new FragmentFavorite();
     }
 
     @Override
@@ -71,7 +69,7 @@ public class FragmentFavorite extends Fragment {
         PhoneMediaControl.setPhoneMediaControlInterface(new PhoneMediaControl.PhoneMediaControlInterface() {
 
             @Override
-            public void loadSongsComplete(ArrayList<SongDetail> songsList_) {
+            public void loadSongsComplete(List<SongDetail> songsList_) {
                 songList = songsList_;
                 mAllSongsListAdapter.notifyDataSetChanged();
             }

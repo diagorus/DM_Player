@@ -44,7 +44,7 @@ import com.dmplayer.manager.MusicPreferance;
 import com.dmplayer.manager.NotificationManager;
 import com.dmplayer.models.DrawerItem;
 import com.dmplayer.models.SongDetail;
-import com.dmplayer.phonemidea.DMPlayerUtility;
+import com.dmplayer.phonemedia.DMPlayerUtility;
 import com.dmplayer.recyclerviewutils.ItemClickSupport;
 import com.dmplayer.slidinguppanelhelper.SlidingUpPanelLayout;
 import com.dmplayer.uicomponent.CircleImageView;

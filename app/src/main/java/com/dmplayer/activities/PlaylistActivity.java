@@ -16,7 +16,6 @@
 
 package com.dmplayer.activities;
 
-import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
@@ -39,23 +38,17 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.dmplayer.R;
-import com.dmplayer.converters.VkToSongDetailConverter;
-import com.dmplayer.externalaccount.vkprofile.VkProfileHelper;
-import com.dmplayer.internetservices.VkApiService;
+import com.dmplayer.helperservises.VkMusicHelper;
+import com.dmplayer.helperservises.VkProfileHelper;
 import com.dmplayer.manager.MediaController;
 import com.dmplayer.manager.NotificationManager;
-import com.dmplayer.models.Playlist;
 import com.dmplayer.models.SongDetail;
-import com.dmplayer.models.VkObjects.VkAudioGetResponce.VkAudioWrapper;
-import com.dmplayer.models.VkObjects.VkAudioObject;
-import com.dmplayer.models.VkObjects.VkPlaylist;
-import com.dmplayer.models.VkObjects.VkPopularAudioResponce.VkPopularCollection;
 import com.dmplayer.observablelib.ObservableScrollView;
 import com.dmplayer.observablelib.ObservableScrollViewCallbacks;
 import com.dmplayer.observablelib.ScrollState;
 import com.dmplayer.observablelib.ScrollUtils;
-import com.dmplayer.phonemidea.DMPlayerUtility;
-import com.dmplayer.phonemidea.PhoneMediaControl;
+import com.dmplayer.phonemedia.DMPlayerUtility;
+import com.dmplayer.phonemedia.PhoneMediaControl;
 import com.dmplayer.slidinguppanelhelper.SlidingUpPanelLayout;
 import com.dmplayer.uicomponent.ExpandableHeightListView;
 import com.dmplayer.uicomponent.PlayPauseView;
@@ -69,17 +62,10 @@ import com.nostra13.universalimageloader.core.display.FadeInBitmapDisplayer;
 import com.nostra13.universalimageloader.core.listener.ImageLoadingListener;
 import com.nostra13.universalimageloader.core.listener.SimpleImageLoadingListener;
 
-import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
-
-import retrofit2.Call;
-import retrofit2.Response;
-import retrofit2.Retrofit;
-import retrofit2.converter.gson.GsonConverterFactory;
 
 public class PlaylistActivity extends AppCompatActivity implements View.OnClickListener,
         ObservableScrollViewCallbacks,
@@ -90,7 +76,7 @@ public class PlaylistActivity extends AppCompatActivity implements View.OnClickL
     private ObservableScrollView mScrollView;
     private int mParallaxImageHeight;
 
-    private SharedPreferences sharedPreferences;
+    private SharedPreferences sp;
     private int color = 0xFFFFFF;
     private Context context;
 
@@ -100,11 +86,9 @@ public class PlaylistActivity extends AppCompatActivity implements View.OnClickL
     private String title_one = "";
     private String title_sec = "";
 
-    private VkApiService service;
+    private VkMusicHelper vkMusicHelper;
     private int vkType = -1;
     private String vkAlbumId;
-    private String vkAccessToken;
-    private String vkUserId;
     private String vkPlaylistName;
 
     private ImageView banner;
@@ -112,8 +96,7 @@ public class PlaylistActivity extends AppCompatActivity implements View.OnClickL
     private TextView displayMainString, displayFirstSubString, displaySecondSubString;
     private ExpandableHeightListView songsList;
     private AllSongsListAdapter mSongsListAdapter;
-    private LinearLayout mLoadingFooter;
-    private ArrayList<SongDetail> songList = new ArrayList<>();
+    private List<SongDetail> songList = new ArrayList<>();
 
     private DisplayImageOptions options;
     private ImageLoader imageLoader = ImageLoader.getInstance();
@@ -225,19 +208,25 @@ public class PlaylistActivity extends AppCompatActivity implements View.OnClickL
     }
 
     @Override
-    public void onDownMotionEvent() {
-        Log.i("Scroll_onDown", "onDownMotionEvent");
-    }
+    public void onDownMotionEvent() { }
 
     @Override
-    public void onUpOrCancelMotionEvent(ScrollState scrollState) {
-        Log.i("Scroll_onUpOrCancel", "onUpOrCancelMotionEvent " + scrollState.toString());
+    public void onUpOrCancelMotionEvent(ScrollState scrollState) { }
+
+    private void setupVkMusicHelper() {
+        SharedPreferences sp = getSharedPreferences("VALUES", Context.MODE_PRIVATE);
+
+        vkMusicHelper = new VkMusicHelper.Builder()
+                .setLogged(sp.getBoolean(VkProfileHelper.SP_LOGGED, false))
+                .setUserId(sp.getString(VkProfileHelper.SP_USER_ID, ""))
+                .setToken(sp.getString(VkProfileHelper.SP_ACCESS_TOKEN, ""))
+                .build();
     }
 
     //Catch  theme changed from settings
     public void theme() {
-        sharedPreferences = getSharedPreferences("VALUES", Context.MODE_PRIVATE);
-        int theme = sharedPreferences.getInt("THEME", 0);
+        sp = getSharedPreferences("VALUES", Context.MODE_PRIVATE);
+        int theme = sp.getInt("THEME", 0);
         DMPlayerUtility.settingTheme(context, theme);
     }
 
@@ -265,7 +254,6 @@ public class PlaylistActivity extends AppCompatActivity implements View.OnClickL
         displayFirstSubString = (TextView) findViewById(R.id.tv_title_frst);
         displaySecondSubString = (TextView) findViewById(R.id.tv_title_sec);
         songsList = (ExpandableHeightListView) findViewById(R.id.listView_songs);
-        mLoadingFooter = (LinearLayout) getLayoutInflater().inflate(R.layout.loading, null);
         mSongsListAdapter = new AllSongsListAdapter(context);
 
         songsList.setAdapter(mSongsListAdapter);
@@ -281,6 +269,8 @@ public class PlaylistActivity extends AppCompatActivity implements View.OnClickL
         } catch (Exception e) {
             e.printStackTrace();
         }
+
+        setupVkMusicHelper();
     }
 
     private void getBundleValues() {
@@ -289,8 +279,6 @@ public class PlaylistActivity extends AppCompatActivity implements View.OnClickL
             tagFor = bundle.getLong("tagfor");
 
             if (tagFor == PhoneMediaControl.SongsLoadFor.VkPlaylist.ordinal()) {
-                vkUserId = sharedPreferences.getString("VKUSERID", "");
-                vkAccessToken = sharedPreferences.getString("VKACCESSTOKEN", "");
                 vkType = bundle.getInt("playlisttype");
                 vkPlaylistName = bundle.getString("playlistname");
                 vkAlbumId = bundle.getString("playlistid");
@@ -328,7 +316,7 @@ public class PlaylistActivity extends AppCompatActivity implements View.OnClickL
         PhoneMediaControl.setPhoneMediaControlInterface(new PhoneMediaControl.PhoneMediaControlInterface() {
 
             @Override
-            public void loadSongsComplete(ArrayList<SongDetail> songsList_) {
+            public void loadSongsComplete(List<SongDetail> songsList_) {
                 songList = songsList_;
                 mSongsListAdapter.notifyDataSetChanged();
                 if (songList != null && songList.size() >= 1) {
@@ -347,7 +335,7 @@ public class PlaylistActivity extends AppCompatActivity implements View.OnClickL
         PhoneMediaControl.setPhoneMediaControlInterface(new PhoneMediaControl.PhoneMediaControlInterface() {
 
             @Override
-            public void loadSongsComplete(ArrayList<SongDetail> songsList_) {
+            public void loadSongsComplete(List<SongDetail> songsList_) {
                 songList = songsList_;
                 mSongsListAdapter.notifyDataSetChanged();
                 if (songList != null && songList.size() >= 1) {
@@ -364,7 +352,7 @@ public class PlaylistActivity extends AppCompatActivity implements View.OnClickL
         PhoneMediaControl.setPhoneMediaControlInterface(new PhoneMediaControl.PhoneMediaControlInterface() {
 
             @Override
-            public void loadSongsComplete(ArrayList<SongDetail> songsList_) {
+            public void loadSongsComplete(List<SongDetail> songsList_) {
                 songList = songsList_;
                 mSongsListAdapter.notifyDataSetChanged();
                 if (songList != null && songList.size() >= 1) {
@@ -377,13 +365,13 @@ public class PlaylistActivity extends AppCompatActivity implements View.OnClickL
         mPhoneMediaControl.loadMusicList(context, id, PhoneMediaControl.SongsLoadFor.Genre, "");
     }
 
-    private void loadSongsLocalPlaylist(long id) {}
+    private void loadSongsLocalPlaylist(long id) { }
 
     private void loadVkPlaylist(final int type, final String id, final String name){
         PhoneMediaControl.setPhoneMediaControlInterface(new PhoneMediaControl.PhoneMediaControlInterface() {
 
             @Override
-            public void loadSongsComplete(final ArrayList<SongDetail> songsList_) {
+            public void loadSongsComplete(final List<SongDetail> songsList_) {
                 songList = songsList_;
                 mSongsListAdapter.notifyDataSetChanged();
 
@@ -394,199 +382,23 @@ public class PlaylistActivity extends AppCompatActivity implements View.OnClickL
             }
         });
 
-        createApiService();
+        new LoadPlaylistTask().execute();
+    }
 
-        switch (type) {
-            case VkPlaylist.ALL:
-                loadAlbum(0, 16, "", "My audios");
-                break;
+    private class LoadPlaylistTask extends AsyncTask<Void, Void, ArrayList<SongDetail>> {
 
-            case VkPlaylist.POPULAR:
-                loadPopular(0, 16);
-                break;
-
-            case VkPlaylist.RECOMMENDED:
-                loadRecommended(0, 16);
-                break;
-
-            case VkPlaylist.ALBUM:
-                loadAlbum(0, 16, id, name);
-                break;
+        @Override
+        protected ArrayList<SongDetail> doInBackground(Void... params) {
+            return vkMusicHelper.loadMusicList(vkType, vkAlbumId, vkPlaylistName)
+                    .getSongs();
         }
-    }
 
-    private void loadAlbum(final int offset, final int count,
-                                            final String albumId, final String albumName) {
-        new AsyncTask<Void, Void, ArrayList<SongDetail>>() {
-            private ProgressDialog progressDialog;
+        @Override
+        protected void onPostExecute(ArrayList<SongDetail> songDetails) {
+            super.onPostExecute(songDetails);
 
-            @Override
-            protected void onPreExecute() {
-                super.onPreExecute();
-
-                progressDialog = new ProgressDialog(PlaylistActivity.this);
-                progressDialog.setMessage(getString(R.string.loading_message));
-                progressDialog.show();
-            }
-
-            @Override
-            protected ArrayList<SongDetail> doInBackground(Void... voids) {
-
-                Call<VkAudioWrapper> callForAlbum = service.loadAudio(albumId, String.valueOf(offset),
-                        String.valueOf(count), vkUserId, vkAccessToken);
-
-                Response<VkAudioWrapper> responseAlbum = null;
-                try {
-                    responseAlbum = callForAlbum.execute();
-                } catch (IOException e) {
-                    Log.e(TAG, "Handled: " + Log.getStackTraceString(e));
-                }
-
-                ArrayList<VkAudioObject> vkAlbum = new ArrayList<>(
-                        Arrays.asList(responseAlbum.body().getResponse().getItems()));
-
-                Playlist playlistAlbum = new Playlist();
-                playlistAlbum.setName(albumName);
-                VkToSongDetailConverter converter = new VkToSongDetailConverter();
-                for (VkAudioObject vkSong : vkAlbum) {
-                    try {
-                        playlistAlbum.addSong(converter.convert(vkSong));
-                    } catch (IOException e) {
-                        Log.e(TAG, "Handled: " + Log.getStackTraceString(e));
-                    }
-                }
-
-                return playlistAlbum.getSongs();
-            }
-
-            @Override
-            protected void onPostExecute(ArrayList<SongDetail> songDetails) {
-                super.onPostExecute(songDetails);
-
-                progressDialog.dismiss();
-
-                mPhoneMediaControl.loadMusicList(songDetails);
-            }
-        }.execute();
-    }
-
-    private void loadPopular(final int offset, final int count) {
-        new AsyncTask<Void, Void, ArrayList<SongDetail>>() {
-            private ProgressDialog progressDialog;
-
-            @Override
-            protected void onPreExecute() {
-                super.onPreExecute();
-
-                progressDialog = new ProgressDialog(PlaylistActivity.this);
-                progressDialog.setMessage(getString(R.string.loading_message));
-                progressDialog.show();
-            }
-
-            @Override
-            protected ArrayList<SongDetail> doInBackground(Void... voids) {
-                Call<VkPopularCollection> callForPopular = service.loadPopularAudio(String.valueOf(offset),
-                        String.valueOf(count), vkAccessToken);
-
-                Response<VkPopularCollection> responsePopular = null;
-                try {
-                    responsePopular = callForPopular.execute();
-                } catch (IOException e) {
-                    Log.e(TAG, "Handled: " + e.toString());
-                    e.printStackTrace();
-                }
-
-                ArrayList<VkAudioObject> vkPopular = new ArrayList<>(
-                        Arrays.asList(responsePopular.body().getResponse()));
-
-                Playlist playlistPopular = new Playlist();
-                playlistPopular.setName("Popular");
-                VkToSongDetailConverter converter = new VkToSongDetailConverter();
-                for (VkAudioObject vkSong : vkPopular) {
-                    try {
-                        playlistPopular.addSong(converter.convert(vkSong));
-                    } catch (IOException e) {
-                        Log.e(TAG, "Handled: " + e.toString());
-                        e.printStackTrace();
-                    }
-                }
-
-                return playlistPopular.getSongs();
-            }
-
-            @Override
-            protected void onPostExecute(ArrayList<SongDetail> songDetails) {
-                super.onPostExecute(songDetails);
-
-                progressDialog.dismiss();
-
-                mPhoneMediaControl.loadMusicList(songDetails);
-            }
-        }.execute();
-    }
-
-    private void loadRecommended(final int offset, final int count) {
-        new AsyncTask<Void, Void, ArrayList<SongDetail>>() {
-            private ProgressDialog progressDialog;
-
-            @Override
-            protected void onPreExecute() {
-                super.onPreExecute();
-
-                progressDialog = new ProgressDialog(PlaylistActivity.this);
-                progressDialog.setMessage(getString(R.string.loading_message));
-                progressDialog.show();
-            }
-
-            @Override
-            protected ArrayList<SongDetail> doInBackground(Void... voids) {
-                Call<VkAudioWrapper> callForRecommended = service.loadRecommendedAudio(String.valueOf(offset),
-                        String.valueOf(count), vkUserId, vkAccessToken);
-
-                Response<VkAudioWrapper> responseRecommended = null;
-                try {
-                    responseRecommended = callForRecommended.execute();
-                } catch (IOException e) {
-                    Log.e(TAG, "Handled: " + e.toString());
-                    e.printStackTrace();
-                }
-
-                ArrayList<VkAudioObject> vkRecommended = new ArrayList<>(
-                        Arrays.asList(responseRecommended.body().getResponse().getItems()));
-
-                Playlist playlistRecommended = new Playlist();
-                playlistRecommended.setName("Recommended");
-                VkToSongDetailConverter converter = new VkToSongDetailConverter();
-                for (VkAudioObject vkSong : vkRecommended) {
-                    try {
-                        playlistRecommended.addSong(converter.convert(vkSong));
-                    } catch (IOException e) {
-                        Log.e(TAG, "Handled: " + e.toString());
-                        e.printStackTrace();
-                    }
-                }
-
-                return playlistRecommended.getSongs();
-            }
-
-            @Override
-            protected void onPostExecute(ArrayList<SongDetail> songDetails) {
-                super.onPostExecute(songDetails);
-
-                progressDialog.dismiss();
-
-                mPhoneMediaControl.loadMusicList(songDetails);
-            }
-        }.execute();
-    }
-
-    private void createApiService() {
-        Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl(VkProfileHelper.VK_API_URL)
-                .addConverterFactory(GsonConverterFactory.create())
-                .build();
-
-        service = retrofit.create(VkApiService.class);
+            mPhoneMediaControl.loadMusicList(songDetails);
+        }
     }
 
     public class AllSongsListAdapter extends BaseAdapter {

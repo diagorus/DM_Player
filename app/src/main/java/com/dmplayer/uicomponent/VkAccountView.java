@@ -1,4 +1,4 @@
-package com.dmplayer.externalaccount.vkprofile;
+package com.dmplayer.uicomponent;
 
 
 import android.content.Context;
@@ -7,7 +7,7 @@ import android.util.AttributeSet;
 import com.dmplayer.externalaccount.ExternalAccountViewExternalCallbacks;
 import com.dmplayer.externalaccount.ExternalAccountViewInternalCallbacks;
 import com.dmplayer.externalaccount.ExternalProfileModel;
-import com.dmplayer.uicomponent.swappinglayout.ExternalProfileLayout;
+import com.dmplayer.uicomponent.externalprofilelayout.ExternalProfileLayout;
 
 public class VkAccountView extends ExternalProfileLayout {
     private ExternalAccountViewExternalCallbacks behaviorCallbacks;

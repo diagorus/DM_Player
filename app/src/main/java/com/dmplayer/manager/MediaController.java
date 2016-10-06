@@ -24,10 +24,11 @@ import com.dmplayer.ApplicationDMPlayer;
 import com.dmplayer.dbhandler.FavoritePlayTableHelper;
 import com.dmplayer.dbhandler.MostAndRecentPlayTableHelper;
 import com.dmplayer.models.SongDetail;
-import com.dmplayer.phonemidea.DMPlayerUtility;
+import com.dmplayer.phonemedia.DMPlayerUtility;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -441,9 +442,9 @@ public class MediaController implements NotificationManager.NotificationCenterDe
         }
     }
 
-    public boolean setPlaylist(ArrayList<SongDetail> allSongsList, SongDetail current, int type_, int id_) {
-        type = type_;
-        id = id_;
+    public boolean setPlaylist(List<SongDetail> allSongsList, SongDetail current, int type, int id) {
+        this.type = type;
+        this.id = id;
 
         if (MusicPreferance.playingSongDetail == current) {
             return playAudio(current);
@@ -579,7 +580,6 @@ public class MediaController implements NotificationManager.NotificationCenterDe
     }
 
     public synchronized void checkIsFavorite(final Context context, final SongDetail mDetail, final View v) {
-
         AsyncTask<Void, Void, Void> task = new AsyncTask<Void, Void, Void>() {
             boolean isFavorite = false;
 

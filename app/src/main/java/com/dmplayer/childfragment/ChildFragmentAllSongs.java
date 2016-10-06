@@ -5,14 +5,12 @@
  */
 package com.dmplayer.childfragment;
 
-import java.util.ArrayList;
-
+import android.app.Fragment;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
-import android.app.Fragment;
 import android.support.v7.widget.PopupMenu;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
@@ -29,22 +27,22 @@ import com.dmplayer.R;
 import com.dmplayer.activities.DMPlayerBaseActivity;
 import com.dmplayer.manager.MediaController;
 import com.dmplayer.models.SongDetail;
-import com.dmplayer.phonemidea.DMPlayerUtility;
-import com.dmplayer.phonemidea.PhoneMediaControl;
-import com.dmplayer.phonemidea.PhoneMediaControl.PhoneMediaControlInterface;
+import com.dmplayer.phonemedia.DMPlayerUtility;
+import com.dmplayer.phonemedia.PhoneMediaControl;
+import com.dmplayer.phonemedia.PhoneMediaControl.PhoneMediaControlInterface;
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.ImageLoader;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class ChildFragmentAllSongs extends Fragment {
 
     private AllSongsListAdapter mAllSongsListAdapter;
-    private ArrayList<SongDetail> songList = new ArrayList<>();
-    private static Context context;
+    private List<SongDetail> songList = new ArrayList<>();
 
     public static ChildFragmentAllSongs newInstance(int position, Context mContext) {
-        ChildFragmentAllSongs f = new ChildFragmentAllSongs();
-        context = mContext;
-        return f;
+        return new ChildFragmentAllSongs();
     }
 
     @Override
@@ -60,8 +58,8 @@ public class ChildFragmentAllSongs extends Fragment {
         super.onDestroy();
     }
 
-    private void setupInitialViews(View inflatreView) {
-        ListView recyclerSongsList = (ListView) inflatreView.findViewById(R.id.listView_songs);
+    private void setupInitialViews(View inflateView) {
+        ListView recyclerSongsList = (ListView) inflateView.findViewById(R.id.listView_songs);
         mAllSongsListAdapter = new AllSongsListAdapter(getActivity());
         recyclerSongsList.setAdapter(mAllSongsListAdapter);
         recyclerSongsList.setFastScrollEnabled(true);
@@ -72,7 +70,7 @@ public class ChildFragmentAllSongs extends Fragment {
         PhoneMediaControl.setPhoneMediaControlInterface(new PhoneMediaControlInterface() {
 
             @Override
-            public void loadSongsComplete(ArrayList<SongDetail> songsList_) {
+            public void loadSongsComplete(List<SongDetail> songsList_) {
                 songList = songsList_;
                 mAllSongsListAdapter.notifyDataSetChanged();
             }

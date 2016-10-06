@@ -3,7 +3,7 @@
  * You should have received a copy of the license in this archive (see LICENSE).
  * Copyright @Dibakar_Mistry, 2015.
  */
-package com.dmplayer.phonemidea;
+package com.dmplayer.phonemedia;
 
 import android.content.Context;
 import android.database.Cursor;
@@ -22,6 +22,7 @@ import com.dmplayer.models.SongDetail;
 import java.io.FileInputStream;
 import java.io.ObjectInputStream;
 import java.util.ArrayList;
+import java.util.List;
 
 public class PhoneMediaControl {
 
@@ -250,18 +251,13 @@ public class PhoneMediaControl {
     private final String[] projectionSongs = {MediaStore.Audio.Media._ID, MediaStore.Audio.Media.ARTIST, MediaStore.Audio.Media.TITLE,
             MediaStore.Audio.Media.DATA, MediaStore.Audio.Media.DISPLAY_NAME, MediaStore.Audio.Media.DURATION};
 
-    public static PhoneMediaControlInterface phonemediacontrolinterface;
-
-    public static PhoneMediaControlInterface getPhoneMediaControlInterface() {
-        return phonemediacontrolinterface;
-    }
+    private static PhoneMediaControlInterface phonemediacontrolinterface;
 
     public static void setPhoneMediaControlInterface(PhoneMediaControlInterface phonemediacontrolinterface) {
         PhoneMediaControl.phonemediacontrolinterface = phonemediacontrolinterface;
     }
 
     public interface PhoneMediaControlInterface {
-        void loadSongsComplete(ArrayList<SongDetail> songsList);
+        void loadSongsComplete(List<SongDetail> songsList);
     }
-
 }

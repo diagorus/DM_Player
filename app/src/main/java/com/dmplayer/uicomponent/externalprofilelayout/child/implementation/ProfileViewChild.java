@@ -1,4 +1,4 @@
-package com.dmplayer.uicomponent.swappinglayout.child.implementation;
+package com.dmplayer.uicomponent.externalprofilelayout.child.implementation;
 
 import android.content.Context;
 import android.widget.ImageView;
@@ -7,15 +7,15 @@ import android.widget.TextView;
 import com.dmplayer.R;
 import com.dmplayer.externalaccount.ExternalProfileModel;
 import com.dmplayer.uicomponent.CircleImageView;
-import com.dmplayer.uicomponent.swappinglayout.child.core.ExternalProfileSettable;
+import com.dmplayer.uicomponent.externalprofilelayout.child.core.ExternalProfileSettable;
 
 public class ProfileViewChild extends ChildForSwapping implements ExternalProfileSettable {
-    CircleImageView avatar;
-    TextView nickname;
-    TextView songsCount;
-    TextView albumsCount;
-    ImageView refresh;
-    ImageView logOut;
+    private CircleImageView avatar;
+    private TextView nickname;
+    private TextView songsCount;
+    private TextView albumsCount;
+    private ImageView refresh;
+    private ImageView logOut;
 
     public ProfileViewChild(Context context, int layoutId) {
         super(context, layoutId);

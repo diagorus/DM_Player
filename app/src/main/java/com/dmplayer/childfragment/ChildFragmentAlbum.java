@@ -6,6 +6,7 @@
 package com.dmplayer.childfragment;
 
 import android.app.Activity;
+import android.app.Fragment;
 import android.content.AsyncQueryHandler;
 import android.content.ContentResolver;
 import android.content.Context;
@@ -18,7 +19,6 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.provider.MediaStore;
-import android.app.Fragment;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
@@ -33,10 +33,10 @@ import android.widget.TextView;
 import com.dmplayer.R;
 import com.dmplayer.activities.PlaylistActivity;
 import com.dmplayer.adapter.CursorRecyclerViewAdapter;
+import com.dmplayer.phonemedia.DMPlayerUtility;
+import com.dmplayer.phonemedia.MusicAlphabetIndexer;
+import com.dmplayer.phonemedia.PhoneMediaControl;
 import com.dmplayer.utility.LogWriter;
-import com.dmplayer.phonemidea.DMPlayerUtility;
-import com.dmplayer.phonemidea.MusicAlphabetIndexer;
-import com.dmplayer.phonemidea.PhoneMediaControl;
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.ImageLoader;
 

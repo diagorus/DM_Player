@@ -3,7 +3,7 @@
  * You should have received a copy of the license in this archive (see LICENSE).
  * Copyright @Dibakar_Mistry, 2015.
  */
-package com.dmplayer.phonemidea;
+package com.dmplayer.phonemedia;
 
 import android.app.Activity;
 import android.content.ContentResolver;
