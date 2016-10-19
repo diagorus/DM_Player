@@ -139,6 +139,14 @@ public class PlaylistActivity extends AppCompatActivity implements View.OnClickL
         loadAlreadyPlaying();
         addObserver();
         fabanim();
+
+
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+
+            }
+        });
     }
 
     @Override

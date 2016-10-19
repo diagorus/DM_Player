@@ -1,11 +1,6 @@
 package com.dmplayer.streamaudio;
 
-import android.app.ProgressDialog;
-import android.content.Context;
-import android.os.Handler;
-import android.os.Message;
 import android.util.Log;
-import android.widget.ProgressBar;
 
 import com.dmplayer.models.SongDetail;
 import com.dmplayer.streamaudio.Observer.SingleObserverContainer;
@@ -18,7 +13,6 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.net.MalformedURLException;
 import java.net.Socket;

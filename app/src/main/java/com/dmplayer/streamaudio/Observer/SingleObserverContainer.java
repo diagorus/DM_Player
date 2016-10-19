@@ -1,8 +1,12 @@
 package com.dmplayer.streamaudio.Observer;
 
+import android.content.Context;
+import android.widget.ListView;
 import android.widget.ProgressBar;
 
-import java.util.List;
+import com.dmplayer.streamaudio.WifiProfile.WifiProfileObject;
+
+import java.util.ArrayList;
 
 /**
  * Created by Alexvojander on 05.10.2016.
@@ -15,7 +19,22 @@ public class SingleObserverContainer implements Observer {
 
     ProgressBar progressBarClient=null;
     ProgressBar progressBarServer=null;
+    ArrayList<WifiProfileObject> serversList=new ArrayList<>();
+    ListView listView;
+    Context context;
+//    View playPauseView;
+//    public void setPlayPauseView(View playPauseView){this.playPauseView=playPauseView;}
+//    public View getPlayPauseView(){return this.playPauseView;}
+    public  void setContext(Context context){this.context=context;}
+    public Context getContext(){return this.context;}
+    public void setServersList(ArrayList<WifiProfileObject> serversList){
+        this.serversList=null;
+        this.serversList=serversList;
+    }
 
+    public void setListView(ListView listView){this.listView=listView;}
+    public ListView getListView(){return this.listView;}
+    public  ArrayList<WifiProfileObject> getServersList(){return this.serversList;}
     private SingleObserverContainer() {}
 
     public static SingleObserverContainer getInstance() {

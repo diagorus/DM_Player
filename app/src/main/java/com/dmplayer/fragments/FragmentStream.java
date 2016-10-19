@@ -5,32 +5,30 @@
  */
 package com.dmplayer.fragments;
 
+import android.app.Fragment;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
 import android.os.Handler;
-import android.app.Fragment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.CompoundButton;
-import android.widget.EditText;
+import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.Switch;
 
 import com.dmplayer.R;
 import com.dmplayer.manager.MediaController;
 import com.dmplayer.streamaudio.ClientStreamService;
-import com.dmplayer.streamaudio.ClientUDPThread;
 import com.dmplayer.streamaudio.Observer.SingleObserverContainer;
+import com.dmplayer.streamaudio.ReciveAudioSocket;
+import com.dmplayer.streamaudio.SendAudioSocket;
 import com.dmplayer.streamaudio.ServerStreamService;
-import com.dmplayer.streamaudio.ServerUDPThread;
-
-import java.util.Observer;
 
 public class FragmentStream extends Fragment {
 
@@ -39,7 +37,9 @@ public class FragmentStream extends Fragment {
 	Button connectToServerButton;
 
 
+	public ReciveAudioSocket reciveAudioSocket;
 
+	SendAudioSocket sendAudioSocket;
 	ProgressBar pbServer,pbClient;
 	Handler handler;
 	BroadcastReceiver brClient;
@@ -62,6 +62,7 @@ public class FragmentStream extends Fragment {
 	final int TASK2_CODE = 2;
 	final int TASK3_CODE = 3;
 
+	View view1;
 	Intent intentServer;
 	Intent intentClient;
 
@@ -75,12 +76,13 @@ public class FragmentStream extends Fragment {
 	public void onDestroy() {
 		getActivity().unregisterReceiver(brClient);
 		getActivity().unregisterReceiver(brServer);
+		//sendAudioSocket.refresh();
 		super.onDestroy();
 	}
 
 	private void setupInitialViews(View view) {
 
-
+		view1=view;
 		pbClient=(ProgressBar)view.findViewById(R.id.client_progress_bar);
 		pbServer=(ProgressBar)view.findViewById(R.id.server_progress_bar);
 
@@ -89,9 +91,13 @@ public class FragmentStream extends Fragment {
 		switcher=(Switch)view.findViewById(R.id.switchServer);
 		switcher.setOnCheckedChangeListener(serverListener);
 
+		ListView listView=(ListView)view1.findViewById(R.id.streamListView);
+		listView.setOnItemClickListener(itemListener);
 		SingleObserverContainer.getInstance().update(pbClient,pbServer);
 
+		SingleObserverContainer.getInstance().setListView(listView);
 
+		SingleObserverContainer.getInstance().setContext(view.getContext());
 
 		brClient = new BroadcastReceiver() {
 			// действия при получении сообщений
@@ -170,20 +176,30 @@ public class FragmentStream extends Fragment {
 			}
 		}
 	};
+
 	private  View.OnClickListener connectToServerListener = new View.OnClickListener() {
 
 		@Override
 		public void onClick(View arg0) {
-
-
 			// Создаем Intent для вызова сервиса,
-			// кладем туда параметр времени и код задачи
+
 			intentClient = new Intent(getActivity(), ClientStreamService.class);
 			// стартуем сервис
 			getActivity().startService(intentClient);
-
-
 			//startSendAudioSocket(pbClient);
 		}
 	};
+	AdapterView.OnItemClickListener itemListener = new AdapterView.OnItemClickListener() {
+		@Override
+		public void onItemClick(AdapterView<?> parent, View v, int position, long id) {
+			reciveAudioSocket=new ReciveAudioSocket();
+			reciveAudioSocket.start();
+
+			if(MediaController.getInstance().getPlayingSongDetail()!=null){
+				sendAudioSocket= new SendAudioSocket(parent.getItemAtPosition(position).toString(),MediaController.getInstance().getPlayingSongDetail());
+				sendAudioSocket.start();
+			}
+		}
+	};
+
 }

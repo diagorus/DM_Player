@@ -8,6 +8,10 @@ import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.content.res.TypedArray;
 import android.graphics.Bitmap;
+import android.hardware.Sensor;
+import android.hardware.SensorEvent;
+import android.hardware.SensorEventListener;
+import android.hardware.SensorManager;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -66,7 +70,7 @@ import java.util.List;
 
 
 public class DMPlayerBaseActivity extends AppCompatActivity implements View.OnClickListener, Slider.OnValueChangedListener,
-        NotificationManager.NotificationCenterDelegate {
+        NotificationManager.NotificationCenterDelegate, SensorEventListener {
 
     private static final String TAG = "ActivityDMPlayerBase";
     private Context context;
@@ -108,6 +112,13 @@ public class DMPlayerBaseActivity extends AppCompatActivity implements View.OnCl
     private boolean isDragingStart = false;
     private int TAG_Observer;
 
+    private SensorManager senSensorManager;
+    private Sensor senAccelerometer;
+
+    private long lastUpdate = 0;
+    private float last_x, last_y, last_z;
+    private static final int SHAKE_THRESHOLD = 600;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         //Set your theme first
@@ -119,9 +130,15 @@ public class DMPlayerBaseActivity extends AppCompatActivity implements View.OnCl
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_dmplayerbase);
 
+        senSensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
+        senAccelerometer = senSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
+        senSensorManager.registerListener(this, senAccelerometer , SensorManager.SENSOR_DELAY_NORMAL);
+
         toolbarStatusBar();
         navigationDrawer();
 
+       // View playPauseButton =(View)findViewById(R.id.bottombar_play);
+        //SingleObserverContainer.getInstance().setPlayPauseView(playPauseButton);
         sharedPreferences = getSharedPreferences("VALUES", Context.MODE_PRIVATE);
 
         initSlidingUpPanel();
@@ -135,6 +152,7 @@ public class DMPlayerBaseActivity extends AppCompatActivity implements View.OnCl
     @Override
     protected void onResume() {
         super.onResume();
+        //senSensorManager.registerListener(this, senAccelerometer, SensorManager.SENSOR_DELAY_NORMAL);
         addObserver();
         try {
             loadAlreadyPlaying();
@@ -147,6 +165,7 @@ public class DMPlayerBaseActivity extends AppCompatActivity implements View.OnCl
     @Override
     protected void onPause() {
         super.onPause();
+       // senSensorManager.unregisterListener(this);
         removeObserver();
     }
 
@@ -763,6 +782,42 @@ public class DMPlayerBaseActivity extends AppCompatActivity implements View.OnCl
         win.setAttributes(winParams);
     }
 
+
+
+
+    @Override
+    public void onAccuracyChanged(Sensor sensor, int i) {
+
+    }
+    @Override
+    public void onSensorChanged(SensorEvent sensorEvent) {
+        Sensor mySensor = sensorEvent.sensor;
+
+        if (mySensor.getType() == Sensor.TYPE_ACCELEROMETER) {
+            float x = sensorEvent.values[0];
+            float y = sensorEvent.values[1];
+            float z = sensorEvent.values[2];
+
+            long curTime = System.currentTimeMillis();
+
+            if ((curTime - lastUpdate) > 100) {
+                long diffTime = (curTime - lastUpdate);
+                lastUpdate = curTime;
+
+                float speed = Math.abs(x + y + z - last_x - last_y - last_z)/ diffTime * 10000;
+
+                if (speed > SHAKE_THRESHOLD) {
+                  //  getRandomNumber();
+                    if (MediaController.getInstance().getPlayingSongDetail() != null)
+                        MediaController.getInstance().playNextSong();
+                }
+
+                last_x = x;
+                last_y = y;
+                last_z = z;
+            }
+        }
+    }
     private static class AnimateFirstDisplayListener extends SimpleImageLoadingListener {
 
         static final List<String> displayedImages = Collections.synchronizedList(new LinkedList<String>());

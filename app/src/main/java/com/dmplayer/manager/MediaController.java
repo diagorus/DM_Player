@@ -606,4 +606,100 @@ public class MediaController implements NotificationManager.NotificationCenterDe
             task.execute();
         }
     }
+    public boolean playAudioFromStream(MediaPlayer mediaPlayer) {
+//        if (mSongDetail == null) {
+//            return false;
+//        }
+//        if ((audioTrackPlayer != null || audioPlayer != null) &&
+//                MusicPreferance.playingSongDetail != null &&
+//                mSongDetail.getId() == MusicPreferance.playingSongDetail.getId()) {
+//            if (isPaused) {
+//                resumeAudio(mSongDetail);
+//            }
+//            return true;
+//        }
+//        if (audioTrackPlayer != null) {
+//            MusicPlayerService.setIgnoreAudioFocus();
+//        }
+//        cleanupPlayer(!playMusicAgain, false);
+//        playMusicAgain = false;
+//        File file = null;
+        try {
+            if (audioPlayer != null) {
+                audioPlayer.pause();
+
+            }
+            isPaused = true;
+           // NotificationManager.getInstance().postNotificationName(NotificationManager.audioPlayStateChanged, MusicPreferance.playingSongDetail.getId());
+        } catch (Exception e) {
+            Log.e("tmessages", e.toString());
+            isPaused = true;
+            return false;
+        }
+
+        try {
+            audioPlayer = new MediaPlayer();
+            audioPlayer=mediaPlayer;
+
+           // audioPlayer.setAudioStreamType(useFrontSpeaker ? AudioManager.STREAM_VOICE_CALL : AudioManager.STREAM_MUSIC);
+           // audioPlayer.setDataSource(mSongDetail.getPath());
+//            audioPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+//                @Override
+//                public void onCompletion(MediaPlayer mediaPlayer) {
+//                    MusicPreferance.playingSongDetail.audioProgress = 0.0f;
+//                    MusicPreferance.playingSongDetail.audioProgressSec = 0;
+//                    //if (!MusicPreferance.playlist.isEmpty() && MusicPreferance.playlist.size() > 1) {
+//                   //     playNextSong(true);
+//                   //} else {
+//                    //    cleanupPlayer(true, true);
+//                    //}
+//                }
+//            });
+            audioPlayer.prepare();
+            audioPlayer.start();
+            startProgressTimer();
+        } catch (Exception e) {
+            if (audioPlayer != null) {
+                audioPlayer.release();
+                audioPlayer = null;
+                isPaused = false;
+                MusicPreferance.playingSongDetail = null;
+            }
+            return false;
+        }
+        isPaused = false;
+        lastProgress = 0;
+//        MusicPreferance.playingSongDetail = mSongDetail;
+//        NotificationManager.getInstance().postNotificationName(NotificationManager.audioDidStarted, mSongDetail);
+
+//        if (audioPlayer != null) {
+//            try {
+//                if (MusicPreferance.playingSongDetail.audioProgress != 0) {
+//                    int seekTo = (int) (audioPlayer.getDuration() * MusicPreferance.playingSongDetail.audioProgress);
+//                    audioPlayer.seekTo(seekTo);
+//                }
+//            } catch (Exception e2) {
+//                MusicPreferance.playingSongDetail.audioProgress = 0;
+//                MusicPreferance.playingSongDetail.audioProgressSec = 0;
+//            }
+//        } else if (audioTrackPlayer != null) {
+//            if (MusicPreferance.playingSongDetail.audioProgress == 1) {
+//                MusicPreferance.playingSongDetail.audioProgress = 0;
+//            }
+//
+//        }
+
+//        if (MusicPreferance.playingSongDetail != null) {
+//            Intent intent = new Intent(ApplicationDMPlayer.applicationContext, MusicPlayerService.class);
+//            ApplicationDMPlayer.applicationContext.startService(intent);
+//        } else {
+//            Intent intent = new Intent(ApplicationDMPlayer.applicationContext, MusicPlayerService.class);
+//            ApplicationDMPlayer.applicationContext.stopService(intent);
+//        }
+
+        //storeResendPlay(ApplicationDMPlayer.applicationContext, mSongDetail);
+       // NotificationManager.getInstance().notifyNewSongLoaded(NotificationManager.newaudioloaded, mSongDetail);
+
+        return true;
+    }
 }

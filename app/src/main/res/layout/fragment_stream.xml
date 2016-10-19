@@ -40,6 +40,10 @@
             android:layout_height="wrap_content"
             android:id="@+id/client_progress_bar"
             android:layout_gravity="center_horizontal" />
+        <ListView
+            android:id="@+id/streamListView"
+            android:layout_width="match_parent"
+            android:layout_height="30pt"></ListView>
     </LinearLayout>
 
 

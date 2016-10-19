@@ -5,14 +5,13 @@ package com.dmplayer.streamaudio;
  */
 
 
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.TimeUnit;
-
 import android.app.Service;
 import android.content.Intent;
 import android.os.IBinder;
 import android.util.Log;
+
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 
 
@@ -21,7 +20,7 @@ public class ServerStreamService extends Service {
     MyRun mr;
     final String LOG_TAG = "myLogs";
     ExecutorService es;
-    ServerUDPThread serverUDPThread;
+    ServerUDPThread serverUDPThread=null;
 
     public void onCreate() {
         super.onCreate();
@@ -51,7 +50,7 @@ public class ServerStreamService extends Service {
             serverUDPThread = null;
             dummy.interrupt();
         }
-        serverUDPThread = new ServerUDPThread();
+        serverUDPThread = new ServerUDPThread(getBaseContext());
         serverUDPThread.start();
 
 //          mr = new MyRun();
