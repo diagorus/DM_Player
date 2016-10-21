@@ -69,10 +69,9 @@ public class ClientUDPThread extends Thread {
             } catch (Exception e) {
 
             }
-
             // Broadcast the message over all the network interfaces
             Enumeration interfaces = NetworkInterface.getNetworkInterfaces();
-            serverSocket = new ServerSocket(5010);
+
             while (interfaces.hasMoreElements()) {
                 NetworkInterface networkInterface = (NetworkInterface) interfaces.nextElement();
                 if (networkInterface.isLoopback() || !networkInterface.isUp()) {
@@ -84,8 +83,8 @@ public class ClientUDPThread extends Thread {
                         continue;
                     }
                     try {
+                        serverSocket = new ServerSocket(5010);
                         WifiProfileObject clientObject;
-                        //sendData = "START_STREAMING_MUSIC".getBytes();
                         sendData=null;
                         sendData = "GET_SERVER_OBJECT".getBytes();
                         DatagramPacket sendPacket = new DatagramPacket(sendData, sendData.length, broadcast, 8888);
@@ -101,10 +100,13 @@ public class ClientUDPThread extends Thread {
                         int count=0;
                         int timeouts=0;
 
-                        serverSocket.setSoTimeout(100);
+                        serverSocket.setSoTimeout(500);
                         while (keepGoing)
                         {
+
                             try{
+                                if(serverSocket==null)
+                                serverSocket = new ServerSocket(5010);
                                 Socket socket = serverSocket.accept();
 
                                 InputStream in = socket.getInputStream();
@@ -123,14 +125,10 @@ public class ClientUDPThread extends Thread {
                                 in.close();
                                 out.close();
                                 socket.close();
-                                serverSocket.close();
 
                                 clientObject=WifiProfileObject.deserialize(bytes);
 
                                 serversList.add(clientObject);
-                                Log.d("ADDED", "obdject added");
-
-
                             }
                             catch (SocketTimeoutException ste){
                                 Log.d("TIMEOUT", "timeout " + timeouts);
@@ -159,18 +157,6 @@ public class ClientUDPThread extends Thread {
 
             SingleObserverContainer.getInstance().setServersList(serversList);
 
-
-
-
-//            for (WifiProfileObject serverinfo:serversList ) {
-//                System.out.println(serverinfo.getName());
-//                System.out.println(serverinfo.getIp());
-//            }
-          //  List<WifiProfileObject> serversList=SingleObserverContainer.getInstance().getServersList();
-
-
-
-            // Get a handler that can be used to post to the main thread
             if(SingleObserverContainer.getInstance().getContext()!=null && SingleObserverContainer.getInstance().getListView()!=null){
 
                 Handler mainHandler = new Handler(SingleObserverContainer.getInstance().getContext().getMainLooper());
@@ -179,8 +165,6 @@ public class ClientUDPThread extends Thread {
                     @Override
                     public void run() {
                         List<WifiProfileObject> serversList=SingleObserverContainer.getInstance().getServersList();
-
-
                         ListView listView=SingleObserverContainer.getInstance().getListView();
                         List<String> countries=new ArrayList<>();
                         for (WifiProfileObject serverinfo: serversList ) {
@@ -193,13 +177,10 @@ public class ClientUDPThread extends Thread {
                         listView.setAdapter(null);
                         // устанавливаем для списка адаптер
                         listView.setAdapter(adapter);
-                    } // This is your code
+                    }
                 };
                 mainHandler.post(myRunnable);
             }
-
-
-
         } catch (IOException ex) {
 
         }

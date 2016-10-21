@@ -43,7 +43,8 @@
         <ListView
             android:id="@+id/streamListView"
             android:layout_width="match_parent"
-            android:layout_height="30pt"></ListView>
+            android:layout_height="50pt"
+            ></ListView>
     </LinearLayout>
 
 

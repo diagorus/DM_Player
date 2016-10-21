@@ -33,7 +33,6 @@ public class SendAudioSocket extends Thread {
 
     public SendAudioSocket(String clientIPAdress, SongDetail audioInfo) {
         this.clientIPAdress = clientIPAdress;
-        //this.port = port;
         this.audioInfo=audioInfo;
         this.pathToFileToStream = audioInfo.getPath();
     }
@@ -47,15 +46,10 @@ public class SendAudioSocket extends Thread {
         }
         SingleObserverContainer.getInstance().getProgressBarServer().setMax(0);
         SingleObserverContainer.getInstance().getProgressBarServer().setProgress(0);
-       // this.s
-
     }
 
     @Override
     public void run() {
-        Log.e(LOG_TAG, "start send thread, thread id: "
-                + Thread.currentThread().getId());
-
         try {
 
             SingleObserverContainer.getInstance().getProgressBarServer().setMax(0);
@@ -71,19 +65,14 @@ public class SendAudioSocket extends Thread {
             boolean started = false;
 
             InetAddress address = InetAddress.getByName(clientIPAdress);
-
             totalRead=0;
-
             while ((numRead = bis.read(buffer)) != -1) {
-
                 socket = new Socket(address,Integer.parseInt(port));
-                //socket = new Socket(address,Integer.parseInt(port));
                 OutputStream out = socket.getOutputStream();
                 DataOutputStream dos = new DataOutputStream(out);
 
                 InputStream in=socket.getInputStream();
                 DataInputStream dis = new DataInputStream(in);
-
 
                 label:
                 {
@@ -98,25 +87,20 @@ public class SendAudioSocket extends Thread {
 
                     dos.writeBoolean(false);
                     if(len>32800){
-                        Log.d(LOG_TAG, "len34567899999999999999999999999999999999999999999999999999999999999999999999999999999999 " +len);
+                        Log.d(LOG_TAG, "so big value of socket pack:" +len);
                     }
                     if (len > 0) {
                         dis.readFully(buffer2,0,len);
                     }
-
                     if(Arrays.equals(buffer,buffer2)){
                         dos.writeBoolean(true);
                         totalRead += numRead;
-
-                       // Log.d(LOG_TAG, "bytes_send(numRead) : " + numRead);
                         Log.d(LOG_TAG, "totalSend : " + totalRead);
-                       // progressDialog.setProgress(totalRead);
                         SingleObserverContainer.getInstance().getProgressBarServer().setProgress(totalRead);
                         Log.d(LOG_TAG, "file size : " + new File(pathToFileToStream).length());
 
                         if (totalRead >=new File(pathToFileToStream).length() && !started) {
                             Log.e("Player", "BufferHIT:StartPlayServer");
-                           // Log.e("Player", "BufferHIT:StartPlayClient");
                             Log.d(LOG_TAG, "file size: " + (int)new File(pathToFileToStream).length());
                             Log.d(LOG_TAG, "recive2 pack: " + buffer.length);
                             Log.d(LOG_TAG, "bytes_count : " + totalRead);
@@ -126,7 +110,6 @@ public class SendAudioSocket extends Thread {
                     else{
                         dos.writeBoolean(false);
                         break label;
-
                     }
                 }
                 out.close();
@@ -140,12 +123,5 @@ public class SendAudioSocket extends Thread {
         } catch (IOException e) {
             e.printStackTrace();
         }
-
     }
-
-
-
-
-
-
 }
