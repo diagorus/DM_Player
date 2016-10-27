@@ -2,11 +2,12 @@ package com.dmplayer.streamaudio;
 
 import android.os.Handler;
 import android.util.Log;
-import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
+import com.dmplayer.R;
 import com.dmplayer.streamaudio.Observer.SingleObserverContainer;
 import com.dmplayer.streamaudio.WifiProfile.WifiProfileObject;
+import com.dmplayer.uicomponent.ServerItemAdapter;
 import com.dmplayer.utils.Utils;
 
 import java.io.DataInputStream;
@@ -24,7 +25,9 @@ import java.net.Socket;
 import java.net.SocketTimeoutException;
 import java.util.ArrayList;
 import java.util.Enumeration;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by Alexvojander on 09.09.2016.
@@ -35,9 +38,14 @@ public class ClientUDPThread extends Thread {
     public ReciveAudioSocket reciveAudioSocket;
     ArrayList<WifiProfileObject> serversList=new ArrayList<>();
 
+    final String ATTRIBUTE_NAME = "text";
+    final String ATTRIBUTE_IP = "value";
+    final String ATTRIBUTE_IMAGE = "image";
+
     public ClientUDPThread() {
 
     }
+
 
     public void refresh()
     {
@@ -166,17 +174,51 @@ public class ClientUDPThread extends Thread {
                     public void run() {
                         List<WifiProfileObject> serversList=SingleObserverContainer.getInstance().getServersList();
                         ListView listView=SingleObserverContainer.getInstance().getListView();
-                        List<String> countries=new ArrayList<>();
+                       // List<String> countries=new ArrayList<>();
+
+                        ArrayList<Map<String, Object>> data = new ArrayList<Map<String, Object>>(serversList.size());
+                        Map<String, Object> m;
+                        int img = 0;
+
+
                         for (WifiProfileObject serverinfo: serversList ) {
-                            countries.add(serverinfo.getIp());
+                            m = new HashMap<String, Object>();
+                            m.put(ATTRIBUTE_NAME, serverinfo.getName());
+                            m.put(ATTRIBUTE_IP, serverinfo.getIp());
+
+                                img = R.drawable.default_server_adapter_icon;
+                            m.put(ATTRIBUTE_IMAGE, img);
+                            data.add(m);
+
+                            //countries.add(serverinfo.getIp());
                             System.out.println(serverinfo.getName());
                             System.out.println(serverinfo.getIp());
                         }
-                        ArrayAdapter<String> adapter = new ArrayAdapter<>(SingleObserverContainer.getInstance().getContext(),android.R.layout.simple_list_item_1, countries);
+
+                        // массив имен атрибутов, из которых будут читаться данные
+                        String[] from = { ATTRIBUTE_NAME, ATTRIBUTE_IP,
+                                ATTRIBUTE_IMAGE };
+                        // массив ID View-компонентов, в которые будут вставлять данные
+                        int[] to = { R.id.name_server_item_adapter, R.id.ip_server_item_adapter, R.id.image_server_item_adapter };
+
+
+                        // создаем адаптер
+                        ServerItemAdapter sAdapter = new ServerItemAdapter(listView.getContext(), data,
+                                R.layout.server_item_adapter, from, to);
+
+                        // определяем список и присваиваем ему адаптер
 
                         listView.setAdapter(null);
+                        listView.setAdapter(sAdapter);
+
+                        //ArrayAdapter<String> adapter = new ArrayAdapter<>(SingleObserverContainer.getInstance().getContext(),android.R.layout.simple_list_item_1, countries);
+
+
+                       // listView.setAdapter(null);
+                        //listView.setAdapter(new ServerItemAdapter(serversList,SingleObserverContainer.getInstance().getContext() ));
                         // устанавливаем для списка адаптер
-                        listView.setAdapter(adapter);
+                        //listView.setAdapter(adapter);
+
                     }
                 };
                 mainHandler.post(myRunnable);
@@ -185,4 +227,53 @@ public class ClientUDPThread extends Thread {
 
         }
     }
+//    private WifiProfileObject getModel(int position,ListView listView) {
+//        return((listView.getAdapter()).getItem(position));
+//    }
+//    public class ServerItemAdapter  extends ArrayAdapter<WifiProfileObject> {
+//
+//
+//        private LayoutInflater mInflater;
+//
+//        private ListView listView;
+//        public ServerItemAdapter(WifiProfileObject[] list,Context context,ListView listView) {
+//            this.listView=listView;
+//            super(context, R.layout.server_item_adapter,  list);
+//            mInflater = LayoutInflater.from(context);
+//        }
+//        public View getView(int position, View convertView,
+//                            ViewGroup parent) {
+//            ViewHolder holder;
+//            View row=convertView;
+//            if(row==null){
+//
+//                row = mInflater.inflate(R.layout.server_item_adapter, parent, false);
+//                holder = new ViewHolder();
+//                holder.imageView = (ImageView) row.findViewById(R.id.image);
+//                holder.nameView = (TextView) row.findViewById(R.id.name_server_item_adapter);
+//                holder.ipView = (TextView) row.findViewById(R.id.ip_server_item_adapter);
+//                row.setTag(holder);
+//            }
+//            else{
+//
+//                holder = (ViewHolder)row.getTag();
+//            }
+//
+//            WifiProfileObject wifiProfileObject = getModel(position,listView);
+//
+//            //holder.imageView.setImageResource((wifiProfileObject.getImageByteArray()));
+//            holder.imageView.setImageResource(R.drawable.default_server_adapter_icon);
+//            holder.nameView.setText(wifiProfileObject.getName());
+//            holder.ipView.setText(wifiProfileObject.getIp());
+//
+//            return row;
+//        }
+//
+//        class ViewHolder {
+//            public ImageView imageView;
+//            public TextView nameView, ipView;
+//        }
+//    }
+
+
 }

@@ -16,6 +16,7 @@ public class WifiProfileObject implements Serializable {
     private String ip;
     private String name;
     private byte[] imageByteArray;
+
     public  void  setIp(String ip){this.ip=ip;}
     public  void  setName(String name){this.name=name;}
     public  void  setImageByteArray(byte[] imageByteArray){this.imageByteArray=imageByteArray.clone();}
@@ -23,6 +24,7 @@ public class WifiProfileObject implements Serializable {
     public  String getIp(){return  ip;}
     public  String getName(){return  name;}
     public  byte[] getImageByteArray(){return imageByteArray;}
+
     public WifiProfileObject(){}
     public WifiProfileObject(String ip,String name,byte[] imageByteArray){
         this.ip=ip;

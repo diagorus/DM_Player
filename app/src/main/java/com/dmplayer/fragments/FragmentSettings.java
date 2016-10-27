@@ -5,35 +5,37 @@
  */
 package com.dmplayer.fragments;
 
-import com.dmplayer.R;
-import com.dmplayer.activities.DMPlayerBaseActivity;
-import com.dmplayer.activities.MusicChooserActivity;
-import com.dmplayer.models.SongDetail;
-import com.dmplayer.phonemidea.DMPlayerUtility;
-import com.dmplayer.models.Playlist;
-import com.dmplayer.utility.LogWriter;
-import com.dmplayer.utility.dialogs.ProfileDialog;
-import com.dmplayer.utility.dialogs.ThemeDialog;
-
-import android.content.Context;
+import android.app.Activity;
+import android.app.Fragment;
+import android.app.FragmentManager;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
-import android.app.Fragment;
-import android.app.FragmentManager;
-import android.app.Activity;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
+
+import com.dmplayer.R;
+import com.dmplayer.activities.DMPlayerBaseActivity;
+import com.dmplayer.activities.MusicChooserActivity;
+import com.dmplayer.models.Playlist;
+import com.dmplayer.models.SongDetail;
+import com.dmplayer.phonemidea.DMPlayerUtility;
+import com.dmplayer.utility.LogWriter;
+import com.dmplayer.utility.dialogs.ProfileDialog;
+import com.dmplayer.utility.dialogs.ThemeDialog;
 
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectOutputStream;
 import java.util.ArrayList;
+
+import static android.content.Context.MODE_PRIVATE;
 
 public class FragmentSettings extends Fragment implements View.OnClickListener {
 
@@ -52,6 +54,8 @@ public class FragmentSettings extends Fragment implements View.OnClickListener {
 
     private ArrayList<Uri> mSongUri = new ArrayList<>();
     private ArrayList<SongDetail> songList = new ArrayList<SongDetail>();
+    String MIXING_MODE="mixing_mode";
+    TextView textViewMixingMode;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -67,13 +71,16 @@ public class FragmentSettings extends Fragment implements View.OnClickListener {
 
 
     private void setupInitialViews(View rootview) {
-        sharedPreferences = getActivity().getSharedPreferences("VALUES", Context.MODE_PRIVATE);
+        sharedPreferences = getActivity().getSharedPreferences("VALUES", MODE_PRIVATE);
 
         rootview.findViewById(R.id.relativeLayout_choose_theme).setOnClickListener(this);
         rootview.findViewById(R.id.relativeLayout_customize_profile).setOnClickListener(this);
         rootview.findViewById(R.id.relativeLayout_change_header_back).setOnClickListener(this);
         rootview.findViewById(R.id.relativeLayoutCreatePlaylist).setOnClickListener(this);
         rootview.findViewById(R.id.relativeLayoutMusicChooser).setOnClickListener(this);
+        rootview.findViewById(R.id.relativeLayoutMusicMixEnabled).setOnClickListener(this);
+        textViewMixingMode=(TextView)rootview.findViewById(R.id.textViewMusicMixEnabledDescription);
+        setMixingModeInTextView();
     }
 
     @Override
@@ -145,6 +152,42 @@ public class FragmentSettings extends Fragment implements View.OnClickListener {
                 Intent picker = new Intent(getActivity(), MusicChooserActivity.class);
                 startActivityForResult(picker,PICKER_REQUEST);
                 break;
+            case R.id.relativeLayoutMusicMixEnabled:
+                setMixingMode();
+                setMixingModeInTextView();
+                break;
+        }
+    }
+
+    void setMixingMode() {
+        sharedPreferences = getActivity().getPreferences(MODE_PRIVATE);
+        String mixing_mode = sharedPreferences.getString(MIXING_MODE, "");
+        SharedPreferences.Editor ed = sharedPreferences.edit();
+        if(mixing_mode.equals("ON")){
+            ed.putString(MIXING_MODE, "OFF");
+        } else if(mixing_mode.equals("OFF")){
+            ed.putString(MIXING_MODE, "ON");
+        } else if(mixing_mode.equals("")){
+            ed.putString(MIXING_MODE, "OFF");
+        }
+        ed.commit();
+       // Toast.makeText(this, "Text saved", Toast.LENGTH_SHORT).show();
+    }
+
+    String getMixingMode() {
+        sharedPreferences = getActivity().getPreferences(MODE_PRIVATE);
+        String savedText = sharedPreferences.getString(MIXING_MODE, "");
+        return savedText;
+       // etText.setText(savedText);
+       // Toast.makeText(this, "Text loaded", Toast.LENGTH_SHORT).show();
+    }
+    void setMixingModeInTextView(){
+        if (getMixingMode().equals("ON")) {
+            textViewMixingMode.setText("Mixing mode on");
+        }else if(getMixingMode().equals("OFF")){
+            textViewMixingMode.setText("Mixing mode off");
+        }else if(getMixingMode().equals("")){
+            textViewMixingMode.setText("Mixing mode off");
         }
     }
 

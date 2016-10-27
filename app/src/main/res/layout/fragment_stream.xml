@@ -32,7 +32,7 @@
             android:id="@+id/connect_to_UDPServer"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Listen Music" />
+            android:text="Find Servers" />
 
         <ProgressBar
             style="?android:attr/progressBarStyleHorizontal"
@@ -44,7 +44,10 @@
             android:id="@+id/streamListView"
             android:layout_width="match_parent"
             android:layout_height="50pt"
-            ></ListView>
+            >
+
+        </ListView>
+
     </LinearLayout>
 
 
@@ -60,25 +63,25 @@
             android:layout_height="wrap_content"
             android:background="@android:color/white"
             android:orientation="horizontal">
-            <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-                android:layout_width="wrap_content"
-                android:layout_weight="1"
-                android:layout_height="wrap_content"
-                android:background="@android:color/white"
-                android:orientation="vertical">
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Ip: "
-                    android:id="@+id/serverIp" />
+            <!--<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"-->
+                <!--android:layout_width="wrap_content"-->
+                <!--android:layout_weight="1"-->
+                <!--android:layout_height="wrap_content"-->
+                <!--android:background="@android:color/white"-->
+                <!--android:orientation="vertical">-->
+                <!--<TextView-->
+                    <!--android:layout_width="wrap_content"-->
+                    <!--android:layout_height="wrap_content"-->
+                    <!--android:text="Ip: "-->
+                    <!--android:id="@+id/serverIp" />-->
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Port: "
-                    android:id="@+id/serverPort" />
+                <!--<TextView-->
+                    <!--android:layout_width="wrap_content"-->
+                    <!--android:layout_height="wrap_content"-->
+                    <!--android:text="Port: "-->
+                    <!--android:id="@+id/serverPort" />-->
 
-            </LinearLayout>
+            <!--</LinearLayout>-->
             <Switch
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"

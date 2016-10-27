@@ -119,9 +119,13 @@ public class DMPlayerBaseActivity extends AppCompatActivity implements View.OnCl
     private float last_x, last_y, last_z;
     private static final int SHAKE_THRESHOLD = 600;
 
+    String MIXING_MODE="mixing_mode";
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         //Set your theme first
+        //requestWindowFeature(Window.FEATURE_ACTION_BAR);
+
         context = DMPlayerBaseActivity.this;
         theme();
         new AssetsCopier(this).execute();
@@ -793,30 +797,36 @@ public class DMPlayerBaseActivity extends AppCompatActivity implements View.OnCl
     public void onSensorChanged(SensorEvent sensorEvent) {
         Sensor mySensor = sensorEvent.sensor;
 
-        if (mySensor.getType() == Sensor.TYPE_ACCELEROMETER) {
-            float x = sensorEvent.values[0];
-            float y = sensorEvent.values[1];
-            float z = sensorEvent.values[2];
+        if(getMixingMode().equals("ON")){
+            if (mySensor.getType() == Sensor.TYPE_ACCELEROMETER) {
+                float x = sensorEvent.values[0];
+                float y = sensorEvent.values[1];
+                float z = sensorEvent.values[2];
+                long curTime = System.currentTimeMillis();
+                if ((curTime - lastUpdate) > 100) {
+                    long diffTime = (curTime - lastUpdate);
+                    lastUpdate = curTime;
+                    float speed = Math.abs(x + y + z - last_x - last_y - last_z)/ diffTime * 10000;
+                    if (speed > SHAKE_THRESHOLD) {
+                        //  getRandomNumber();
 
-            long curTime = System.currentTimeMillis();
-
-            if ((curTime - lastUpdate) > 100) {
-                long diffTime = (curTime - lastUpdate);
-                lastUpdate = curTime;
-
-                float speed = Math.abs(x + y + z - last_x - last_y - last_z)/ diffTime * 10000;
-
-                if (speed > SHAKE_THRESHOLD) {
-                  //  getRandomNumber();
-                    if (MediaController.getInstance().getPlayingSongDetail() != null)
-                        MediaController.getInstance().playNextSong();
+                        if (MediaController.getInstance().getPlayingSongDetail() != null)
+                            MediaController.getInstance().playNextSong();
+                    }
+                    last_x = x;
+                    last_y = y;
+                    last_z = z;
                 }
-
-                last_x = x;
-                last_y = y;
-                last_z = z;
             }
         }
+
+    }
+    String getMixingMode() {
+        sharedPreferences = getPreferences(MODE_PRIVATE);
+        String savedText = sharedPreferences.getString(MIXING_MODE, "");
+        return savedText;
+        // etText.setText(savedText);
+        // Toast.makeText(this, "Text loaded", Toast.LENGTH_SHORT).show();
     }
     private static class AnimateFirstDisplayListener extends SimpleImageLoadingListener {
 

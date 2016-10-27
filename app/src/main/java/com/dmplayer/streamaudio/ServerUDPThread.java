@@ -5,6 +5,7 @@ import android.content.SharedPreferences;
 import android.util.Log;
 
 import com.dmplayer.fragments.FragmentSettings;
+import com.dmplayer.manager.MediaController;
 import com.dmplayer.streamaudio.WifiProfile.WifiProfileObject;
 import com.dmplayer.utils.Utils;
 
@@ -118,18 +119,18 @@ public class ServerUDPThread extends Thread {
                     out.close();
                     socket.close();
                 }
-//                else if(message.equals("START_STREAMING_MUSIC")){
-//                    byte[] sendData = Utils.getIPAddress(true).getBytes();
-//                    //Send a response
-//                    DatagramPacket sendPacket = new DatagramPacket(sendData, sendData.length, packet.getAddress(), packet.getPort());
-//
-//                    if(MediaController.getInstance().getPlayingSongDetail()!=null){
-//
-//                        sendAudioSocket= new SendAudioSocket(sendPacket.getAddress().getHostAddress(),MediaController.getInstance().getPlayingSongDetail());
-//                        sendAudioSocket.start();
-//                    }
-//                    System.out.println(  ">>>Sent packet to: " + sendPacket.getAddress().getHostAddress());
-//                }
+                else if(message.equals("START_STREAMING_MUSIC")){
+                    byte[] sendData = Utils.getIPAddress(true).getBytes();
+                    //Send a response
+                    DatagramPacket sendPacket = new DatagramPacket(sendData, sendData.length, packet.getAddress(), packet.getPort());
+
+                    if(MediaController.getInstance().getPlayingSongDetail()!=null){
+
+                        sendAudioSocket= new SendAudioSocket(sendPacket.getAddress().getHostAddress(),MediaController.getInstance().getPlayingSongDetail());
+                        sendAudioSocket.start();
+                    }
+                    System.out.println(  ">>>Sent packet to: " + sendPacket.getAddress().getHostAddress());
+                }
             }
 
         } catch (IOException ex) {

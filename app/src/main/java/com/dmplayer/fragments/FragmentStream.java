@@ -30,6 +30,13 @@ import com.dmplayer.streamaudio.ReciveAudioSocket;
 import com.dmplayer.streamaudio.SendAudioSocket;
 import com.dmplayer.streamaudio.ServerStreamService;
 
+import java.io.IOException;
+import java.net.DatagramPacket;
+import java.net.DatagramSocket;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
+import java.util.HashMap;
+
 public class FragmentStream extends Fragment {
 
 	Button stopStreamButton;
@@ -66,6 +73,10 @@ public class FragmentStream extends Fragment {
 	Intent intentServer;
 	Intent intentClient;
 
+	final String ATTRIBUTE_NAME = "text";
+	final String ATTRIBUTE_IP = "value";
+	final String ATTRIBUTE_IMAGE = "image";
+
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 		View rootview = inflater.inflate(R.layout.fragment_stream, null);
@@ -91,8 +102,45 @@ public class FragmentStream extends Fragment {
 		switcher=(Switch)view.findViewById(R.id.switchServer);
 		switcher.setOnCheckedChangeListener(serverListener);
 
-		ListView listView=(ListView)view1.findViewById(R.id.streamListView);
-		listView.setOnItemClickListener(itemListener);
+		final ListView listView=(ListView)view1.findViewById(R.id.streamListView);
+
+		//listView.setOnItemClickListener(itemListener);
+		listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+			@Override
+			public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+				HashMap<String, Object> obj = (HashMap<String, Object>)listView.getAdapter().getItem(position);
+				final String ip_adress = (String) obj.get(ATTRIBUTE_IP);
+				//Log.d("Yourtag ", name);
+				reciveAudioSocket=new ReciveAudioSocket();
+				reciveAudioSocket.start();
+
+				if(MediaController.getInstance().getPlayingSongDetail()!=null){
+
+					new Thread()
+					{
+						public void run() {
+							DatagramSocket datagramSocket = null;
+							DatagramPacket sendPacket;
+							try {
+								datagramSocket = new DatagramSocket();
+								datagramSocket.setBroadcast(true);
+								byte[]sendData = "START_STREAMING_MUSIC".getBytes();
+								sendPacket = new DatagramPacket(sendData, sendData.length, InetAddress.getByName(ip_adress), 8888);
+								datagramSocket.send(sendPacket);
+							} catch (UnknownHostException e) {
+								e.printStackTrace();
+							} catch (IOException e) {
+								e.printStackTrace();
+							}
+							datagramSocket.close();
+						}
+					}.start();
+
+					//sendAudioSocket= new SendAudioSocket(name,MediaController.getInstance().getPlayingSongDetail());
+					//sendAudioSocket.start();
+				}
+			}
+		});
 		SingleObserverContainer.getInstance().update(pbClient,pbServer);
 
 		SingleObserverContainer.getInstance().setListView(listView);
@@ -172,7 +220,7 @@ public class FragmentStream extends Fragment {
 			else{
 				switcher.setText("Server OFF");
 				getActivity().stopService(intentServer);
-//
+
 			}
 		}
 	};
@@ -189,17 +237,6 @@ public class FragmentStream extends Fragment {
 			//startSendAudioSocket(pbClient);
 		}
 	};
-	AdapterView.OnItemClickListener itemListener = new AdapterView.OnItemClickListener() {
-		@Override
-		public void onItemClick(AdapterView<?> parent, View v, int position, long id) {
-			reciveAudioSocket=new ReciveAudioSocket();
-			reciveAudioSocket.start();
 
-			if(MediaController.getInstance().getPlayingSongDetail()!=null){
-				sendAudioSocket= new SendAudioSocket(parent.getItemAtPosition(position).toString(),MediaController.getInstance().getPlayingSongDetail());
-				sendAudioSocket.start();
-			}
-		}
-	};
 
 }
