@@ -27,12 +27,12 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.dmplayer.R;
-import com.dmplayer.externalaccount.ExternalAccountViewInternalCallbacks;
+import com.dmplayer.externalprofile.ExternalProfileViewInternalCallbacks;
 import com.dmplayer.fragments.FragmentSettings;
 import com.dmplayer.phonemedia.DMPlayerUtility;
-import com.dmplayer.presenters.VkAccountPresenter;
+import com.dmplayer.presenters.VkProfilePresenter;
 import com.dmplayer.uicomponent.CircleImageView;
-import com.dmplayer.uicomponent.VkAccountView;
+import com.dmplayer.uicomponent.VkProfileView;
 import com.vk.sdk.VKAccessToken;
 import com.vk.sdk.VKCallback;
 import com.vk.sdk.VKScope;
@@ -53,10 +53,9 @@ public class ProfileDialog extends DialogFragment {
     private Button buttonOK, buttonCancel;
     private EditText nickName;
     private CircleImageView avatar;
-    private View view;
 
-    VkAccountPresenter vkProfilePresenter;
-    VkAccountView vkProfileView;
+    VkProfilePresenter vkProfilePresenter;
+    VkProfileView vkProfileView;
 
     private SharedPreferences sharedPreferences;
     private SharedPreferences.Editor editor;
@@ -68,16 +67,15 @@ public class ProfileDialog extends DialogFragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-
         sharedPreferences = getActivity().getSharedPreferences("VALUES", Context.MODE_PRIVATE);
 
-        view = inflater.inflate(R.layout.profile_dialog, null);
+        View v = inflater.inflate(R.layout.dialog_profile, null);
 
         getDialog().requestWindowFeature(Window.FEATURE_NO_TITLE);
 
-        init();
+        init(v);
 
-        return view;
+        return v;
     }
 
     @Override
@@ -122,11 +120,11 @@ public class ProfileDialog extends DialogFragment {
         }
     }
 
-    void init() {
-        buttonOK = (Button) view.findViewById(R.id.buttonOK);
-        buttonCancel = (Button) view.findViewById(R.id.buttonCancel);
-        nickName = (EditText) view.findViewById(R.id.profile_dialog_name);
-        avatar = (CircleImageView) view.findViewById(R.id.profile_dialog_avatar);
+    void init(View v) {
+        buttonOK = (Button) v.findViewById(R.id.buttonOK);
+        buttonCancel = (Button) v.findViewById(R.id.buttonCancel);
+        nickName = (EditText) v.findViewById(R.id.profile_dialog_name);
+        avatar = (CircleImageView) v.findViewById(R.id.profile_dialog_avatar);
 
         buttonOK.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -180,17 +178,18 @@ public class ProfileDialog extends DialogFragment {
 
         setDefaultSettings();
 
-        setVkProfile();
+        setVkProfile(v);
     }
 
     private void setDefaultSettings() {
         setAvatar();
+
         setName();
     }
 
-    private  void setVkProfile() {
-        vkProfileView = (VkAccountView) view.findViewById(R.id.vk_profile_view);
-        vkProfileView.setInternalButtonsCallbacks(new ExternalAccountViewInternalCallbacks() {
+    private  void setVkProfile(View v) {
+        vkProfileView = (VkProfileView) v.findViewById(R.id.vk_profile_view);
+        vkProfileView.setInternalButtonsCallbacks(new ExternalProfileViewInternalCallbacks() {
             @Override
             public View.OnClickListener onLogInListener() {
                 return new View.OnClickListener() {
@@ -222,7 +221,7 @@ public class ProfileDialog extends DialogFragment {
             }
         });
 
-        vkProfilePresenter = new VkAccountPresenter(vkProfileView);
+        vkProfilePresenter = new VkProfilePresenter(vkProfileView);
         vkProfilePresenter.onCreate(this);
     }
 

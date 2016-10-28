@@ -5,8 +5,6 @@
  */
 package com.dmplayer;
 
-import java.util.ArrayList;
-
 import android.app.Application;
 import android.content.Context;
 import android.content.res.Configuration;
@@ -17,21 +15,20 @@ import android.view.Display;
 import android.view.WindowManager;
 
 import com.dmplayer.dbhandler.DMPLayerDBHelper;
-import com.dmplayer.models.SongDetail;
 import com.nostra13.universalimageloader.cache.disc.naming.Md5FileNameGenerator;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
 import com.nostra13.universalimageloader.core.assist.QueueProcessingType;
 import com.vk.sdk.VKSdk;
 
-public class ApplicationDMPlayer extends Application {
+public class DMPlayerApplication extends Application {
 
     public static Context applicationContext = null;
     public static volatile Handler applicationHandler = null;
     public static Point displaySize = new Point();
     public static float density = 1;
 
-    private static final String TAG = "ApplicationDMPlayer";
+    private static final String TAG = "DMPlayerApplication";
 
     @Override
     public void onCreate() {
@@ -110,7 +107,7 @@ public class ApplicationDMPlayer extends Application {
 
     private void initilizeDB() {
         if (DB_HELPER == null) {
-            DB_HELPER = new DMPLayerDBHelper(ApplicationDMPlayer.this);
+            DB_HELPER = new DMPLayerDBHelper(DMPlayerApplication.this);
         }
         try {
             DB_HELPER.getWritableDatabase();

@@ -14,16 +14,16 @@ public class VkPlaylist extends Playlist {
     public final static int POPULAR = 2;
     public final static int RECOMMENDED = 3;
 
-    public VkPlaylist(String name, int type) {
-        super(name, true);
-        this.type = type;
-    }
-
-    public VkPlaylist(String name, int type, String id) {
-        super(name, true);
-        this.type = type;
-        this.id = id;
-    }
+//    public VkPlaylist(String name, int type) {
+//        super(name, true);
+//        this.type = type;
+//    }
+//
+//    public VkPlaylist(String name, int type, String id) {
+//        super(name, true);
+//        this.type = type;
+//        this.id = id;
+//    }
 
     public int getType() {
         return type;

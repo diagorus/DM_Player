@@ -40,9 +40,9 @@ import com.dmplayer.utility.LogWriter;
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.ImageLoader;
 
-public class ChildFragmentAlbum extends Fragment {
+public class ChildFragmentAlbums extends Fragment {
 
-    private static final String TAG = "ChildFragmentAlbum";
+    private static final String TAG = "ChildFragmentAlbums";
     private static Context context;
     private RecyclerView recyclerView;
     boolean mIsUnknownArtist;
@@ -52,8 +52,8 @@ public class ChildFragmentAlbum extends Fragment {
     private Cursor mAlbumCursor;
     private String mArtistId;
 
-    public static ChildFragmentAlbum newInstance(int position, Context mContext) {
-        ChildFragmentAlbum f = new ChildFragmentAlbum();
+    public static ChildFragmentAlbums newInstance(int position, Context mContext) {
+        ChildFragmentAlbums f = new ChildFragmentAlbums();
         context = mContext;
         return f;
     }
@@ -114,7 +114,9 @@ public class ChildFragmentAlbum extends Fragment {
     };
 
     private Cursor getAlbumCursor(AsyncQueryHandler async, String filter) {
-        String[] cols = new String[]{MediaStore.Audio.Albums._ID, MediaStore.Audio.Albums.ARTIST, MediaStore.Audio.Albums.ALBUM,
+        String[] cols = new String[]{MediaStore.Audio.Albums._ID,
+                MediaStore.Audio.Albums.ARTIST,
+                MediaStore.Audio.Albums.ALBUM,
                 MediaStore.Audio.Albums.ALBUM_ART};
 
         Cursor ret = null;
@@ -131,7 +133,6 @@ public class ChildFragmentAlbum extends Fragment {
     }
 
     public class AlbumRecyclerAdapter extends CursorRecyclerViewAdapter<AlbumRecyclerAdapter.ViewHolder> {
-
         private int mAlbumIdx;
         private int mArtistIdx;
         private final Resources mResources;
@@ -152,9 +153,15 @@ public class ChildFragmentAlbum extends Fragment {
             this.mUnknownArtist = context.getString(R.string.unknown_artist_name);
             this.mResources = context.getResources();
 
-            this.options = new DisplayImageOptions.Builder().showImageOnLoading(R.drawable.bg_default_album_art)
-                    .showImageForEmptyUri(R.drawable.bg_default_album_art).showImageOnFail(R.drawable.bg_default_album_art).cacheInMemory(true)
-                    .cacheOnDisk(true).considerExifParams(true).bitmapConfig(Bitmap.Config.RGB_565).build();
+            this.options = new DisplayImageOptions.Builder()
+                    .showImageOnLoading(R.drawable.bg_default_album_art)
+                    .showImageForEmptyUri(R.drawable.bg_default_album_art)
+                    .showImageOnFail(R.drawable.bg_default_album_art)
+                    .cacheInMemory(true)
+                    .cacheOnDisk(true)
+                    .considerExifParams(true)
+                    .bitmapConfig(Bitmap.Config.RGB_565)
+                    .build();
             getColumnIndices(cursor);
         }
 
@@ -198,7 +205,6 @@ public class ChildFragmentAlbum extends Fragment {
         }
 
         private void getColumnIndices(Cursor cursor) {
-
             if (cursor != null) {
                 mAlbumIdx = cursor.getColumnIndexOrThrow(MediaStore.Audio.Albums.ALBUM);
                 mArtistIdx = cursor.getColumnIndexOrThrow(MediaStore.Audio.Albums.ARTIST);
@@ -208,13 +214,10 @@ public class ChildFragmentAlbum extends Fragment {
                     mIndexer = new MusicAlphabetIndexer(cursor, mAlbumIdx, mResources.getString(R.string.fast_scroll_alphabet));
                 }
             }
-
         }
-
 
         @Override
         public void onBindViewHolder(ViewHolder viewHolder, Cursor cursor) {
-
             String displayname = cursor.getString(mAlbumIdx);
             String artistname = cursor.getString(mArtistIdx);
 
@@ -228,7 +231,6 @@ public class ChildFragmentAlbum extends Fragment {
 
             String contentURI = "content://media/external/audio/albumart/" + cursor.getLong(0);
             imageLoader.displayImage(contentURI, viewHolder.icon, options);
-
         }
 
         @Override
@@ -243,8 +245,8 @@ public class ChildFragmentAlbum extends Fragment {
 
             public ViewHolder(View itemView) {
                 super(itemView);
-                albumName = (TextView) itemView.findViewById(R.id.line_1);
-                artistName = (TextView) itemView.findViewById(R.id.line_2);
+                albumName = (TextView) itemView.findViewById(R.id.title);
+                artistName = (TextView) itemView.findViewById(R.id.details);
                 icon = (ImageView) itemView.findViewById(R.id.icon);
                 icon.setScaleType(ScaleType.CENTER_CROP);
                 itemView.setOnClickListener(this);
@@ -253,14 +255,14 @@ public class ChildFragmentAlbum extends Fragment {
             @Override
             public void onClick(View view) {
                 try {
-                    long albumID = getAlbumID(getPosition());
+                    long albumID = getAlbumID(getAdapterPosition());
 
                     Intent mIntent = new Intent(context, PlaylistActivity.class);
                     Bundle mBundle = new Bundle();
                     mBundle.putLong("id", albumID);
                     mBundle.putLong("tagfor", PhoneMediaControl.SongsLoadFor.Album.ordinal());
-                    mBundle.putString("albumname", ((TextView) view.findViewById(R.id.line_1)).getText().toString().trim());
-                    mBundle.putString("title_one", ((TextView) view.findViewById(R.id.line_2)).getText().toString().trim());
+                    mBundle.putString("albumname", ((TextView) view.findViewById(R.id.title)).getText().toString().trim());
+                    mBundle.putString("title_one", ((TextView) view.findViewById(R.id.details)).getText().toString().trim());
                     mBundle.putString("title_sec", "");
                     mIntent.putExtras(mBundle);
                     ((Activity) context).startActivity(mIntent);
@@ -275,6 +277,5 @@ public class ChildFragmentAlbum extends Fragment {
         private long getAlbumID(int position) {
             return getItemId(position);
         }
-
     }
 }

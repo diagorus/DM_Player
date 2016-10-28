@@ -97,7 +97,7 @@ public class MusicChooserActivity extends AppCompatActivity {
                 mAllSongsListAdapter.notifyDataSetChanged();
             }
         });
-        mPhoneMediaControl.loadMusicList(context, -1, PhoneMediaControl.SongsLoadFor.All,"");
+        mPhoneMediaControl.loadMusicListAsync(context, -1, PhoneMediaControl.SongsLoadFor.All,"");
     }
 
     public class AllSongsListAdapter extends BaseAdapter {
@@ -130,7 +130,7 @@ public class MusicChooserActivity extends AppCompatActivity {
             ViewHolder mViewHolder;
             if (convertView == null) {
                 mViewHolder = new ViewHolder();
-                convertView = layoutInflater.inflate(R.layout.inflate_allsongsitem, null);
+                convertView = layoutInflater.inflate(R.layout.item_song, null);
                 mViewHolder.song_row = (LinearLayout) convertView.findViewById(R.id.inflate_allsong_row);
                 mViewHolder.textViewSongName = (TextView) convertView.findViewById(R.id.inflate_allsong_textsongname);
                 mViewHolder.textViewSongArtistNameAndDuration = (TextView) convertView.findViewById(R.id.inflate_allsong_textsongArtisName_duration);

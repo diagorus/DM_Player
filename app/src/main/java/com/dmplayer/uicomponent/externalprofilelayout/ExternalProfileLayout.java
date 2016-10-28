@@ -6,12 +6,12 @@ import android.util.AttributeSet;
 import android.widget.LinearLayout;
 
 import com.dmplayer.R;
-import com.dmplayer.externalaccount.ExternalAccountView;
+import com.dmplayer.externalprofile.ExternalProfileView;
 import com.dmplayer.uicomponent.externalprofilelayout.child.implementation.ChildForSwapping;
 import com.dmplayer.uicomponent.externalprofilelayout.child.implementation.LogInViewChild;
 import com.dmplayer.uicomponent.externalprofilelayout.child.implementation.ProfileViewChild;
 
-public abstract class ExternalProfileLayout extends LinearLayout implements ExternalProfileView, ExternalAccountView {
+public abstract class ExternalProfileLayout extends LinearLayout implements com.dmplayer.uicomponent.externalprofilelayout.ExternalProfileView, ExternalProfileView {
     private LogInViewChild startingLayout;
     private ProfileViewChild swappingLayout;
     private ChildForSwapping loadingLayout;

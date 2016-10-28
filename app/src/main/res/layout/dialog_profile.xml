@@ -75,7 +75,7 @@
                     android:textSize="18sp"
                     android:text="Vk profile:" />
 
-                <com.dmplayer.uicomponent.VkAccountView
+                <com.dmplayer.uicomponent.VkProfileView
                     android:id="@+id/vk_profile_view"
                     android:layout_width="match_parent"
                     android:layout_height="100dp"

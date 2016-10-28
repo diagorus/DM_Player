@@ -44,7 +44,7 @@
     <string name="design">Design</string>
     <string name="develop">Develop</string>
 
-    <array name="drawerIcons">
+    <array name="drawer_icons">
         <item>@drawable/ic_library_music</item>
         <item>@drawable/ic_favorite</item>
         <item>@drawable/ic_content_send</item>
@@ -68,6 +68,9 @@
 
     <string name="ok">OK</string>
     <string name="copyright_message">Simple Equalizer v0.1a, Copyright \u00A92013 Kevin Boone. Feel free to distribute as you see fit.</string>
+    <string name="try_again">TRY AGAIN</string>
+    <string name="error">Error!</string>
+    <string name="check_connection">Check your internet connection.</string>
 
 
 </resources>

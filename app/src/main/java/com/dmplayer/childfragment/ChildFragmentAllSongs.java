@@ -9,7 +9,6 @@ import android.app.Fragment;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Color;
-import android.os.Build;
 import android.os.Bundle;
 import android.support.v7.widget.PopupMenu;
 import android.view.LayoutInflater;
@@ -19,7 +18,6 @@ import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -75,7 +73,7 @@ public class ChildFragmentAllSongs extends Fragment {
                 mAllSongsListAdapter.notifyDataSetChanged();
             }
         });
-        mPhoneMediaControl.loadMusicList(getActivity(), -1, PhoneMediaControl.SongsLoadFor.All, "");
+        mPhoneMediaControl.loadMusicListAsync(getActivity(), -1, PhoneMediaControl.SongsLoadFor.All, "");
     }
 
     public class AllSongsListAdapter extends BaseAdapter {
@@ -87,9 +85,15 @@ public class ChildFragmentAllSongs extends Fragment {
         public AllSongsListAdapter(Context mContext) {
             this.context = mContext;
             this.layoutInflater = LayoutInflater.from(mContext);
-            this.options = new DisplayImageOptions.Builder().showImageOnLoading(R.drawable.bg_default_album_art)
-                    .showImageForEmptyUri(R.drawable.bg_default_album_art).showImageOnFail(R.drawable.bg_default_album_art).cacheInMemory(true)
-                    .cacheOnDisk(true).considerExifParams(true).bitmapConfig(Bitmap.Config.RGB_565).build();
+            this.options = new DisplayImageOptions.Builder()
+                    .showImageOnLoading(R.drawable.bg_default_album_art)
+                    .showImageForEmptyUri(R.drawable.bg_default_album_art)
+                    .showImageOnFail(R.drawable.bg_default_album_art)
+                    .cacheInMemory(true)
+                    .cacheOnDisk(true)
+                    .considerExifParams(true)
+                    .bitmapConfig(Bitmap.Config.RGB_565)
+                    .build();
         }
 
         @Override
@@ -108,12 +112,11 @@ public class ChildFragmentAllSongs extends Fragment {
             ViewHolder mViewHolder;
             if (convertView == null) {
                 mViewHolder = new ViewHolder();
-                convertView = layoutInflater.inflate(R.layout.inflate_allsongsitem, null);
-                mViewHolder.song_row = (LinearLayout) convertView.findViewById(R.id.inflate_allsong_row);
-                mViewHolder.textViewSongName = (TextView) convertView.findViewById(R.id.inflate_allsong_textsongname);
-                mViewHolder.textViewSongArtistNameAndDuration = (TextView) convertView.findViewById(R.id.inflate_allsong_textsongArtisName_duration);
-                mViewHolder.imageSongThm = (ImageView) convertView.findViewById(R.id.inflate_allsong_imgSongThumb);
-                mViewHolder.imagemore = (ImageView) convertView.findViewById(R.id.img_moreicon);
+                convertView = layoutInflater.inflate(R.layout.item_song, null);
+                mViewHolder.songName = (TextView) convertView.findViewById(R.id.inflate_allsong_textsongname);
+                mViewHolder.artistAndDuration = (TextView) convertView.findViewById(R.id.inflate_allsong_textsongArtisName_duration);
+                mViewHolder.songImage = (ImageView) convertView.findViewById(R.id.inflate_allsong_imgSongThumb);
+                mViewHolder.menuImage = (ImageView) convertView.findViewById(R.id.img_moreicon);
                 convertView.setTag(mViewHolder);
             } else {
                 mViewHolder = (ViewHolder) convertView.getTag();
@@ -127,17 +130,16 @@ public class ChildFragmentAllSongs extends Fragment {
                 e.printStackTrace();
             }
 
-            mViewHolder.textViewSongArtistNameAndDuration.setText((audioDuration.isEmpty() ? "" : audioDuration + " | ") + mDetail.getArtist());
-            mViewHolder.textViewSongName.setText(mDetail.getTitle());
+            mViewHolder.artistAndDuration.setText((audioDuration.isEmpty() ? "" : audioDuration + " | ") + mDetail.getArtist());
+            mViewHolder.songName.setText(mDetail.getTitle());
             String contentURI = "content://media/external/audio/media/" + mDetail.getId() + "/albumart";
-            imageLoader.displayImage(contentURI, mViewHolder.imageSongThm, options);
 
+            imageLoader.displayImage(contentURI, mViewHolder.songImage, options);
 
             convertView.setOnClickListener(new OnClickListener() {
 
                 @Override
                 public void onClick(View v) {
-
                     SongDetail mDetail = songList.get(position);
                     mDetail.audioProgress = 0.0f;
                     mDetail.audioProgressSec = 0;
@@ -150,18 +152,13 @@ public class ChildFragmentAllSongs extends Fragment {
                             MediaController.getInstance().setPlaylist(songList, mDetail, PhoneMediaControl.SongsLoadFor.All.ordinal(), -1);
                         }
                     }
-
                 }
             });
 
-            mViewHolder.imagemore.setColorFilter(Color.DKGRAY);
-            if (Build.VERSION.SDK_INT > 15) {
-                mViewHolder.imagemore.setImageAlpha(255);
-            } else {
-                mViewHolder.imagemore.setAlpha(255);
-            }
+            mViewHolder.menuImage.setColorFilter(Color.DKGRAY);
+            mViewHolder.menuImage.setImageAlpha(255);
 
-            mViewHolder.imagemore.setOnClickListener(new OnClickListener() {
+            mViewHolder.menuImage.setOnClickListener(new OnClickListener() {
 
                 @Override
                 public void onClick(View v) {
@@ -208,10 +205,10 @@ public class ChildFragmentAllSongs extends Fragment {
         }
 
         class ViewHolder {
-            TextView textViewSongName;
-            ImageView imageSongThm, imagemore;
-            TextView textViewSongArtistNameAndDuration;
-            LinearLayout song_row;
+            TextView songName;
+            ImageView songImage;
+            ImageView menuImage;
+            TextView artistAndDuration;
         }
     }
 

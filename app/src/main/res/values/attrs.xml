@@ -84,10 +84,16 @@
         <attr name="isCircleDraw" format="boolean" />
     </declare-styleable>
 
-
+    <!-- ExternalProfileLayout -->
     <declare-styleable name="ExternalProfileLayout">
         <attr name="starting_layout" format="reference" />
         <attr name="swapping_layout" format="reference" />
         <attr name="loading_layout" format="reference" />
+    </declare-styleable>
+
+    <declare-styleable name="ExpandableLayout">
+        <attr name="text_title" format="string" />
+        <attr name="text_details" format="string" />
+        <attr name="src_image" format="reference|integer" />
     </declare-styleable>
 </resources>

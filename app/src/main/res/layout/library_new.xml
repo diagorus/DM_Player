@@ -1,18 +1,42 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical" android:layout_width="match_parent"
-    android:layout_height="match_parent">
-    <com.dmplayer.uicomponent.ExpandableLayoutWithAdditionalImageView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content">
-        <android.support.v7.widget.RecyclerView
-            android:id="@+id/list"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/scroll"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:focusable="false"
+    android:clickable="false">
+    <LinearLayout  xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingBottom="?attr/actionBarSize">
+        <com.dmplayer.uicomponent.ExpandableLayout
+            android:id="@+id/local_playlists"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:text_title="Local playlists"
+            app:src_image="@drawable/ic_plus">
+        </com.dmplayer.uicomponent.ExpandableLayout>
 
-        <ImageView
-            android:id="@+id/ad_imageView"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
-    </com.dmplayer.uicomponent.ExpandableLayoutWithAdditionalImageView>
-</LinearLayout>
+        <com.dmplayer.uicomponent.ExpandableLayout
+            android:id="@+id/vk_playlists"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:text_title="Vk playlists"
+            app:src_image="@drawable/ic_plus">
+        </com.dmplayer.uicomponent.ExpandableLayout>
+
+        <com.dmplayer.uicomponent.ExpandableLayout
+            android:id="@+id/default_playlists"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:text_title="Default playlists"
+            app:src_image="@drawable/ic_plus">
+        </com.dmplayer.uicomponent.ExpandableLayout>
+    </LinearLayout>
+</ScrollView>

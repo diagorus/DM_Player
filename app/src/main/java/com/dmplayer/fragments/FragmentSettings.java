@@ -108,7 +108,7 @@ public class FragmentSettings extends Fragment implements View.OnClickListener {
 //                        });
 //                        for (Uri uri :
 //                                mSongUri) {
-//                            mPhoneMediaControl.loadMusicList(getActivity(), -1, PhoneMediaControl
+//                            mPhoneMediaControl.loadMusicListAsync(getActivity(), -1, PhoneMediaControl
 //                                            .SongsLoadFor.Playlist,
 //                                    uri.getPath());
 //

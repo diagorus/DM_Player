@@ -9,10 +9,11 @@ import android.content.Context;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.AsyncTask;
+import android.os.Looper;
 import android.provider.MediaStore;
 import android.util.Log;
 
-import com.dmplayer.ApplicationDMPlayer;
+import com.dmplayer.DMPlayerApplication;
 import com.dmplayer.dbhandler.FavoritePlayTableHelper;
 import com.dmplayer.dbhandler.MostAndRecentPlayTableHelper;
 import com.dmplayer.manager.MediaController;
@@ -49,7 +50,9 @@ public class PhoneMediaControl {
         return localInstance;
     }
 
-    public void loadMusicList(final Context context, final long id, final SongsLoadFor songsloadfor, final String path) {
+    @Deprecated
+    public void loadMusicListAsync(final Context context, final long id,
+                                   final SongsLoadFor songsloadfor, final String path) {
         new AsyncTask<Void, Void, Void>() {
             ArrayList<SongDetail> songsList = null;
 
@@ -58,7 +61,7 @@ public class PhoneMediaControl {
                 try {
                     songsList = getList(context, id, songsloadfor, path);
                 } catch (Exception e) {
-                    closeCrs();
+                    closeCursor();
                     e.printStackTrace();
                 }
                 return null;
@@ -74,17 +77,36 @@ public class PhoneMediaControl {
         }.execute();
     }
 
-    public void loadMusicList(ArrayList<SongDetail> songsList) {
-        if (phonemediacontrolinterface != null) {
-            phonemediacontrolinterface.loadSongsComplete(songsList);
+    public ArrayList<SongDetail> loadMusicList(final Context context, final long id,
+                                               final SongsLoadFor songsloadfor, final String path)
+            throws IllegalThreadStateException {
+        if (Looper.myLooper() == Looper.getMainLooper()) {
+            throw new IllegalThreadStateException("Method mustn't run on UI thread!");
         }
-    }
-    public void addMusicToList(ArrayList<SongDetail> songsList) {
-        if (phonemediacontrolinterface != null) {
-            phonemediacontrolinterface.loadSongsComplete(songsList);
+
+        ArrayList<SongDetail> playlist = null;
+
+        try {
+            playlist = getList(context, id, songsloadfor, path);
+        } catch (Exception e) {
+            closeCursor();
+            Log.e(TAG, "Error getting music list:", e);
         }
+
+        return playlist;
     }
 
+    public void loadMusicListAsync(List<SongDetail> songsList) {
+        if (phonemediacontrolinterface != null) {
+            phonemediacontrolinterface.loadSongsComplete(songsList);
+        }
+    }
+    public void addMusicToList(List<SongDetail> songsList) {
+        if (phonemediacontrolinterface != null) {
+            phonemediacontrolinterface.loadSongsComplete(songsList);
+        }
+    }
+    //TODO: change arraylist to list
     public ArrayList<SongDetail> getList(final Context context, final long id, final SongsLoadFor songsLoadFor, final String path) {
         ArrayList<SongDetail> songsList = new ArrayList<>();
         String sortOrder;
@@ -143,7 +165,7 @@ public class PhoneMediaControl {
                         Playlist current = (Playlist) fin.readObject();
                         current.setPath(path);
                         plCondition.append("='");
-                        ArrayList<SongDetail> sList = current.getSongs();
+                        List<SongDetail> sList = current.getSongs();
                         for(int i=0;i<sList.size()-1;i++){
                             plCondition.append(sList.get(i).getPath());
                             plCondition.append("' OR ");
@@ -172,7 +194,7 @@ public class PhoneMediaControl {
     }
 
     private ArrayList<SongDetail> getSongsFromCursor(Cursor cursor) {
-        ArrayList<SongDetail> genreAsSongsList = new ArrayList<>();
+        ArrayList<SongDetail> songs = new ArrayList<>();
         try {
             if (cursor != null && cursor.getCount() >= 1) {
                 int _id = cursor.getColumnIndex(MediaStore.Audio.Media._ID);
@@ -193,15 +215,15 @@ public class PhoneMediaControl {
                     final String PATH = cursor.getString(data);
 
                     SongDetail mSongDetail = new SongDetail(ID, album_id, ARTIST, TITLE, PATH, DISPLAY_NAME, DURATION);
-                    genreAsSongsList.add(mSongDetail);
+                    songs.add(mSongDetail);
                 }
             }
         } catch (Exception e) {
-            Log.e(TAG, e.getMessage());
+            Log.e(TAG, "Can't get songs from cursor:", e);
         } finally {
-            closeCrs();
+            closeCursor();
         }
-        return genreAsSongsList;
+        return songs;
     }
 
     private ArrayList<SongDetail> getSongsFromSQLDBCursor(Cursor cursor) {
@@ -222,15 +244,15 @@ public class PhoneMediaControl {
                     generassongsList.add(mSongDetail);
                 }
             }
-            closeCrs();
+            closeCursor();
         } catch (Exception e) {
-            closeCrs();
+            closeCursor();
             e.printStackTrace();
         }
         return generassongsList;
     }
 
-    private void closeCrs() {
+    private void closeCursor() {
         if (cursor != null) {
             try {
                 cursor.close();
@@ -242,14 +264,15 @@ public class PhoneMediaControl {
 
     public static void runOnUIThread(Runnable runnable, long delay) {
         if (delay == 0) {
-            ApplicationDMPlayer.applicationHandler.post(runnable);
+            DMPlayerApplication.applicationHandler.post(runnable);
         } else {
-            ApplicationDMPlayer.applicationHandler.postDelayed(runnable, delay);
+            DMPlayerApplication.applicationHandler.postDelayed(runnable, delay);
         }
     }
 
     private final String[] projectionSongs = {MediaStore.Audio.Media._ID, MediaStore.Audio.Media.ARTIST, MediaStore.Audio.Media.TITLE,
             MediaStore.Audio.Media.DATA, MediaStore.Audio.Media.DISPLAY_NAME, MediaStore.Audio.Media.DURATION};
+
 
     private static PhoneMediaControlInterface phonemediacontrolinterface;
 

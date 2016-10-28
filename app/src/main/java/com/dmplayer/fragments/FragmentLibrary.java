@@ -11,28 +11,23 @@ import android.os.Bundle;
 import android.os.Parcelable;
 import android.support.v13.app.FragmentStatePagerAdapter;
 import android.support.v4.view.ViewPager;
-import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
 import com.dmplayer.R;
-import com.dmplayer.childfragment.ChildFragmentAlbum;
+import com.dmplayer.childfragment.ChildFragmentAlbums;
 import com.dmplayer.childfragment.ChildFragmentAllSongs;
 import com.dmplayer.childfragment.ChildFragmentArtists;
 import com.dmplayer.childfragment.ChildFragmentGenres;
-import com.dmplayer.childfragment.ChildFragmentMostPlay;
+import com.dmplayer.childfragment.ChildFragmentMostPlayed;
 import com.dmplayer.childfragment.ChildFragmentPlaylists;
 import com.dmplayer.tablayout.SlidingTabLayout;
 
 public class FragmentLibrary extends Fragment {
 
     private final String[] TITLES = {"ALL SONGS","ALBUMS", "ARTISTS", "GENRES", "MOST PLAYED",
-            "playlists"};
-    private TypedValue typedValueToolbarHeight = new TypedValue();
-
-    private MyPagerAdapter pagerAdapter;
-    private int tabsPaddingTop;
+            "PLAYLISTS", "TEST"};
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -51,7 +46,6 @@ public class FragmentLibrary extends Fragment {
         return v;
     }
 
-
     private void setupView(View view) {
         ViewPager pager = (ViewPager) view.findViewById(R.id.pager);
         MyPagerAdapter pagerAdapter = new MyPagerAdapter(getFragmentManager());
@@ -69,7 +63,6 @@ public class FragmentLibrary extends Fragment {
     }
 
     public class MyPagerAdapter extends FragmentStatePagerAdapter {
-
         public MyPagerAdapter(FragmentManager fm) {
             super(fm);
         }
@@ -101,7 +94,7 @@ public class FragmentLibrary extends Fragment {
                     return ChildFragmentAllSongs.newInstance(position, getActivity());
 
                 case 1:
-                    return ChildFragmentAlbum.newInstance(position, getActivity());
+                    return ChildFragmentAlbums.newInstance(position, getActivity());
 
                 case 2:
                     return ChildFragmentArtists.newInstance(position, getActivity());
@@ -110,19 +103,15 @@ public class FragmentLibrary extends Fragment {
                     return ChildFragmentGenres.newInstance(position, getActivity());
 
                 case 4:
-                    return ChildFragmentMostPlay.newInstance(position, getActivity());
+                    return ChildFragmentMostPlayed.newInstance(position, getActivity());
 
                 case 5:
                     return ChildFragmentPlaylists.newInstance(position);
+                case 6:
+                    return new TestFragmentLibrary();
+                default:
+                    throw new IllegalArgumentException("Fragment out of range");
             }
-            return null;
         }
-    }
-
-    public int convertToPx(int dp) {
-        // Get the screen's density scale
-        final float scale = getResources().getDisplayMetrics().density;
-        // Convert the dps to pixels, based on density scale
-        return (int) (dp * scale + 0.5f);
     }
 }

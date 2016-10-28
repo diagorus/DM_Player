@@ -1,10 +1,10 @@
 package com.dmplayer.utility.dialogs;
 
 import android.app.ActivityOptions;
+import android.app.DialogFragment;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.app.DialogFragment;
 import android.support.v7.widget.CardView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -32,10 +32,10 @@ public class ThemeDialog extends DialogFragment implements View.OnClickListener 
         sharedPreferences = getActivity().getSharedPreferences("VALUES", Context.MODE_PRIVATE);
         currentTheme = sharedPreferences.getInt("THEME", 0);
 
-        //inflate theme_dialog.xml
-        view = inflater.inflate(R.layout.theme_dialog, container);
+        //inflate dialog_theme.xml
+        view = inflater.inflate(R.layout.dialog_theme, container);
 
-        // remove title (already defined in theme_dialog.xml)
+        // remove title (already defined in dialog_theme.xml)
         getDialog().requestWindowFeature(Window.FEATURE_NO_TITLE);
 
         // Declare buttons and onClick methods

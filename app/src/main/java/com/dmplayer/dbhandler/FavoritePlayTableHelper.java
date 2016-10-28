@@ -1,13 +1,12 @@
 package com.dmplayer.dbhandler;
 
-import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteStatement;
 import android.util.Log;
 
-import com.dmplayer.ApplicationDMPlayer;
+import com.dmplayer.DMPlayerApplication;
 import com.dmplayer.models.SongDetail;
 
 public class FavoritePlayTableHelper {
@@ -43,7 +42,7 @@ public class FavoritePlayTableHelper {
     public FavoritePlayTableHelper(Context context_) {
         this.context = context_;
         if (dbHelper == null) {
-            dbHelper = ((ApplicationDMPlayer) context.getApplicationContext()).DB_HELPER;
+            dbHelper = ((DMPlayerApplication) context.getApplicationContext()).DB_HELPER;
         }
     }
 

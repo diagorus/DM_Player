@@ -110,7 +110,10 @@ public class ChildFragmentArtists extends Fragment {
 
     private Cursor getArtistCursor(AsyncQueryHandler async, String filter) {
 
-        String[] cols = new String[]{MediaStore.Audio.Artists._ID, MediaStore.Audio.Artists.ARTIST, MediaStore.Audio.Artists.NUMBER_OF_ALBUMS,
+        String[] cols = new String[] {
+                MediaStore.Audio.Artists._ID,
+                MediaStore.Audio.Artists.ARTIST,
+                MediaStore.Audio.Artists.NUMBER_OF_ALBUMS,
                 MediaStore.Audio.Artists.NUMBER_OF_TRACKS};
 
         Uri uri = MediaStore.Audio.Artists.EXTERNAL_CONTENT_URI;
@@ -221,8 +224,8 @@ public class ChildFragmentArtists extends Fragment {
 
             public ViewHolder(View itemView) {
                 super(itemView);
-                line1 = (TextView) itemView.findViewById(R.id.line_1);
-                line2 = (TextView) itemView.findViewById(R.id.line_2);
+                line1 = (TextView) itemView.findViewById(R.id.title);
+                line2 = (TextView) itemView.findViewById(R.id.details);
                 icon = (ImageView) itemView.findViewById(R.id.icon);
                 icon.setScaleType(ScaleType.CENTER_CROP);
                 itemView.setOnClickListener(this);
@@ -236,9 +239,9 @@ public class ChildFragmentArtists extends Fragment {
                     Bundle mBundle = new Bundle();
                     mBundle.putLong("id", artisID);
                     mBundle.putLong("tagfor", PhoneMediaControl.SongsLoadFor.Artist.ordinal());
-                    mBundle.putString("albumname", ((TextView) view.findViewById(R.id.line_1)).getText().toString().trim());
+                    mBundle.putString("albumname", ((TextView) view.findViewById(R.id.title)).getText().toString().trim());
                     mBundle.putString("title_one", "All my songs");
-                    mBundle.putString("title_sec", ((TextView) view.findViewById(R.id.line_2)).getText().toString().trim());
+                    mBundle.putString("title_sec", ((TextView) view.findViewById(R.id.details)).getText().toString().trim());
                     mIntent.putExtras(mBundle);
                     context.startActivity(mIntent);
                     ((Activity) context).overridePendingTransition(0, 0);
@@ -251,7 +254,6 @@ public class ChildFragmentArtists extends Fragment {
 
         @Override
         public void onBindViewHolder(ViewHolder viewHolder, Cursor cursor) {
-
             String artist = cursor.getString(mGroupArtistIdx);
             String displayartist = artist;
             boolean unknown = artist == null || artist.equals(MediaStore.UNKNOWN_STRING);
@@ -266,7 +268,6 @@ public class ChildFragmentArtists extends Fragment {
             String songs_albums = DMPlayerUtility.makeAlbumsLabel(context, numalbums, numsongs, unknown);
 
             viewHolder.line2.setText(songs_albums);
-
         }
 
         @Override

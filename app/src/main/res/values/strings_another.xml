@@ -166,6 +166,8 @@
     <string name="sdcard_error_message">An error was encountered on your SD card.</string>
     <!-- label underneath icon used to indicate there was an error accessing the sd card -->
     <string name="sdcard_error_message_nosdcard">An error was encountered on your USB storage.</string>
+    <!-- Default name of playlist -->
+    <string name="unknown_playlist">Unknown</string>
     <!-- Default name of artist that doesn't have a name in the metadata -->
     <string name="unknown_artist_name">Unknown artist</string>
     <!-- Default name of album that doesn't have a name in the metadata -->

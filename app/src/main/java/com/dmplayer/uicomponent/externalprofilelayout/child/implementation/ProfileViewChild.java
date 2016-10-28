@@ -5,7 +5,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.dmplayer.R;
-import com.dmplayer.externalaccount.ExternalProfileModel;
+import com.dmplayer.externalprofile.ExternalProfileModel;
 import com.dmplayer.uicomponent.CircleImageView;
 import com.dmplayer.uicomponent.externalprofilelayout.child.core.ExternalProfileSettable;
 

@@ -32,7 +32,7 @@ import android.widget.TextView;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.animation.GlideAnimation;
 import com.bumptech.glide.request.target.SimpleTarget;
-import com.dmplayer.ApplicationDMPlayer;
+import com.dmplayer.DMPlayerApplication;
 import com.dmplayer.R;
 import com.nineoldandroids.animation.Animator;
 import com.nineoldandroids.animation.AnimatorListenerAdapter;
@@ -160,7 +160,6 @@ public final class DMPlayerUtility {
         } catch (UnsupportedOperationException ex) {
             return null;
         }
-
     }
 
     public static long[] getSongListForArtist(Context context, long id) {
@@ -317,17 +316,10 @@ public final class DMPlayerUtility {
 
     public static void runOnUIThread(Runnable runnable, long delay) {
         if (delay == 0) {
-            ApplicationDMPlayer.applicationHandler.post(runnable);
+            DMPlayerApplication.applicationHandler.post(runnable);
         } else {
-            ApplicationDMPlayer.applicationHandler.postDelayed(runnable, delay);
+            DMPlayerApplication.applicationHandler.postDelayed(runnable, delay);
         }
-    }
-
-    public static int dp(float value) {
-        if (value == 0) {
-            return 0;
-        }
-        return (int) Math.ceil(ApplicationDMPlayer.density * value);
     }
 
     public static boolean hasConnection(final Context context) {
@@ -505,5 +497,21 @@ public final class DMPlayerUtility {
         InputMethodManager imm = (InputMethodManager) context.getSystemService(Context.INPUT_METHOD_SERVICE);
         imm.hideSoftInputFromWindow(textView.getWindowToken(),
                 InputMethodManager.HIDE_NOT_ALWAYS);
+    }
+
+    public static int dp(float value) {
+        if (value == 0) {
+            return 0;
+        }
+        return (int) Math.ceil(DMPlayerApplication.density * value);
+    }
+
+    public static int dpToPx(int dp) {
+        return (int) (dp * Resources.getSystem().getDisplayMetrics().density);
+    }
+
+    public static float pixelsToSp(Context context, float px) {
+        float scaledDensity = context.getResources().getDisplayMetrics().scaledDensity;
+        return px / scaledDensity;
     }
 }

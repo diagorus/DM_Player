@@ -72,7 +72,7 @@ public class ChildFragmentPlaylists extends Fragment {
     private void setupVkMusicHelper() {
         SharedPreferences sp = getActivity().getSharedPreferences("VALUES", Context.MODE_PRIVATE);
 
-        vkMusicHelper = new VkMusicHelper.Builder()
+        vkMusicHelper = new VkMusicHelper.Builder(getActivity())
                 .setLogged(sp.getBoolean(VkProfileHelper.SP_LOGGED, false))
                 .setUserId(sp.getString(VkProfileHelper.SP_USER_ID, ""))
                 .setToken(sp.getString(VkProfileHelper.SP_ACCESS_TOKEN, ""))
@@ -132,8 +132,8 @@ public class ChildFragmentPlaylists extends Fragment {
 
             public ViewHolder(View itemView) {
                 super(itemView);
-                topLine = (TextView) itemView.findViewById(R.id.line_1);
-                bottomLine = (TextView) itemView.findViewById(R.id.line_2);
+                topLine = (TextView) itemView.findViewById(R.id.title);
+                bottomLine = (TextView) itemView.findViewById(R.id.details);
                 icon = (ImageView) itemView.findViewById(R.id.icon);
                 icon.setScaleType(ImageView.ScaleType.CENTER_CROP);
                 itemView.setOnClickListener(this);
@@ -160,7 +160,8 @@ public class ChildFragmentPlaylists extends Fragment {
 
         @Override
         protected List<Playlist> doInBackground(Void... params) {
-            return vkMusicHelper.loadMusicListsToShow();
+//            return vkMusicHelper.loadMusicListsToShow();
+            return null;
         }
 
         @Override

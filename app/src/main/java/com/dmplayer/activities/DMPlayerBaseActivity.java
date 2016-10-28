@@ -36,9 +36,9 @@ import com.dmplayer.adapter.DrawerAdapter;
 import com.dmplayer.fragments.FragmentChat;
 import com.dmplayer.fragments.FragmentEqualizer;
 import com.dmplayer.fragments.FragmentFavorite;
-import com.dmplayer.fragments.FragmentLibrary;
 import com.dmplayer.fragments.FragmentSettings;
 import com.dmplayer.fragments.FragmentStream;
+import com.dmplayer.fragments.TestFragmentLibrary;
 import com.dmplayer.manager.MediaController;
 import com.dmplayer.manager.MusicPreferance;
 import com.dmplayer.manager.NotificationManager;
@@ -163,9 +163,15 @@ public class DMPlayerBaseActivity extends AppCompatActivity implements View.OnCl
         if (isExpand) {
             mLayout.setPanelState(SlidingUpPanelLayout.PanelState.COLLAPSED);
         } else {
-            super.onBackPressed();
-            overridePendingTransition(0, 0);
-            finish();
+            int count = getFragmentManager().getBackStackEntryCount();
+            if (count == 0) {
+                super.onBackPressed();
+                overridePendingTransition(0, 0);
+                finish();
+            } else {
+                getFragmentManager().popBackStack();
+            }
+
         }
     }
 
@@ -293,7 +299,7 @@ public class DMPlayerBaseActivity extends AppCompatActivity implements View.OnCl
 
         ArrayList<DrawerItem> drawerItems = new ArrayList<>();
         final String[] drawerTitles = getResources().getStringArray(R.array.drawer);
-        final TypedArray drawerIcons = getResources().obtainTypedArray(R.array.drawerIcons);
+        final TypedArray drawerIcons = getResources().obtainTypedArray(R.array.drawer_icons);
         for (int i = 0; i < drawerTitles.length; i++) {
             drawerItems.add(new DrawerItem(drawerTitles[i], drawerIcons.getDrawable(i)));
         }
@@ -512,8 +518,8 @@ public class DMPlayerBaseActivity extends AppCompatActivity implements View.OnCl
         switch (position) {
             case 0:
                 sharedPreferences.edit().putInt("FRAGMENT", position).apply();
-                FragmentLibrary fragmentlibrary = new FragmentLibrary();
-                fragmentTransaction.replace(R.id.fragment, fragmentlibrary);
+                TestFragmentLibrary testfragmentlibrary = new TestFragmentLibrary();
+                fragmentTransaction.replace(R.id.fragment, testfragmentlibrary);
                 fragmentTransaction.commit();
                 toolbar.setTitle("My Library");
                 break;

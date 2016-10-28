@@ -216,7 +216,7 @@ public class PlaylistActivity extends AppCompatActivity implements View.OnClickL
     private void setupVkMusicHelper() {
         SharedPreferences sp = getSharedPreferences("VALUES", Context.MODE_PRIVATE);
 
-        vkMusicHelper = new VkMusicHelper.Builder()
+        vkMusicHelper = new VkMusicHelper.Builder(this)
                 .setLogged(sp.getBoolean(VkProfileHelper.SP_LOGGED, false))
                 .setUserId(sp.getString(VkProfileHelper.SP_USER_ID, ""))
                 .setToken(sp.getString(VkProfileHelper.SP_ACCESS_TOKEN, ""))
@@ -324,7 +324,7 @@ public class PlaylistActivity extends AppCompatActivity implements View.OnClickL
                 }
             }
         });
-        mPhoneMediaControl.loadMusicList(context, id, PhoneMediaControl.SongsLoadFor.Album, "");
+        mPhoneMediaControl.loadMusicListAsync(context, id, PhoneMediaControl.SongsLoadFor.Album, "");
 
         String contentURI = "content://media/external/audio/albumart/" + id;
         imageLoader.displayImage(contentURI, banner, options);
@@ -344,7 +344,7 @@ public class PlaylistActivity extends AppCompatActivity implements View.OnClickL
                 }
             }
         });
-        mPhoneMediaControl.loadMusicList(context, id, PhoneMediaControl.SongsLoadFor.Artist, "");
+        mPhoneMediaControl.loadMusicListAsync(context, id, PhoneMediaControl.SongsLoadFor.Artist, "");
     }
 
     private void loadSongsGenres(long id) {
@@ -362,7 +362,7 @@ public class PlaylistActivity extends AppCompatActivity implements View.OnClickL
                 }
             }
         });
-        mPhoneMediaControl.loadMusicList(context, id, PhoneMediaControl.SongsLoadFor.Genre, "");
+        mPhoneMediaControl.loadMusicListAsync(context, id, PhoneMediaControl.SongsLoadFor.Genre, "");
     }
 
     private void loadSongsLocalPlaylist(long id) { }
@@ -385,19 +385,20 @@ public class PlaylistActivity extends AppCompatActivity implements View.OnClickL
         new LoadPlaylistTask().execute();
     }
 
-    private class LoadPlaylistTask extends AsyncTask<Void, Void, ArrayList<SongDetail>> {
+    private class LoadPlaylistTask extends AsyncTask<Void, Void, List<SongDetail>> {
 
         @Override
-        protected ArrayList<SongDetail> doInBackground(Void... params) {
-            return vkMusicHelper.loadMusicList(vkType, vkAlbumId, vkPlaylistName)
-                    .getSongs();
+        protected List<SongDetail> doInBackground(Void... params) {
+//            return vkMusicHelper.loadMusicList(vkType, vkAlbumId, vkPlaylistName)
+//                    .getSongs();
+            return null;
         }
 
         @Override
-        protected void onPostExecute(ArrayList<SongDetail> songDetails) {
+        protected void onPostExecute(List<SongDetail> songDetails) {
             super.onPostExecute(songDetails);
 
-            mPhoneMediaControl.loadMusicList(songDetails);
+            mPhoneMediaControl.loadMusicListAsync(songDetails);
         }
     }
 
@@ -426,7 +427,7 @@ public class PlaylistActivity extends AppCompatActivity implements View.OnClickL
             ViewHolder mViewHolder;
             if (convertView == null) {
                 mViewHolder = new ViewHolder();
-                convertView = layoutInflater.inflate(R.layout.inflate_allsongsitem, null);
+                convertView = layoutInflater.inflate(R.layout.item_song, null);
                 mViewHolder.song_row = (LinearLayout) convertView.findViewById(R.id.inflate_allsong_row);
                 mViewHolder.textViewSongName = (TextView) convertView.findViewById(R.id.inflate_allsong_textsongname);
                 mViewHolder.textViewSongArtisNameAndDuration = (TextView) convertView.findViewById(R.id.inflate_allsong_textsongArtisName_duration);

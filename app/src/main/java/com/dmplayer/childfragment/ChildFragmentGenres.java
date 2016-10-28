@@ -122,7 +122,9 @@ public class ChildFragmentGenres extends Fragment {
     }
 
     private Cursor getGenresCursor() {
-        String[] cols = new String[]{MediaStore.Audio.Genres._ID, MediaStore.Audio.Genres.NAME};
+        String[] cols = new String[] {MediaStore.Audio.Genres._ID,
+                MediaStore.Audio.Genres._COUNT,
+                MediaStore.Audio.Genres.NAME};
         Uri uri = MediaStore.Audio.Genres.EXTERNAL_CONTENT_URI;
 
         return DMPlayerUtility.query(getActivity(), uri, cols, null, null, null);
@@ -184,8 +186,8 @@ public class ChildFragmentGenres extends Fragment {
 
             public ViewHolder(View itemView) {
                 super(itemView);
-                topLine = (TextView) itemView.findViewById(R.id.line_1);
-                bottomLine = (TextView) itemView.findViewById(R.id.line_2);
+                topLine = (TextView) itemView.findViewById(R.id.title);
+                bottomLine = (TextView) itemView.findViewById(R.id.details);
                 icon = (ImageView) itemView.findViewById(R.id.icon);
                 icon.setScaleType(ImageView.ScaleType.CENTER_CROP);
                 itemView.setOnClickListener(this);
@@ -201,9 +203,9 @@ public class ChildFragmentGenres extends Fragment {
                     Bundle mBundle = new Bundle();
                     mBundle.putLong("id", genreId);
                     mBundle.putLong("tagfor", PhoneMediaControl.SongsLoadFor.Genre.ordinal());
-                    mBundle.putString("albumname", ((TextView) view.findViewById(R.id.line_1)).getText().toString().trim());
+                    mBundle.putString("albumname", ((TextView) view.findViewById(R.id.title)).getText().toString().trim());
                     mBundle.putString("title_one", "All my songs");
-                    mBundle.putString("title_sec", ((TextView) view.findViewById(R.id.line_2)).getText().toString().trim());
+                    mBundle.putString("title_sec", ((TextView) view.findViewById(R.id.details)).getText().toString().trim());
 
                     mIntent.putExtras(mBundle);
 

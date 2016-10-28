@@ -15,12 +15,11 @@ import android.media.AudioManager;
 import android.media.AudioTrack;
 import android.media.MediaPlayer;
 import android.os.AsyncTask;
-import android.os.Build;
 import android.os.PowerManager;
 import android.util.Log;
 import android.view.View;
 
-import com.dmplayer.ApplicationDMPlayer;
+import com.dmplayer.DMPlayerApplication;
 import com.dmplayer.dbhandler.FavoritePlayTableHelper;
 import com.dmplayer.dbhandler.MostAndRecentPlayTableHelper;
 import com.dmplayer.models.SongDetail;
@@ -241,14 +240,14 @@ public class MediaController implements NotificationManager.NotificationCenterDe
         }
 
         if (MusicPreferance.playingSongDetail != null) {
-            Intent intent = new Intent(ApplicationDMPlayer.applicationContext, MusicPlayerService.class);
-            ApplicationDMPlayer.applicationContext.startService(intent);
+            Intent intent = new Intent(DMPlayerApplication.applicationContext, MusicPlayerService.class);
+            DMPlayerApplication.applicationContext.startService(intent);
         } else {
-            Intent intent = new Intent(ApplicationDMPlayer.applicationContext, MusicPlayerService.class);
-            ApplicationDMPlayer.applicationContext.stopService(intent);
+            Intent intent = new Intent(DMPlayerApplication.applicationContext, MusicPlayerService.class);
+            DMPlayerApplication.applicationContext.stopService(intent);
         }
 
-        storeResendPlay(ApplicationDMPlayer.applicationContext, mSongDetail);
+        storeResendPlay(DMPlayerApplication.applicationContext, mSongDetail);
         NotificationManager.getInstance().notifyNewSongLoaded(NotificationManager.newaudioloaded, mSongDetail);
 
         return true;
@@ -383,8 +382,8 @@ public class MediaController implements NotificationManager.NotificationCenterDe
         stopProgressTimer();
         isPaused = false;
 
-        Intent intent = new Intent(ApplicationDMPlayer.applicationContext, MusicPlayerService.class);
-        ApplicationDMPlayer.applicationContext.stopService(intent);
+        Intent intent = new Intent(DMPlayerApplication.applicationContext, MusicPlayerService.class);
+        DMPlayerApplication.applicationContext.stopService(intent);
     }
 
     private void startProgressTimer() {
@@ -526,8 +525,8 @@ public class MediaController implements NotificationManager.NotificationCenterDe
         stopProgressTimer();
         isPaused = true;
         if (stopService) {
-            Intent intent = new Intent(ApplicationDMPlayer.applicationContext, MusicPlayerService.class);
-            ApplicationDMPlayer.applicationContext.stopService(intent);
+            Intent intent = new Intent(DMPlayerApplication.applicationContext, MusicPlayerService.class);
+            DMPlayerApplication.applicationContext.stopService(intent);
         }
     }
 
@@ -535,8 +534,7 @@ public class MediaController implements NotificationManager.NotificationCenterDe
      * Store Recent Play Data
      */
     public synchronized void storeResendPlay(final Context context, final SongDetail mDetail) {
-
-        AsyncTask<Void, Void, Void> task = new AsyncTask<Void, Void, Void>() {
+        new AsyncTask<Void, Void, Void>() {
             @Override
             protected Void doInBackground(Void... voids) {
                 try {
@@ -546,41 +544,28 @@ public class MediaController implements NotificationManager.NotificationCenterDe
                 }
                 return null;
             }
-        };
-
-        if (Build.VERSION.SDK_INT > Build.VERSION_CODES.HONEYCOMB) {
-            task.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
-        } else {
-            task.execute();
-        }
+        }.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
     }
 
     /**
      * Store Favorite Play Data
      */
     public synchronized void storeFavoritePlay(final Context context, final SongDetail mDetail, final int isFav) {
-
-        AsyncTask<Void, Void, Void> task = new AsyncTask<Void, Void, Void>() {
+        new AsyncTask<Void, Void, Void>() {
             @Override
             protected Void doInBackground(Void... voids) {
                 try {
                     FavoritePlayTableHelper.getInstance(context).inserSong(mDetail, isFav);
                 } catch (Exception e) {
-                    e.printStackTrace();
+                    Log.e(TAG, "Error adding song into favourites: ", e);
                 }
                 return null;
             }
-        };
-
-        if (Build.VERSION.SDK_INT > Build.VERSION_CODES.HONEYCOMB) {
-            task.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
-        } else {
-            task.execute();
-        }
+        }.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
     }
-
+    //TODO: change exceptions output with Log.e(...)
     public synchronized void checkIsFavorite(final Context context, final SongDetail mDetail, final View v) {
-        AsyncTask<Void, Void, Void> task = new AsyncTask<Void, Void, Void>() {
+        new AsyncTask<Void, Void, Void>() {
             boolean isFavorite = false;
 
             @Override
@@ -598,12 +583,6 @@ public class MediaController implements NotificationManager.NotificationCenterDe
                 super.onPostExecute(aVoid);
                 v.setSelected(isFavorite);
             }
-        };
-
-        if (Build.VERSION.SDK_INT > Build.VERSION_CODES.HONEYCOMB) {
-            task.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
-        } else {
-            task.execute();
-        }
+        }.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
     }
 }

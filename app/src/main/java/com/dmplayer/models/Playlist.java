@@ -14,39 +14,46 @@ import java.io.ObjectOutput;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.List;
 
 public class Playlist implements Serializable {
 
     private static int count = 0;
 
-    private String name = "";
-    private transient String path = "";
-    private ArrayList<SongDetail> songs = new ArrayList<>();
+    private String name;
+    private transient String path;
+    private List<SongDetail> songs;
 
-    private boolean isVk = false;
+//    private boolean isVk;
 
     private static final String TAG = "Playlist";
 
     public Playlist() {
         count++;
+
+        this.name = "";
+        this.path = "";
+        this.songs = new ArrayList<>();
+//        this.isVk = false;
     }
 
-    public Playlist(String name) {
+    public Playlist(String name, List<SongDetail> songs) {
         this();
+
         this.name = name;
+        this.songs = songs;
     }
 
-    public Playlist(String name, boolean isVk) {
-        this(name);
-        this.isVk = isVk;
-    }
-
+//    public Playlist(String name, boolean isVk) {
+//        this(name);
+//        this.isVk = isVk;
+//    }
 
     public void addSong(SongDetail newSong){
         songs.add(newSong);
     }
 
-    public ArrayList<SongDetail> getSongs(){
+    public List<SongDetail> getSongs(){
         return songs;
     }
 
@@ -74,13 +81,13 @@ public class Playlist implements Serializable {
         return path;
     }
 
-    public boolean isVk() {
-        return isVk;
-    }
-
-    public void setVk(boolean vk) {
-        isVk = vk;
-    }
+//    public boolean isVk() {
+//        return isVk;
+//    }
+//
+//    public void setVk(boolean vk) {
+//        isVk = vk;
+//    }
 
     public Bundle getBundle() {
         Bundle bundle = new Bundle();

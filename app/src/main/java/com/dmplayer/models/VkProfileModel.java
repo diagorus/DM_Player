@@ -2,7 +2,7 @@ package com.dmplayer.models;
 
 import android.graphics.Bitmap;
 
-import com.dmplayer.externalaccount.ExternalProfileModel;
+import com.dmplayer.externalprofile.ExternalProfileModel;
 
 public class VkProfileModel implements ExternalProfileModel {
     private final Bitmap photo;

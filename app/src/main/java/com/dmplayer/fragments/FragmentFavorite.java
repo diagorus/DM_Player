@@ -9,7 +9,6 @@ import android.app.Fragment;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Color;
-import android.os.Build;
 import android.os.Bundle;
 import android.support.v7.widget.PopupMenu;
 import android.view.LayoutInflater;
@@ -74,7 +73,7 @@ public class FragmentFavorite extends Fragment {
                 mAllSongsListAdapter.notifyDataSetChanged();
             }
         });
-        mPhoneMediaControl.loadMusicList(getActivity(), -1, PhoneMediaControl.SongsLoadFor.Favorite, "");
+        mPhoneMediaControl.loadMusicListAsync(getActivity(), -1, PhoneMediaControl.SongsLoadFor.Favorite, "");
     }
 
     public class AllSongsListAdapter extends BaseAdapter {
@@ -86,9 +85,15 @@ public class FragmentFavorite extends Fragment {
         public AllSongsListAdapter(Context mContext) {
             this.context = mContext;
             this.layoutInflater = LayoutInflater.from(mContext);
-            this.options = new DisplayImageOptions.Builder().showImageOnLoading(R.drawable.bg_default_album_art)
-                    .showImageForEmptyUri(R.drawable.bg_default_album_art).showImageOnFail(R.drawable.bg_default_album_art).cacheInMemory(true)
-                    .cacheOnDisk(true).considerExifParams(true).bitmapConfig(Bitmap.Config.RGB_565).build();
+            this.options = new DisplayImageOptions.Builder()
+                    .showImageOnLoading(R.drawable.bg_default_album_art)
+                    .showImageForEmptyUri(R.drawable.bg_default_album_art)
+                    .showImageOnFail(R.drawable.bg_default_album_art)
+                    .cacheInMemory(true)
+                    .cacheOnDisk(true)
+                    .considerExifParams(true)
+                    .bitmapConfig(Bitmap.Config.RGB_565)
+                    .build();
         }
 
         @Override
@@ -107,7 +112,7 @@ public class FragmentFavorite extends Fragment {
             ViewHolder mViewHolder;
             if (convertView == null) {
                 mViewHolder = new ViewHolder();
-                convertView = layoutInflater.inflate(R.layout.inflate_allsongsitem, null);
+                convertView = layoutInflater.inflate(R.layout.item_song, null);
                 mViewHolder.song_row = (LinearLayout) convertView.findViewById(R.id.inflate_allsong_row);
                 mViewHolder.textViewSongName = (TextView) convertView.findViewById(R.id.inflate_allsong_textsongname);
                 mViewHolder.textViewSongArtisNameAndDuration = (TextView) convertView.findViewById(R.id.inflate_allsong_textsongArtisName_duration);
@@ -152,11 +157,7 @@ public class FragmentFavorite extends Fragment {
             });
 
             mViewHolder.imagemore.setColorFilter(Color.DKGRAY);
-            if (Build.VERSION.SDK_INT > 15) {
-                mViewHolder.imagemore.setImageAlpha(255);
-            } else {
-                mViewHolder.imagemore.setAlpha(255);
-            }
+            mViewHolder.imagemore.setImageAlpha(255);
 
             mViewHolder.imagemore.setOnClickListener(new View.OnClickListener() {
 

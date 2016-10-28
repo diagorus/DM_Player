@@ -6,8 +6,8 @@ import android.util.Log;
 
 import com.dmplayer.bitmaploader.UriLoader;
 import com.dmplayer.bitmaploader.UrlLoader;
-import com.dmplayer.externalaccount.ExternalProfileHelper;
-import com.dmplayer.externalaccount.ExternalProfileModel;
+import com.dmplayer.externalprofile.ExternalProfileHelper;
+import com.dmplayer.externalprofile.ExternalProfileModel;
 import com.dmplayer.internetservices.VkApiService;
 import com.dmplayer.models.VkObjects.VkAlbumsResponse.VkAlbumsWrapper;
 import com.dmplayer.models.VkObjects.VkProfileUserDataResponse.VkUserData;
@@ -214,7 +214,6 @@ public class VkProfileHelper implements ExternalProfileHelper {
             } else {
                 return new VkProfileHelper(context, logged, userId, token);
             }
-
         }
     }
 }

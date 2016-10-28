@@ -4,8 +4,8 @@ package com.dmplayer.models;
 import android.graphics.drawable.Drawable;
 
 public class DrawerItem {
-    String title;
-    Drawable icon;
+    private String title;
+    private Drawable icon;
 
     public DrawerItem(String title, Drawable icon) {
         this.title = title;

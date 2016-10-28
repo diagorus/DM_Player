@@ -34,15 +34,15 @@ import com.nostra13.universalimageloader.core.ImageLoader;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ChildFragmentMostPlay extends Fragment {
+public class ChildFragmentMostPlayed extends Fragment {
 
-    private static final String TAG = "ChildFragmentMostPlay";
+    private static final String TAG = "ChildFragmentMostPlayed";
     private ListView recycler_songslist;
     private AllSongsListAdapter mAllSongsListAdapter;
     private List<SongDetail> songList = new ArrayList<>();
 
-    public static ChildFragmentMostPlay newInstance(int position, Context mContext) {
-        return new ChildFragmentMostPlay();
+    public static ChildFragmentMostPlayed newInstance(int position, Context mContext) {
+        return new ChildFragmentMostPlayed();
     }
 
     @Override
@@ -74,7 +74,7 @@ public class ChildFragmentMostPlay extends Fragment {
                 mAllSongsListAdapter.notifyDataSetChanged();
             }
         });
-        mPhoneMediaControl.loadMusicList(getActivity(), -1, PhoneMediaControl.SongsLoadFor.MostPlay, "");
+        mPhoneMediaControl.loadMusicListAsync(getActivity(), -1, PhoneMediaControl.SongsLoadFor.MostPlay, "");
     }
 
     public class AllSongsListAdapter extends BaseAdapter {
@@ -107,7 +107,7 @@ public class ChildFragmentMostPlay extends Fragment {
             ViewHolder mViewHolder;
             if (convertView == null) {
                 mViewHolder = new ViewHolder();
-                convertView = layoutInflater.inflate(R.layout.inflate_allsongsitem, null);
+                convertView = layoutInflater.inflate(R.layout.item_song, null);
                 mViewHolder.song_row = (LinearLayout) convertView.findViewById(R.id.inflate_allsong_row);
                 mViewHolder.textViewSongName = (TextView) convertView.findViewById(R.id.inflate_allsong_textsongname);
                 mViewHolder.textViewSongArtisNameAndDuration = (TextView) convertView.findViewById(R.id.inflate_allsong_textsongArtisName_duration);
