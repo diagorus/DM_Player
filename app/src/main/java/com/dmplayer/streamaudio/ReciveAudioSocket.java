@@ -1,10 +1,10 @@
 package com.dmplayer.streamaudio;
 
 import android.media.MediaPlayer;
-import android.os.Handler;
 import android.util.Log;
-import android.widget.ProgressBar;
-import android.widget.TextView;
+
+import com.dmplayer.manager.MediaController;
+import com.dmplayer.streamaudio.Observer.SingleObserverContainer;
 
 import java.io.BufferedOutputStream;
 import java.io.DataInputStream;
@@ -16,35 +16,26 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.net.MalformedURLException;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.net.SocketException;
 
 /**
  * Created by Alexvojander on 09.09.2016.
  */
 public class ReciveAudioSocket extends Thread {
-    String LOG_TAG="LOG_TAG:";
+    String LOG_TAG="RecAudioSocketLOG_TAG:";
     public java.net.ServerSocket serverSocket;
     static final int SocketServerPORT = 5005;
     public MediaPlayer mediaPlayer=new MediaPlayer();
 
     int totalRead;
-    ProgressBar progressBarClient;
+    public ReciveAudioSocket(){    }
 
-    public ReciveAudioSocket(ProgressBar progressBarClient){
-        this.progressBarClient=progressBarClient;
-        //this.mediaPlayer=mediaPlayer;
-        //this.ipTextView=ipTextView;
-        //this.portTextView=portTextView;
-       // this.handler=handler;
-    }
     public void refresh()
     {
         if(mediaPlayer.isPlaying()){
-            mediaPlayer.stop();}
-       // mediaPlayer=null;
+            mediaPlayer.stop();
+        }
         if(serverSocket!=null)
         {
             try {
@@ -53,56 +44,46 @@ public class ReciveAudioSocket extends Thread {
                 e.printStackTrace();
             }
         }
-        progressBarClient.setProgress(0);
-        progressBarClient.setMax(0);
+        SingleObserverContainer.getInstance().getProgressBarClient().setProgress(0);
+        SingleObserverContainer.getInstance().getProgressBarClient().setMax(0);
 
     }
     @Override
     public void run() {
         Boolean bool=false;
+
         try {
             serverSocket = new ServerSocket(SocketServerPORT);
-
-//            handler.post(new Runnable(){
-//                public void run() {
-//                    ipTextView.setText("Ip: "+serverSocket.getInetAddress());
-//                    portTextView.setText("Port: "+serverSocket.getLocalPort());
-//
-//                }
-//            });
-
-
         } catch (IOException e) {
             e.printStackTrace();
         }
-
         byte[] buffer = new byte[32384];
         try {
+            int maxValueForProgressBar=0;
+            SingleObserverContainer.getInstance().getProgressBarClient().setProgress(0);
+            SingleObserverContainer.getInstance().getProgressBarClient().setMax(0);
+
             File bufferFile = File.createTempFile("test", "mp3");
             BufferedOutputStream bufferOS = new BufferedOutputStream(new FileOutputStream(bufferFile));
-            Socket socket1 = serverSocket.accept();
-            InputStream in1 = socket1.getInputStream();
-            DataInputStream dis1 = new DataInputStream(in1);
-            progressBarClient.setMax(dis1.readInt());
-            dis1.close();
-            in1.close();
-            boolean started = false;
+
             while(true)
             {
                 Socket socket = serverSocket.accept();
-                if(mediaPlayer.isPlaying()){
-                    mediaPlayer.stop();
-                    mediaPlayer=new MediaPlayer();
-
-                }
                 InputStream in = socket.getInputStream();
                 DataInputStream dis = new DataInputStream(in);
-
                 OutputStream out = socket.getOutputStream();
                 DataOutputStream dos = new DataOutputStream(out);
 
                 label:{
+                    maxValueForProgressBar=dis.readInt();
+                    dos.writeBoolean(false);
+                    SingleObserverContainer.getInstance().getProgressBarClient().setMax(maxValueForProgressBar);
                     int len = dis.readInt();
+                    dos.writeBoolean(false);
+                    if(len>32800){
+                        Log.d(LOG_TAG, "so big value of socket pack: " +len);
+                        continue  ;
+                    }
                     Log.d(LOG_TAG, "len " +len);
                     try {
                         if (len > 0) {
@@ -113,34 +94,31 @@ public class ReciveAudioSocket extends Thread {
                     }
 
                     dos.writeInt(len);
+                    dis.readBoolean();
                     dos.write(buffer, 0, len);
                     bool=dis.readBoolean();
 
-                    if(bool){
-                        Log.d(LOG_TAG, "recive2 pack: " + buffer.length);
+                    if(bool==true){
                         bufferOS.write(buffer, 0,len);
                         bufferOS.flush();
                         totalRead+=len;
 
-                        Log.d(LOG_TAG, "recive2 pack: " + buffer.length);
-                        Log.d(LOG_TAG, "bytes_count : " + totalRead);
-                        progressBarClient.setProgress(totalRead);
-                        //Log.d(LOG_TAG, "file size : " + new File("storage/emulated/0/Download/Mmdance.mp3").length());
-
+                        Log.d(LOG_TAG, "totalRecive : " + totalRead);
+                        SingleObserverContainer.getInstance().getProgressBarClient().setProgress(totalRead);
                         if (len<32384 ) {
                             Log.e("Player", "BufferHIT:StartPlayClient");
-                            if(mediaPlayer.isPlaying())
-                            {
-                                mediaPlayer.stop();
-                                mediaPlayer=new MediaPlayer();
-                            }
+                            Log.d(LOG_TAG, "file size: " + maxValueForProgressBar);
+                            Log.d(LOG_TAG, "totalRecive : " + totalRead);
+                            mediaPlayer=new MediaPlayer();
+
+                            bool=false;
                             setSourceAndStartPlay(mediaPlayer,bufferFile, totalRead);
+                            totalRead=0;
                             dos.close();
                             dis.close();
                             in.close();
                             out.close();
 
-                            totalRead=0;
                             bufferFile = File.createTempFile("test", "mp3");
                             bufferOS = new BufferedOutputStream(new FileOutputStream(bufferFile));
                         }
@@ -153,17 +131,12 @@ public class ReciveAudioSocket extends Thread {
                 dis.close();
                 in.close();
                 out.close();
-                //progressBarClient.setProgress(0);
             }
-
-
         } catch (IOException e ) {
             e.printStackTrace();
         }catch (NullPointerException e){
             e.printStackTrace();
         }
-
-
     }
     public void setSourceAndStartPlay(MediaPlayer mediaPlayer,File bufferFile, long size) {
         try {
@@ -175,12 +148,24 @@ public class ReciveAudioSocket extends Thread {
             FileDescriptor fileDescriptor = fis.getFD();
             mediaPlayer.setDataSource(fileDescriptor, 0, size);
 
-            mediaPlayer.prepare();
-            mediaPlayer.start();
+           // MediaController.getInstance().playNextSongFromStream(true,mediaPlayer);
+//            if (!MediaController.getInstance().isPlayingAudio(MediaController.getInstance().getPlayingSongDetail())) {
+//
+//                MediaController.getInstance().pauseAudio(MediaController.getInstance().getPlayingSongDetail());
+//
+//                //((PlayPauseView) SingleObserverContainer.getInstance().getPlayPauseView()).Pause();
+//            }
+
+            MediaController.getInstance().playAudioFromStream(mediaPlayer);
+
+       //     mediaPlayer.prepare();
+         //   mediaPlayer.start();
+
+
 //            videoView.start();
 
         } catch (Exception e) {
-            e.printStackTrace();
+           // e.printStackTrace();
         }
     }
 }

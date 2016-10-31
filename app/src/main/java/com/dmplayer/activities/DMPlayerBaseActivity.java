@@ -8,6 +8,10 @@ import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.content.res.TypedArray;
 import android.graphics.Bitmap;
+import android.hardware.Sensor;
+import android.hardware.SensorEvent;
+import android.hardware.SensorEventListener;
+import android.hardware.SensorManager;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -65,7 +69,7 @@ import java.util.List;
 
 
 public class DMPlayerBaseActivity extends AppCompatActivity implements View.OnClickListener, Slider.OnValueChangedListener,
-        NotificationManager.NotificationCenterDelegate {
+        NotificationManager.NotificationCenterDelegate, SensorEventListener {
 
     private static final String TAG = "ActivityDMPlayerBase";
     private Context context;
@@ -107,9 +111,20 @@ public class DMPlayerBaseActivity extends AppCompatActivity implements View.OnCl
     private boolean isDragingStart = false;
     private int TAG_Observer;
 
+    private SensorManager senSensorManager;
+    private Sensor senAccelerometer;
+
+    private long lastUpdate = 0;
+    private float last_x, last_y, last_z;
+    private static final int SHAKE_THRESHOLD = 600;
+
+    String MIXING_MODE="mixing_mode";
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         //Set your theme first
+        //requestWindowFeature(Window.FEATURE_ACTION_BAR);
+
         context = DMPlayerBaseActivity.this;
         theme();
         new AssetsCopier(this).execute();
@@ -117,6 +132,10 @@ public class DMPlayerBaseActivity extends AppCompatActivity implements View.OnCl
         //Set your Layout view
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_dmplayerbase);
+
+        senSensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
+        senAccelerometer = senSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
+        senSensorManager.registerListener(this, senAccelerometer , SensorManager.SENSOR_DELAY_NORMAL);
 
         toolbarStatusBar();
         navigationDrawer();
@@ -750,6 +769,48 @@ public class DMPlayerBaseActivity extends AppCompatActivity implements View.OnCl
         win.setAttributes(winParams);
     }
 
+
+
+
+    @Override
+    public void onAccuracyChanged(Sensor sensor, int i) {
+
+    }
+    @Override
+    public void onSensorChanged(SensorEvent sensorEvent) {
+        Sensor mySensor = sensorEvent.sensor;
+
+        if(getMixingMode().equals("ON")){
+            if (mySensor.getType() == Sensor.TYPE_ACCELEROMETER) {
+                float x = sensorEvent.values[0];
+                float y = sensorEvent.values[1];
+                float z = sensorEvent.values[2];
+                long curTime = System.currentTimeMillis();
+                if ((curTime - lastUpdate) > 100) {
+                    long diffTime = (curTime - lastUpdate);
+                    lastUpdate = curTime;
+                    float speed = Math.abs(x + y + z - last_x - last_y - last_z)/ diffTime * 10000;
+                    if (speed > SHAKE_THRESHOLD) {
+                        //  getRandomNumber();
+
+                        if (MediaController.getInstance().getPlayingSongDetail() != null)
+                            MediaController.getInstance().playNextSong();
+                    }
+                    last_x = x;
+                    last_y = y;
+                    last_z = z;
+                }
+            }
+        }
+
+    }
+    String getMixingMode() {
+        sharedPreferences = getPreferences(MODE_PRIVATE);
+        String savedText = sharedPreferences.getString(MIXING_MODE, "");
+        return savedText;
+        // etText.setText(savedText);
+        // Toast.makeText(this, "Text loaded", Toast.LENGTH_SHORT).show();
+    }
     private static class AnimateFirstDisplayListener extends SimpleImageLoadingListener {
         static final List<String> displayedImages = Collections.synchronizedList(new LinkedList<String>());
 

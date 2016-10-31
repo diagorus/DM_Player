@@ -14,7 +14,7 @@
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.BROADCAST_STICKY" />
     <uses-permission android:name="android.permission.CAMERA" />
-
+    <uses-permission android:name="android.permission.RECORD_AUDIO"/>
     <uses-feature android:name="android.hardware.camera" />
 
     <application
@@ -106,6 +106,14 @@
 
         <service
             android:name=".manager.MusicPlayerService"
+            android:enabled="true"
+            android:exported="true" />
+        <service
+            android:name=".streamaudio.ClientStreamService"
+            android:enabled="true"
+            android:exported="true" />
+        <service
+            android:name=".streamaudio.ServerStreamService"
             android:enabled="true"
             android:exported="true" />
 

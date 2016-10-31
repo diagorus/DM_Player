@@ -5,44 +5,77 @@
  */
 package com.dmplayer.fragments;
 
+import android.app.Fragment;
+import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Bundle;
 import android.os.Handler;
-import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.CompoundButton;
+import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.Switch;
 
 import com.dmplayer.R;
 import com.dmplayer.manager.MediaController;
-import com.dmplayer.streamaudio.ClientUDPThread;
-import com.dmplayer.streamaudio.ServerUDPThread;
+import com.dmplayer.streamaudio.ClientStreamService;
+import com.dmplayer.streamaudio.Observer.SingleObserverContainer;
+import com.dmplayer.streamaudio.ReciveAudioSocket;
+import com.dmplayer.streamaudio.SendAudioSocket;
+import com.dmplayer.streamaudio.ServerStreamService;
+
+import java.io.IOException;
+import java.net.DatagramPacket;
+import java.net.DatagramSocket;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
+import java.util.HashMap;
 
 public class FragmentStream extends Fragment {
 
-	//public static TextView ipTextView;
 	Button stopStreamButton;
-	//EditText editTextIpAdress,editTextPortAdress;
-	//SongDetail audioInfo = MediaController.getInstance().getPlayingSongDetail();
-	//String ipAdress,path1;
-
 	Switch switcher;
-	//String port="5005";
-	//TextView ipTextView,portTextView;
-	//LinearLayout clientLayout,serverLayout;
-	Button pauseButton,stopButton;
 	Button connectToServerButton;
-	ServerUDPThread serverUDPThread;
-	ClientUDPThread clientUDPThread;
 
-	//Handler handler = new Handler();
 
-	ProgressBar pb,pbClient;
+	public ReciveAudioSocket reciveAudioSocket;
+
+	SendAudioSocket sendAudioSocket;
+	ProgressBar pbServer,pbClient;
 	Handler handler;
+	BroadcastReceiver brClient;
+	BroadcastReceiver brServer;
+	public final static String BROADCAST_ACTION_CLIENT = "com.dmplayer.streamaudio.ClientStreamService";
+	public final static String BROADCAST_ACTION_SERVER = "com.dmplayer.streamaudio.ServerStreamService";
+
+	final String LOG_TAG = "myLogs";
+
+	public final static String PARAM_TIME = "time";
+	public final static String PARAM_TASK = "task";
+	public final static String PARAM_RESULT = "result";
+	public final static String PARAM_STATUS = "status";
+
+
+	public final static int STATUS_START = 100;
+	public final static int STATUS_FINISH = 200;
+
+	final int TASK1_CODE = 1;
+	final int TASK2_CODE = 2;
+	final int TASK3_CODE = 3;
+
+	View view1;
+	Intent intentServer;
+	Intent intentClient;
+
+	final String ATTRIBUTE_NAME = "text";
+	final String ATTRIBUTE_IP = "value";
+	final String ATTRIBUTE_IMAGE = "image";
 
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -52,28 +85,122 @@ public class FragmentStream extends Fragment {
 	}
 	@Override
 	public void onDestroy() {
+		getActivity().unregisterReceiver(brClient);
+		getActivity().unregisterReceiver(brServer);
+		//sendAudioSocket.refresh();
 		super.onDestroy();
 	}
 
 	private void setupInitialViews(View view) {
 
-		//editTextIpAdress = (EditText)view.findViewById(R.id.ip_stream_server);
-		//editTextPortAdress=(EditText)view.findViewById(R.id.port_stream_server);
-		stopStreamButton=(Button)view.findViewById(R.id.stop_stream_music);
-		stopStreamButton.setOnClickListener (startListener);
-		pbClient=(ProgressBar)view.findViewById(R.id.progressBarClient);
+		view1=view;
+		pbClient=(ProgressBar)view.findViewById(R.id.client_progress_bar);
+		pbServer=(ProgressBar)view.findViewById(R.id.server_progress_bar);
 
-		pb=(ProgressBar)view.findViewById(R.id.progressBar);
-		pauseButton=(Button)view.findViewById(R.id.pause_button);
-		stopButton=(Button)view.findViewById(R.id.stop_button);
-		connectToServerButton=(Button)view.findViewById(R.id.connect_to_server_button);
+		connectToServerButton=(Button)view.findViewById(R.id.connect_to_UDPServer);
 		connectToServerButton.setOnClickListener(connectToServerListener);
 		switcher=(Switch)view.findViewById(R.id.switchServer);
 		switcher.setOnCheckedChangeListener(serverListener);
-		//clientLayout=(LinearLayout)view.findViewById(R.id.clientLayout);
-		//serverLayout=(LinearLayout)view.findViewById(R.id.serverLayout);
-		//ipTextView=(TextView)view.findViewById(R.id.serverIp);
-		//portTextView=(TextView)view.findViewById(R.id.serverPort);
+
+		final ListView listView=(ListView)view1.findViewById(R.id.streamListView);
+
+		//listView.setOnItemClickListener(itemListener);
+		listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+			@Override
+			public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+				HashMap<String, Object> obj = (HashMap<String, Object>)listView.getAdapter().getItem(position);
+				final String ip_adress = (String) obj.get(ATTRIBUTE_IP);
+				//Log.d("Yourtag ", name);
+				reciveAudioSocket=new ReciveAudioSocket();
+				reciveAudioSocket.start();
+
+				if(MediaController.getInstance().getPlayingSongDetail()!=null){
+
+					new Thread()
+					{
+						public void run() {
+							DatagramSocket datagramSocket = null;
+							DatagramPacket sendPacket;
+							try {
+								datagramSocket = new DatagramSocket();
+								datagramSocket.setBroadcast(true);
+								byte[]sendData = "START_STREAMING_MUSIC".getBytes();
+								sendPacket = new DatagramPacket(sendData, sendData.length, InetAddress.getByName(ip_adress), 8888);
+								datagramSocket.send(sendPacket);
+							} catch (UnknownHostException e) {
+								e.printStackTrace();
+							} catch (IOException e) {
+								e.printStackTrace();
+							}
+							datagramSocket.close();
+						}
+					}.start();
+
+					//sendAudioSocket= new SendAudioSocket(name,MediaController.getInstance().getPlayingSongDetail());
+					//sendAudioSocket.start();
+				}
+			}
+		});
+		SingleObserverContainer.getInstance().update(pbClient,pbServer);
+
+		SingleObserverContainer.getInstance().setListView(listView);
+
+		SingleObserverContainer.getInstance().setContext(view.getContext());
+
+		brClient = new BroadcastReceiver() {
+			// действия при получении сообщений
+			public void onReceive(Context context, Intent intent) {
+				//int task = intent.getIntExtra(PARAM_TASK, 0);
+				//int status = intent.getIntExtra(PARAM_STATUS, 0);
+				//Log.d(LOG_TAG, "onReceive: task = " + task + ", status = " + status);
+
+				// Ловим сообщения о старте задач
+				//if (status  == STATUS_START) {
+				//	switch (task) {
+
+//						case TASK1_CODE:
+//							tvTask1.setText("Task1 start");
+//							//break;
+//						case TASK2_CODE:
+//							tvTask2.setText("Task2 start");
+//							//break;
+//						case TASK3_CODE:
+//							//tvTask3.setText("Task3 start");
+//							break;
+				//	}
+				//}
+
+				// Ловим сообщения об окончании задач
+				//if (status == STATUS_FINISH) {
+				//	int result = intent.getIntExtra(PARAM_RESULT, 0);
+				//	switch (task) {
+
+//						case TASK1_CODE:
+//							tvTask1.setText("Task1 finish, result = " + result);
+//							break;
+//						case TASK2_CODE:
+//							tvTask2.setText("Task2 finish, result = " + result);
+//							break;
+//						case TASK3_CODE:
+//							tvTask3.setText("Task3 finish, result = " + result);
+//							break;
+				//	}
+				//}
+			}
+		};
+		brServer = new BroadcastReceiver() {
+			// действия при получении сообщений
+			public void onReceive(Context context, Intent intent) {
+
+			}
+		};
+		// создаем фильтр для BroadcastReceiver
+		IntentFilter intFiltClient = new IntentFilter(BROADCAST_ACTION_CLIENT);
+		IntentFilter intFiltServer = new IntentFilter(BROADCAST_ACTION_SERVER);
+		// регистрируем (включаем) BroadcastReceiver
+		getActivity().registerReceiver(brClient, intFiltClient);
+		getActivity().registerReceiver(brServer, intFiltServer);
+
 	}
 	private CompoundButton.OnCheckedChangeListener serverListener = new CompoundButton.OnCheckedChangeListener() {
 
@@ -83,78 +210,33 @@ public class FragmentStream extends Fragment {
 
 				//sendButton.setEnabled(false);
 				switcher.setText("Server ON");
-				stopButton.setEnabled(true);
-				pauseButton.setEnabled(true);
-				startReciveAudioSocket(pb,getContext());
 
-
-
+				// Создаем Intent для вызова сервиса,
+				// кладем туда параметр времени и код задачи
+				intentServer = new Intent(getActivity(), ServerStreamService.class);
+				// стартуем сервис
+				getActivity().startService(intentServer);
 			}
 			else{
-				stopButton.setEnabled(false);
-				pauseButton.setEnabled(false);
-				//sendButton.setEnabled(true);
 				switcher.setText("Server OFF");
-				if (serverUDPThread != null) {
-					if(serverUDPThread.sockett!=null){serverUDPThread.sockett.close();}
-					Thread dummy = serverUDPThread;
-					serverUDPThread = null;
-					dummy.interrupt();
-				}
+				getActivity().stopService(intentServer);
+
 			}
 		}
 	};
+
 	private  View.OnClickListener connectToServerListener = new View.OnClickListener() {
 
 		@Override
 		public void onClick(View arg0) {
-			startSendAudioSocket(pbClient);
-		}
-	};
-	private View.OnClickListener startListener = new View.OnClickListener() {
+			// Создаем Intent для вызова сервиса,
 
-		@Override
-		public void onClick(View arg0) {
-
-			if(clientUDPThread.reciveAudioSocket.mediaPlayer!=null) {
-				if (clientUDPThread.reciveAudioSocket.mediaPlayer.isPlaying()) {
-					clientUDPThread.reciveAudioSocket.mediaPlayer.stop();
-				}
-			}
-			//status = true;
-			//startStreaming();
-			//ipAdress=editTextIpAdress.getText().toString();
-			//if(audioInfo!=null){
-				//path1=audioInfo.path;
-				//port=editTextPortAdress.getText().toString();
-			//	new SendAudioSocket(editTextIpAdress.getText().toString(),audioInfo);
-			//}else{
-				//song not playing
-			//}
+			intentClient = new Intent(getActivity(), ClientStreamService.class);
+			// стартуем сервис
+			getActivity().startService(intentClient);
+			//startSendAudioSocket(pbClient);
 		}
 	};
 
-	void startReciveAudioSocket(ProgressBar progerssBar,Context context){
-		if (serverUDPThread != null) {
-			serverUDPThread.sockett.close();
-			Thread dummy = serverUDPThread;
-			serverUDPThread = null;
-			dummy.interrupt();
-		}
-		serverUDPThread = new ServerUDPThread(MediaController.getInstance().getPlayingSongDetail(),progerssBar,context);
-		serverUDPThread.start();
-	}
-	void startSendAudioSocket(ProgressBar progressBarClient){
-		if (clientUDPThread != null) {
-			Thread dummy = clientUDPThread;
-			clientUDPThread = null;
-			dummy.interrupt();
-		}
-		clientUDPThread = new ClientUDPThread(progressBarClient);
-		clientUDPThread.start();
-		//ipTextView.setText("Ip: "+ Utils.getIPAddress(true));
-		//portTextView.setText("Port: "+clientUDPThread.reciveAudioSocket.serverSocket.getLocalPort());
-		//portTextView.setText("Port: 5005");
-	}
 
 }

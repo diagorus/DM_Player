@@ -1,62 +1,67 @@
 package com.dmplayer.streamaudio;
 
-import android.app.ProgressDialog;
 import android.content.Context;
-import android.widget.ProgressBar;
+import android.content.SharedPreferences;
+import android.util.Log;
 
+import com.dmplayer.fragments.FragmentSettings;
 import com.dmplayer.manager.MediaController;
-import com.dmplayer.models.SongDetail;
+import com.dmplayer.streamaudio.WifiProfile.WifiProfileObject;
 import com.dmplayer.utils.Utils;
 
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
+import java.net.InetAddress;
+import java.net.Socket;
 
 /**
  * Created by Alexvojander on 09.09.2016.
  */
 public class ServerUDPThread extends Thread {
     SendAudioSocket sendAudioSocket;
-    public DatagramSocket sockett;
-    ProgressBar progressBar;
+    DatagramSocket sockett;
+
     Context context;
 
-    SongDetail audioInfo;
-    public ServerUDPThread(SongDetail audioInfo,ProgressBar progressBar,Context context){
-        this.audioInfo=audioInfo;
+    Socket socket;
+    public ServerUDPThread(Context context){
         this.context=context;
-        this.progressBar=progressBar;
     }
     public void refresh()
     {
-        sendAudioSocket.refresh();
         if (  sendAudioSocket != null) {
-
             Thread dummy =  sendAudioSocket;
             sendAudioSocket = null;
             dummy.interrupt();
-
         }
         if(sockett!=null){
                 sockett.close();
         }
-
     }
+    private SharedPreferences sharedPreferences;
 
     @Override
     public void run() {
         try {
-            if (  sendAudioSocket != null) {
-
+            if (sendAudioSocket != null) {
                 Thread dummy =  sendAudioSocket;
                 sendAudioSocket = null;
                 dummy.interrupt();
             }
-            //Keep a socket open to listen to all the UDP trafic that is destined for this port
             sockett = new DatagramSocket(8888);
             sockett.setBroadcast(true);
 
             while (true) {
+                if(sockett==null) {
+
+                    sockett = new DatagramSocket(8888);
+                    sockett.setBroadcast(true);
+                }
                 System.out.println(  ">>>Ready to receive broadcast packets!");
 
                 //Receive a packet
@@ -71,24 +76,71 @@ public class ServerUDPThread extends Thread {
 
                 //See if the packet holds the right command (message)
                 String message = new String(packet.getData()).trim();
-                // if (message.equals("DISCOVER_FUIFSERVER_REQUEST")) {
+                if (message.equals("GET_SERVER_OBJECT")){
+                    sharedPreferences = context.getSharedPreferences("VALUES", Context.MODE_PRIVATE);
+//                    String avatar = sharedPreferences.getString(FragmentSettings.AVATAR, "");
+//                    Uri avatarUri = Uri.parse(avatar);
+//                    ByteArrayOutputStream baos = new ByteArrayOutputStream();
+//                    FileInputStream fis;
+//                    try {
+//                        fis = new FileInputStream(new File(avatarUri.getPath()));
+//                        byte[] buf = new byte[1024];
+//                        int n;
+//                        while (-1 != (n = fis.read(buf)))
+//                            baos.write(buf, 0, n);
+//                    } catch (Exception e) {
+//                        e.printStackTrace();
+//                    }
+//
+//                    byte[] bbytes = baos.toByteArray();
+                    String name = sharedPreferences.getString(FragmentSettings.NAME, "");
+                    String ip=Utils.getIPAddress(true).toString();
+                    //WifiProfileObject serverObject=new WifiProfileObject(ip,name,bbytes);
+                    WifiProfileObject serverObject=new WifiProfileObject(ip,name);
+                    //System.out.println(  ">>>BYTEEEEEEEEEEEEEEE: " + bbytes.length);
 
-                byte[] sendData = Utils.getIPAddress(true).getBytes();
-                //Send a response
-                DatagramPacket sendPacket = new DatagramPacket(sendData, sendData.length, packet.getAddress(), packet.getPort());
-                sockett.send(sendPacket);
+                    byte[] byteToSendToClient =serverObject.serialize();
+                    System.out.println(  ">>>BYTEEEEEEEEEEEEEEE: " + byteToSendToClient.length);
+                    socket=new Socket(InetAddress.getByName(packet.getAddress().getHostAddress()),5010);
 
-               // sockett.close();
-                if(audioInfo!=null){
+                    OutputStream out = socket.getOutputStream();
+                    DataOutputStream dos = new DataOutputStream(out);
 
-                    sendAudioSocket= new SendAudioSocket(sendPacket.getAddress().getHostAddress(),MediaController.getInstance().getPlayingSongDetail(),progressBar,context);
-                    sendAudioSocket.start();
+                    InputStream in=socket.getInputStream();
+                    DataInputStream dis = new DataInputStream(in);
+
+                    dos.writeInt(byteToSendToClient.length);
+                    dis.readBoolean();
+                    dos.write(byteToSendToClient,0,byteToSendToClient.length);
+
+                    dos.close();
+                    dis.close();
+                    in.close();
+                    out.close();
+                    socket.close();
                 }
-                System.out.println(  ">>>Sent packet to: " + sendPacket.getAddress().getHostAddress());
+                else if(message.equals("START_STREAMING_MUSIC")){
+                    byte[] sendData = Utils.getIPAddress(true).getBytes();
+                    //Send a response
+                    DatagramPacket sendPacket = new DatagramPacket(sendData, sendData.length, packet.getAddress(), packet.getPort());
 
+                    if(MediaController.getInstance().getPlayingSongDetail()!=null){
+
+                        sendAudioSocket= new SendAudioSocket(sendPacket.getAddress().getHostAddress(),MediaController.getInstance().getPlayingSongDetail());
+                        sendAudioSocket.start();
+                    }
+                    System.out.println(  ">>>Sent packet to: " + sendPacket.getAddress().getHostAddress());
+                }
             }
+
         } catch (IOException ex) {
-            //Logger.getLogger(ServerThread.class.getName()).log(Level.SEVERE, null, ex);
+            try {
+                if(socket!=null)
+                socket.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            Log.e(getClass().getCanonicalName(), Log.getStackTraceString(ex));
         }
     }
 
