@@ -6,6 +6,7 @@ import android.util.Log;
 
 import com.dmplayer.bitmaploader.UriLoader;
 import com.dmplayer.bitmaploader.UrlLoader;
+import com.dmplayer.dialogs.ProfileDialog;
 import com.dmplayer.externalprofile.ExternalProfileHelper;
 import com.dmplayer.externalprofile.ExternalProfileModel;
 import com.dmplayer.internetservices.VkApiService;
@@ -14,7 +15,6 @@ import com.dmplayer.models.VkObjects.VkProfileUserDataResponse.VkUserData;
 import com.dmplayer.models.VkObjects.VkProfileUserDataResponse.VkUserDataCollection;
 import com.dmplayer.models.VkProfileModel;
 import com.dmplayer.phonemedia.DMPlayerUtility;
-import com.dmplayer.utility.dialogs.ProfileDialog;
 
 import java.io.IOException;
 
@@ -84,6 +84,11 @@ public class VkProfileHelper implements ExternalProfileHelper {
                 .setPhoto(new UriLoader().loadImage(context,
                         prefs.getString("VK_USER_PHOTO_URI", "")))
                 .build();
+    }
+
+    @Override
+    public boolean isLogged() {
+        return logged;
     }
 
     private VkApiService createApiService() {
@@ -170,9 +175,6 @@ public class VkProfileHelper implements ExternalProfileHelper {
                 .apply();
     }
 
-    public boolean isLogged() {
-        return logged;
-    }
 
     public static class Builder {
         private Context context;

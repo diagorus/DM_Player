@@ -73,9 +73,9 @@
 
     <!-- Custom SeekBar -->
     <declare-styleable name="CustomAttributes">
-        <!-- in progress view indicate max value of progress -->
+        <!-- in progress viewActions indicate max value of progress -->
         <attr name="max" format="integer" />
-        <!-- in progress view indicate min value of progress -->
+        <!-- in progress viewActions indicate min value of progress -->
         <attr name="min" format="integer" />
     </declare-styleable>
 
@@ -91,9 +91,15 @@
         <attr name="loading_layout" format="reference" />
     </declare-styleable>
 
+    <!-- ExpandableLayout -->
     <declare-styleable name="ExpandableLayout">
         <attr name="text_title" format="string" />
         <attr name="text_details" format="string" />
         <attr name="src_image" format="reference|integer" />
+    </declare-styleable>
+
+    <!-- ExpandableLayoutExternalAccount -->
+    <declare-styleable name="ExpandableLayoutExternalAccount">
+        <attr name="massage_layout" format="reference" />
     </declare-styleable>
 </resources>

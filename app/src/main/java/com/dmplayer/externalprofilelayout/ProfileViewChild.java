@@ -1,4 +1,4 @@
-package com.dmplayer.uicomponent.externalprofilelayout.child.implementation;
+package com.dmplayer.externalprofilelayout;
 
 import android.content.Context;
 import android.widget.ImageView;
@@ -7,9 +7,8 @@ import android.widget.TextView;
 import com.dmplayer.R;
 import com.dmplayer.externalprofile.ExternalProfileModel;
 import com.dmplayer.uicomponent.CircleImageView;
-import com.dmplayer.uicomponent.externalprofilelayout.child.core.ExternalProfileSettable;
 
-public class ProfileViewChild extends ChildForSwapping implements ExternalProfileSettable {
+public class ProfileViewChild extends ChildForSwapping {
     private CircleImageView avatar;
     private TextView nickname;
     private TextView songsCount;
@@ -42,7 +41,6 @@ public class ProfileViewChild extends ChildForSwapping implements ExternalProfil
                 refresh == null || logOut == null);
     }
 
-    @Override
     public void setProfile(ExternalProfileModel profile) {
         avatar.setImageBitmap(profile.getPhoto());
         nickname.setText(profile.getNickname());
@@ -50,12 +48,10 @@ public class ProfileViewChild extends ChildForSwapping implements ExternalProfil
         albumsCount.setText("Albums: " + profile.getAlbumsCount());
     }
 
-    @Override
     public void setOnRefreshListener(OnClickListener l) {
         refresh.setOnClickListener(l);
     }
 
-    @Override
     public void setOnLogOutListener(OnClickListener l) {
         logOut.setOnClickListener(l);
     }

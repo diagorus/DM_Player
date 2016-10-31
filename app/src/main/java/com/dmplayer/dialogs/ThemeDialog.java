@@ -1,4 +1,4 @@
-package com.dmplayer.utility.dialogs;
+package com.dmplayer.dialogs;
 
 import android.app.ActivityOptions;
 import android.app.DialogFragment;

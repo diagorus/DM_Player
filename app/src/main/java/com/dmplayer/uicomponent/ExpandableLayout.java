@@ -52,10 +52,8 @@ public class ExpandableLayout extends LinearLayout {
         originalOrientation = Integer.parseInt(attrs.getAttributeValue(ANDROID_SCHEME, "orientation"));
         setOrientation(VERTICAL);
 
-        TypedArray a = context.getTheme().obtainStyledAttributes(
-                attrs,
-                R.styleable.ExpandableLayout,
-                0, 0);
+        TypedArray a = context.getTheme()
+                .obtainStyledAttributes(attrs, R.styleable.ExpandableLayout, 0, 0);
 
         try {
             titleText = a.getString(R.styleable.ExpandableLayout_text_title);
@@ -71,7 +69,7 @@ public class ExpandableLayout extends LinearLayout {
         return isExpanded;
     }
 
-    private void setupHeader() {
+    protected void setupHeader() {
         LayoutInflater.from(getContext()).inflate(R.layout.expandable_layout, this, true);
 
         header = (RelativeLayout) findViewById(R.id.header);

@@ -75,13 +75,13 @@
                     android:textSize="18sp"
                     android:text="Vk profile:" />
 
-                <com.dmplayer.uicomponent.VkProfileView
+                <com.dmplayer.externalprofilelayout.ExternalProfileLayout
                     android:id="@+id/vk_profile_view"
                     android:layout_width="match_parent"
                     android:layout_height="100dp"
                     android:gravity="center"
-                    app:starting_layout="@layout/starting_vk_profile"
-                    app:swapping_layout="@layout/swapping_vk_profile"
+                    app:starting_layout="@layout/vk_profile_starting"
+                    app:swapping_layout="@layout/vk_profile_swapping"
                     app:loading_layout="@layout/loading" />
             </LinearLayout>
 

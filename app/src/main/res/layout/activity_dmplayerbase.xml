@@ -7,7 +7,7 @@
     android:fitsSystemWindows="@bool/fitsSystemWindows"
     tools:context=".activities.DMPlayerBaseActivity">
 
-    <!-- The toolbar and main content view -->
+    <!-- The toolbar and main content viewActions -->
     <include
         android:id="@+id/include_sliding_panel"
         layout="@layout/include_slidingup_panellayout"

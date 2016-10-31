@@ -21,7 +21,7 @@
         <item quantity="other"><xliff:g id="count_for_artist">%2$d</xliff:g> of <xliff:g id="total_count">%1$d</xliff:g> songs</item>
     </plurals>
 
-    <!-- Used in artists list view, indicates how many albums exist for a given artist. -->
+    <!-- Used in artists list viewActions, indicates how many albums exist for a given artist. -->
     <plurals name="Nalbums">
 
         <!-- number of albums is one -->
@@ -134,11 +134,11 @@
     <string name="playlist_deleted_message">Playlist deleted.</string>
     <!-- Transient popup message shown after renaming a playlist -->
     <string name="playlist_renamed_message">Playlist renamed.</string>
-    <!-- The name of the pseudo-playlist that holds all the recently added files, shown in list view -->
+    <!-- The name of the pseudo-playlist that holds all the recently added files, shown in list viewActions -->
     <string name="recentlyadded">Recently added</string>
     <!-- The name of the pseudo-playlist that holds all the recently added files, shown in title bar of songs list -->
     <string name="recentlyadded_title">Recently added</string>
-    <!-- The name of the pseudo-playlist that holds all the podcasts, shown in list view -->
+    <!-- The name of the pseudo-playlist that holds all the podcasts, shown in list viewActions -->
     <string name="podcasts_listitem">Podcasts</string>
     <!-- The name of the pseudo-playlist that holds all the podcasts, shown in title bar of songs list -->
     <string name="podcasts_title">Podcasts</string>
@@ -239,7 +239,7 @@
     <string name="weekpicker_title">Set time</string>
     <!-- Do not translate. Background color for currently dragged item in playlist edit mode. -->
     <color name="dragndrop_background">#e0103010</color>
-    <!-- Do not translate. Background color for albums in the artists list view. -->
+    <!-- Do not translate. Background color for albums in the artists list viewActions. -->
     <color name="expanding_child_background">#ff404040</color>
 
     <!-- menu item to save the current list as a new playlist -->

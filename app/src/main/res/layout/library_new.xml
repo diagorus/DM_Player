@@ -21,14 +21,15 @@
             app:src_image="@drawable/ic_plus">
         </com.dmplayer.uicomponent.ExpandableLayout>
 
-        <com.dmplayer.uicomponent.ExpandableLayout
+        <com.dmplayer.uicomponent.ExpandableLayoutExternalAccount
             android:id="@+id/vk_playlists"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
             app:text_title="Vk playlists"
-            app:src_image="@drawable/ic_plus">
-        </com.dmplayer.uicomponent.ExpandableLayout>
+            app:src_image="@drawable/ic_plus"
+            app:massage_layout="@layout/expandable_vk_not_logged">
+        </com.dmplayer.uicomponent.ExpandableLayoutExternalAccount>
 
         <com.dmplayer.uicomponent.ExpandableLayout
             android:id="@+id/default_playlists"

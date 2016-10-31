@@ -11,7 +11,7 @@ import retrofit2.http.GET;
 import retrofit2.http.Query;
 
 public interface VkApiService {
-        @GET("users.get?v=5.53&name_case=nom")
+        @GET("users.get?name_case=nom&v=5.53")
         Call<VkUserDataCollection> loadUserData(@Query("fields") String fieldList,
                                                 @Query("user_ids") String userIds,
                                                 @Query("access_token") String token);
@@ -32,10 +32,11 @@ public interface VkApiService {
                                        @Query("count") String count,
                                        @Query("owner_id") String userId,
                                        @Query("access_token") String token);
-
+        //TODO: move only_eng to strings
         @GET("audio.getPopular?only_eng=1&v=5.53")
         Call<VkPopularCollection> loadPopularAudio(@Query("offset") String offset,
                                                    @Query("count") String count,
+                                                   @Query("genre_id") String genreId,
                                                    @Query("access_token") String token);
 
         @GET("audio.getRecommendations?shuffle=1&v=5.53")

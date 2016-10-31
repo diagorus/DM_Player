@@ -1,4 +1,4 @@
-package com.dmplayer.utility.dialogs;
+package com.dmplayer.dialogs;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -27,15 +27,13 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.dmplayer.R;
-import com.dmplayer.externalprofile.ExternalProfileViewInternalCallbacks;
+import com.dmplayer.externalprofilelayout.ExternalProfileLayout;
 import com.dmplayer.fragments.FragmentSettings;
 import com.dmplayer.phonemedia.DMPlayerUtility;
 import com.dmplayer.presenters.VkProfilePresenter;
 import com.dmplayer.uicomponent.CircleImageView;
-import com.dmplayer.uicomponent.VkProfileView;
 import com.vk.sdk.VKAccessToken;
 import com.vk.sdk.VKCallback;
-import com.vk.sdk.VKScope;
 import com.vk.sdk.VKSdk;
 import com.vk.sdk.api.VKError;
 
@@ -55,7 +53,7 @@ public class ProfileDialog extends DialogFragment {
     private CircleImageView avatar;
 
     VkProfilePresenter vkProfilePresenter;
-    VkProfileView vkProfileView;
+    ExternalProfileLayout vkProfileView;
 
     private SharedPreferences sharedPreferences;
     private SharedPreferences.Editor editor;
@@ -83,7 +81,7 @@ public class ProfileDialog extends DialogFragment {
         if (!VKSdk.onActivityResult(requestCode, resultCode, data, new VKCallback<VKAccessToken>() {
             @Override
             public void onResult(VKAccessToken res) {
-                vkProfilePresenter.logIn(res.accessToken, res.userId);
+                vkProfilePresenter.onAccountDataReceived(res.accessToken, res.userId);
             }
 
             @Override
@@ -188,38 +186,7 @@ public class ProfileDialog extends DialogFragment {
     }
 
     private  void setVkProfile(View v) {
-        vkProfileView = (VkProfileView) v.findViewById(R.id.vk_profile_view);
-        vkProfileView.setInternalButtonsCallbacks(new ExternalProfileViewInternalCallbacks() {
-            @Override
-            public View.OnClickListener onLogInListener() {
-                return new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        VKSdk.login(ProfileDialog.this, VKScope.AUDIO, VKScope.OFFLINE);
-                    }
-                };
-            }
-
-            @Override
-            public View.OnClickListener onRefreshListener() {
-                return new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        vkProfilePresenter.refresh();
-                    }
-                };
-            }
-
-            @Override
-            public View.OnClickListener onLogOutListener() {
-                return new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        vkProfilePresenter.logOut();
-                    }
-                };
-            }
-        });
+        vkProfileView = (ExternalProfileLayout) v.findViewById(R.id.vk_profile_view);
 
         vkProfilePresenter = new VkProfilePresenter(vkProfileView);
         vkProfilePresenter.onCreate(this);
@@ -350,10 +317,5 @@ public class ProfileDialog extends DialogFragment {
 
     public void setOnWorkDone(OnWorkDone OnWorkDone) {
         this.OnWorkDone = OnWorkDone;
-    }
-
-    public interface OnWorkDone {
-        void onPositiveAnswer();
-        void onNegativeAnswer();
     }
 }
