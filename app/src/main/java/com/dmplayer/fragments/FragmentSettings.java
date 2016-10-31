@@ -22,12 +22,13 @@ import android.widget.TextView;
 import com.dmplayer.R;
 import com.dmplayer.activities.DMPlayerBaseActivity;
 import com.dmplayer.activities.MusicChooserActivity;
+import com.dmplayer.dialogs.OnWorkDone;
+import com.dmplayer.dialogs.ProfileDialog;
+import com.dmplayer.dialogs.ThemeDialog;
 import com.dmplayer.models.Playlist;
 import com.dmplayer.models.SongDetail;
-import com.dmplayer.phonemidea.DMPlayerUtility;
+import com.dmplayer.phonemedia.DMPlayerUtility;
 import com.dmplayer.utility.LogWriter;
-import com.dmplayer.utility.dialogs.ProfileDialog;
-import com.dmplayer.utility.dialogs.ThemeDialog;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -53,7 +54,7 @@ public class FragmentSettings extends Fragment implements View.OnClickListener {
     private String TAG = "FragmentSettings";
 
     private ArrayList<Uri> mSongUri = new ArrayList<>();
-    private ArrayList<SongDetail> songList = new ArrayList<SongDetail>();
+    private ArrayList<SongDetail> songList = new ArrayList<>();
     String MIXING_MODE="mixing_mode";
     TextView textViewMixingMode;
 
@@ -256,7 +257,7 @@ public class FragmentSettings extends Fragment implements View.OnClickListener {
     private void showColorProfileDialog() {
         FragmentManager fragmentManager = getActivity().getFragmentManager();
         ProfileDialog dialog = new ProfileDialog();
-        dialog.setOnWorkDone(new ProfileDialog.OnWorkDone() {
+        dialog.setOnWorkDone(new OnWorkDone() {
             @Override
             public void onPositiveAnswer() {
                 startActivity(new Intent(getActivity(), DMPlayerBaseActivity.class));
@@ -274,7 +275,7 @@ public class FragmentSettings extends Fragment implements View.OnClickListener {
 
     private String copyBackgroundToStorage(Uri picture) {
         File backgroundSource = new File(DMPlayerUtility.getRealPathFromURI(getActivity(), picture));
-        File backgroundDest = new File(ProfileDialog.getPhotoDirectory(getActivity()) + "/" + "header_background" +
+        File backgroundDest = new File(ProfileDialog.PHOTO_DIR_PATH + "/" + "header_background" +
                 backgroundSource
                         .getPath()
                         .substring(backgroundSource
