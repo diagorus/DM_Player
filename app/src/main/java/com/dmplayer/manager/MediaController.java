@@ -21,6 +21,7 @@ import android.util.Log;
 import android.view.View;
 
 import com.dmplayer.ApplicationDMPlayer;
+import com.dmplayer.R;
 import com.dmplayer.dbhandler.FavoritePlayTableHelper;
 import com.dmplayer.dbhandler.MostAndRecentPlayTableHelper;
 import com.dmplayer.models.SongDetail;
@@ -35,6 +36,7 @@ public class MediaController implements NotificationManager.NotificationCenterDe
 
     private boolean isPaused = true;
     private MediaPlayer audioPlayer = null;
+
     private AudioTrack audioTrackPlayer = null;
     private int lastProgress = 0;
     private boolean useFrontSpeaker;
@@ -102,6 +104,7 @@ public class MediaController implements NotificationManager.NotificationCenterDe
 
     }
 
+    public MediaPlayer getAudioPlayer(){return audioPlayer;}
     public int generateObserverTag() {
         return lastTag++;
     }
