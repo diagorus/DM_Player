@@ -96,10 +96,18 @@
         <attr name="text_title" format="string" />
         <attr name="text_details" format="string" />
         <attr name="src_image" format="reference|integer" />
+        <attr name="color_header" format="color" />
+        <attr name="color_content" format="color" />
     </declare-styleable>
 
     <!-- ExpandableLayoutExternalAccount -->
     <declare-styleable name="ExpandableLayoutExternalAccount">
         <attr name="massage_layout" format="reference" />
+    </declare-styleable>
+
+    <!-- General SelectableView -->
+    <declare-styleable name="SelectableView">
+        <attr name="selectable_tint" format="reference|color" />
+        <attr name="selectable_background" format="reference|color" />
     </declare-styleable>
 </resources>

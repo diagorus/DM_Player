@@ -132,6 +132,7 @@ public class ProfileDialog extends DialogFragment {
                 if (getOnWorkDone() != null) {
                     getOnWorkDone().onPositiveAnswer();
                 }
+                dismiss();
             }
         });
 
@@ -140,10 +141,10 @@ public class ProfileDialog extends DialogFragment {
             public void onClick(View view) {
                 DMPlayerUtility.deleteFile(DMPlayerUtility.getUriFromPath(AVATAR_TEMP_FILE_PATH).getPath());
 
-                if (getOnWorkDone() != null)
+                if (getOnWorkDone() != null) {
                     getOnWorkDone().onNegativeAnswer();
-
-                getDialog().dismiss();
+                }
+                dismiss();
             }
         });
 
@@ -199,17 +200,18 @@ public class ProfileDialog extends DialogFragment {
         if (DMPlayerUtility.isURIExists(avatarPhotoUri)) {
             DMPlayerUtility.settingPicture(avatar, avatarPhotoUri);
         } else {
-            DMPlayerUtility.settingPicture(avatar, R.drawable.profile_default_avatar);
+            DMPlayerUtility.settingPicture(avatar, R.drawable.avatar_default);
         }
     }
 
     private void setName() {
         String nameText = sharedPreferences.getString(FragmentSettings.NAME, "");
 
-        if (!nameText.equals(""))
+        if (!nameText.equals("")) {
             nickName.setText(nameText);
-        else
+        } else {
             nickName.setText(R.string.profile_defult_name);
+        }
 
         initialName = nickName.getText().toString();
     }
@@ -218,7 +220,7 @@ public class ProfileDialog extends DialogFragment {
         AlertDialog.Builder adb = new AlertDialog.Builder(getActivity());
         adb.setTitle("Photo");
         String[] titles = {"Take photo from camera", "Choose from gallery"};
-        OnClickListener ocl = new OnClickListener() {
+        OnClickListener l = new OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
                 switch (i) {
@@ -239,7 +241,7 @@ public class ProfileDialog extends DialogFragment {
                 }
             }
         };
-        adb.setItems(titles, ocl);
+        adb.setItems(titles, l);
         adb.show();
     }
 

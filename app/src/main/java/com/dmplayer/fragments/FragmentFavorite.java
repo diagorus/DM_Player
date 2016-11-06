@@ -52,11 +52,6 @@ public class FragmentFavorite extends Fragment {
         return rootview;
     }
 
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-    }
-
     private void setupInitialViews(View inflatreView) {
         recycler_songslist = (ListView) inflatreView.findViewById(R.id.listView_songs);
         mAllSongsListAdapter = new AllSongsListAdapter(getActivity());

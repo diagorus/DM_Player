@@ -40,9 +40,9 @@ import com.dmplayer.adapter.DrawerAdapter;
 import com.dmplayer.fragments.FragmentChat;
 import com.dmplayer.fragments.FragmentEqualizer;
 import com.dmplayer.fragments.FragmentFavorite;
+import com.dmplayer.fragments.FragmentLibrary;
 import com.dmplayer.fragments.FragmentSettings;
 import com.dmplayer.fragments.FragmentStream;
-import com.dmplayer.fragments.TestFragmentLibrary;
 import com.dmplayer.manager.MediaController;
 import com.dmplayer.manager.MusicPreferance;
 import com.dmplayer.manager.NotificationManager;
@@ -126,7 +126,6 @@ public class DMPlayerBaseActivity extends AppCompatActivity implements View.OnCl
         //requestWindowFeature(Window.FEATURE_ACTION_BAR);
 
         context = DMPlayerBaseActivity.this;
-        theme();
         new AssetsCopier(this).execute();
 
         //Set your Layout view
@@ -143,6 +142,7 @@ public class DMPlayerBaseActivity extends AppCompatActivity implements View.OnCl
         sharedPreferences = getSharedPreferences("VALUES", Context.MODE_PRIVATE);
 
         initSlidingUpPanel();
+        theme();
         header();
 
         setFragment(0);
@@ -537,7 +537,7 @@ public class DMPlayerBaseActivity extends AppCompatActivity implements View.OnCl
         switch (position) {
             case 0:
                 sharedPreferences.edit().putInt("FRAGMENT", position).apply();
-                TestFragmentLibrary testfragmentlibrary = new TestFragmentLibrary();
+                FragmentLibrary testfragmentlibrary = new FragmentLibrary();
                 fragmentTransaction.replace(R.id.fragment, testfragmentlibrary);
                 fragmentTransaction.commit();
                 toolbar.setTitle("My Library");
@@ -599,7 +599,6 @@ public class DMPlayerBaseActivity extends AppCompatActivity implements View.OnCl
         setUserName();
     }
 
-
     private void setBackgroundImage() {
         ImageView headerBackgroundImage = (ImageView) findViewById(R.id.imageViewCover);
 
@@ -622,7 +621,7 @@ public class DMPlayerBaseActivity extends AppCompatActivity implements View.OnCl
         if (DMPlayerUtility.isURIExists(avatarUri)) {
             DMPlayerUtility.settingPicture(avatarImage, avatarUri);
         } else {
-            DMPlayerUtility.settingPicture(avatarImage, R.drawable.profile_default_avatar);
+            DMPlayerUtility.settingPicture(avatarImage, R.drawable.avatar_default);
         }
     }
 

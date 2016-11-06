@@ -28,15 +28,15 @@
             android:layout_margin="8dp"
             android:gravity="center_vertical"
             android:textSize="24sp"
+            android:textColor="@android:color/darker_gray"
             android:text="Title"/>
 
         <FrameLayout
             android:layout_width="match_parent"
-            android:layout_height="2dp"
+            android:layout_height="1dp"
             android:layout_alignParentBottom="true"
             android:background="@color/md_divider" />
     </RelativeLayout>
-
 
     <ProgressBar
         android:id="@+id/progress_bar"

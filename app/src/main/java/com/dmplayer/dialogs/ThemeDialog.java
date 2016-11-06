@@ -142,10 +142,6 @@ public class ThemeDialog extends DialogFragment implements View.OnClickListener 
 
     private OnItemChoose onItemChoose;
 
-    public OnItemChoose getOnItemChoose() {
-        return onItemChoose;
-    }
-
     public void setOnItemChoose(OnItemChoose onItemChoose) {
         this.onItemChoose = onItemChoose;
     }

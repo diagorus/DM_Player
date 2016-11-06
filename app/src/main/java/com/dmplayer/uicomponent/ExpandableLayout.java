@@ -8,12 +8,17 @@ import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
+import android.view.animation.Transformation;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.dmplayer.R;
+import com.dmplayer.phonemedia.DMPlayerUtility;
 
 public class ExpandableLayout extends LinearLayout {
     private static final String ANDROID_SCHEME = "http://schemas.android.com/apk/res/android";
@@ -21,67 +26,54 @@ public class ExpandableLayout extends LinearLayout {
     private static final String SAVE_STATE_EXPANDED = "IS_EXPANDED";
     private static final String SAVE_STATE_SUPER = "STATE_SUPER";
 
-    RelativeLayout header;
-    LinearLayout content;
+    private RelativeLayout header;
+    private ImageView icon;
+
+    private LinearLayout content;
 
     String titleText;
     String detailsText;
     int imageResource;
 
-    int originalOrientation;
+    int headerColor;
+    int contentColor;
+
+
+    String originalOrientation;
 
     boolean isExpanded;
 
     public ExpandableLayout(Context context, AttributeSet attrs) {
         super(context, attrs);
 
-        init(context, attrs);
+        init(context, attrs, 0);
     }
 
     public ExpandableLayout(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
 
-        init(context, attrs);
+        init(context, attrs, defStyleAttr);
     }
 
-    public LinearLayout getContent() {
-        return content;
-    }
-
-    private void init(Context context, AttributeSet attrs) {
-        originalOrientation = Integer.parseInt(attrs.getAttributeValue(ANDROID_SCHEME, "orientation"));
+    private void init(Context context, AttributeSet attrs, int defStyleAttr) {
+        originalOrientation = attrs.getAttributeValue(ANDROID_SCHEME, "orientation");
         setOrientation(VERTICAL);
 
         TypedArray a = context.getTheme()
-                .obtainStyledAttributes(attrs, R.styleable.ExpandableLayout, 0, 0);
+                .obtainStyledAttributes(attrs, R.styleable.ExpandableLayout, defStyleAttr, 0);
 
         try {
             titleText = a.getString(R.styleable.ExpandableLayout_text_title);
             detailsText = a.getString(R.styleable.ExpandableLayout_text_details);
             imageResource = a.getResourceId(R.styleable.ExpandableLayout_src_image,
                     android.R.color.transparent);
+            headerColor = a.getColor(R.styleable.ExpandableLayout_color_header,
+                    getResources().getColor(R.color.md_grey_200));
+            contentColor = a.getColor(R.styleable.ExpandableLayout_color_content,
+                    getResources().getColor(R.color.md_grey_50));
         } finally {
             a.recycle();
         }
-    }
-
-    public boolean isExpanded() {
-        return isExpanded;
-    }
-
-    protected void setupHeader() {
-        LayoutInflater.from(getContext()).inflate(R.layout.expandable_layout, this, true);
-
-        header = (RelativeLayout) findViewById(R.id.header);
-
-        TextView title = (TextView) findViewById(R.id.title);
-        title.setText(titleText);
-
-        TextView details = (TextView) findViewById(R.id.details);
-        details.setText(detailsText);
-
-        ImageView image = (ImageView) findViewById(R.id.image);
-        image.setImageResource(imageResource);
     }
 
     @Override
@@ -91,7 +83,11 @@ public class ExpandableLayout extends LinearLayout {
             isExpanded = savedState.getBoolean(SAVE_STATE_EXPANDED, false);
             state = savedState.getParcelable(SAVE_STATE_SUPER);
         }
-        setExpandedState(isExpanded);
+        if (isExpanded()) {
+            show();
+        } else {
+            hide();
+        }
         super.onRestoreInstanceState(state);
     }
 
@@ -105,11 +101,18 @@ public class ExpandableLayout extends LinearLayout {
     }
 
     @Override
+    public void setOnClickListener(OnClickListener l) {
+        header.setOnClickListener(l);
+    }
+
+    @Override
     protected void onFinishInflate() {
         super.onFinishInflate();
 
         content = new LinearLayout(getContext());
-        content.setOrientation(originalOrientation);
+        content.setBackgroundColor(contentColor);
+        content.setOrientation((originalOrientation.equals("1")) ?
+                LinearLayout.VERTICAL : LinearLayout.HORIZONTAL);
 
         int childCount = getChildCount();
         for (int i = 0; i < childCount; i++) {
@@ -117,6 +120,11 @@ public class ExpandableLayout extends LinearLayout {
             removeViewAt(0);
             content.addView(child);
         }
+
+        FrameLayout divider = new FrameLayout(getContext());
+        divider.setLayoutParams(new LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, DMPlayerUtility.dp(2)));
+        divider.setBackgroundColor(getResources().getColor(R.color.md_divider));
+        content.addView(divider);
 
         setupHeader();
 
@@ -128,31 +136,137 @@ public class ExpandableLayout extends LinearLayout {
         setLayoutParams(new ViewGroup.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT));
     }
 
-    @Override
-    public void setOnClickListener(OnClickListener l) {
-        header.setOnClickListener(l);
+    protected void setupHeader() {
+        View v = LayoutInflater.from(getContext()).inflate(R.layout.expandable_layout_header, this, false);
+        addView(v, 0);
+
+
+        header = (RelativeLayout) findViewById(R.id.header);
+        header.setBackgroundColor(headerColor);
+
+        TextView title = (TextView) findViewById(R.id.title);
+        title.setText(titleText);
+
+        TextView details = (TextView) findViewById(R.id.details);
+        details.setText(detailsText);
+
+        ImageView image = (ImageView) findViewById(R.id.image);
+        image.setImageResource(imageResource);
+
+        icon = (ImageView) findViewById(R.id.expand_icon);
     }
 
-    public void changeExpandState() {
-        setExpandedState(!isExpanded());
+    int position = 0;
+
+    public void addContent(View v) {
+        content.addView(v, position++);
     }
 
-    public void setExpandedState(boolean isExpand) {
-        if (isExpand) {
-            content.setVisibility(VISIBLE);
-            isExpanded = true;
+    public int getContentAmount() {
+        return content.getChildCount() - 1;
+    }
 
-            onExpandListener.OnExpand();
-        } else {
-            content.setVisibility(GONE);
-            isExpanded = false;
-        }
+    public void show() {
+        onExpandListener.OnExpand();
+        isExpanded = true;
+        content.setVisibility(View.VISIBLE);
+    }
+
+    public void hide() {
+        isExpanded = false;
+        content.setVisibility(View.GONE);
+    }
+
+    public void collapse() {
+        isExpanded = false;
+
+        animateRotateBackward(icon);
+        animateCollapse(content);
+    }
+
+    public void expand() {
+        onExpandListener.OnExpand();
+
+        isExpanded = true;
+
+        animateRotateStraight(icon);
+        animateExpand(content);
+    }
+
+    public boolean isExpanded() {
+        return isExpanded;
+    }
+
+    private void animateExpand(final View v) {
+        v.measure(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
+        final int targetHeight = v.getMeasuredHeight();
+
+        // Older versions of android (pre API 21) cancel animations for views with a height of 0.
+        v.getLayoutParams().height = 1;
+        v.setVisibility(View.VISIBLE);
+        Animation a = new Animation()
+        {
+            @Override
+            protected void applyTransformation(float interpolatedTime, Transformation t) {
+                v.getLayoutParams().height = interpolatedTime == 1
+                        ? LayoutParams.WRAP_CONTENT
+                        : (int)(targetHeight * interpolatedTime);
+                v.requestLayout();
+            }
+
+            @Override
+            public boolean willChangeBounds() {
+                return true;
+            }
+        };
+
+        // 1dp/ms
+        a.setDuration((int)(targetHeight / v.getContext().getResources().getDisplayMetrics().density));
+        v.startAnimation(a);
+    }
+
+    private void animateCollapse(final View v) {
+        final int initialHeight = v.getMeasuredHeight();
+
+        Animation a = new Animation()
+        {
+            @Override
+            protected void applyTransformation(float interpolatedTime, Transformation t) {
+                if(interpolatedTime == 1){
+                    v.setVisibility(View.GONE);
+                } else {
+                    v.getLayoutParams().height = initialHeight - (int)(initialHeight * interpolatedTime);
+                    v.requestLayout();
+                }
+            }
+
+            @Override
+            public boolean willChangeBounds() {
+                return true;
+            }
+        };
+
+        // 1dp/ms
+        a.setDuration((int)(initialHeight / v.getContext().getResources().getDisplayMetrics().density));
+        v.startAnimation(a);
+    }
+
+    private void animateRotateStraight(View v) {
+        Animation iconRotation = AnimationUtils.loadAnimation(getContext(),
+                R.anim.expandable_icon_rotation_straight);
+        v.startAnimation(iconRotation);
+    }
+
+    private void animateRotateBackward(View v) {
+        Animation iconRotation = AnimationUtils.loadAnimation(getContext(),
+                R.anim.expandable_icon_rotation_backward);
+        v.startAnimation(iconRotation);
     }
 
     private OnExpandListener onExpandListener;
 
-    public void setOnExpandListener(OnExpandListener onExpandListener) {
-        this.onExpandListener = onExpandListener;
+    public void setOnExpandListener(OnExpandListener l) {
+        this.onExpandListener = l;
     }
 
     public interface OnExpandListener {
