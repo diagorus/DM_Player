@@ -68,14 +68,15 @@ import java.util.LinkedList;
 import java.util.List;
 
 
-public class DMPlayerBaseActivity extends AppCompatActivity implements View.OnClickListener, Slider.OnValueChangedListener,
-        NotificationManager.NotificationCenterDelegate, SensorEventListener {
+public class DMPlayerBaseActivity extends AppCompatActivity implements View.OnClickListener,
+        Slider.OnValueChangedListener,
+        NotificationManager.NotificationCenterDelegate,
+        SensorEventListener {
 
-    private static final String TAG = "ActivityDMPlayerBase";
+    private static final String TAG = DMPlayerBaseActivity.class.getSimpleName();
     private Context context;
     private SharedPreferences sharedPreferences;
     private ActionBarDrawerToggle mDrawerToggle;
-    private int theme;
 
     private Toolbar toolbar;
     private DrawerLayout mDrawerLayout;
@@ -91,7 +92,8 @@ public class DMPlayerBaseActivity extends AppCompatActivity implements View.OnCl
     private DisplayImageOptions options;
     private ImageLoader imageLoader = ImageLoader.getInstance();
     private ImageLoadingListener animateFirstListener = new AnimateFirstDisplayListener();
-    private ImageView songAlbumbg;
+
+    private ImageView songBackground;
     private ImageView img_bottom_slideone;
     private ImageView img_bottom_slidetwo;
     private TextView txt_playesongname;
@@ -108,7 +110,8 @@ public class DMPlayerBaseActivity extends AppCompatActivity implements View.OnCl
     private PlayPauseView btn_playpause;
     private PlayPauseView btn_playpausePanel;
     private Slider audio_progress;
-    private boolean isDragingStart = false;
+
+    private boolean isDraggingStart = false;
     private int TAG_Observer;
 
     private SensorManager senSensorManager;
@@ -118,14 +121,18 @@ public class DMPlayerBaseActivity extends AppCompatActivity implements View.OnCl
     private float last_x, last_y, last_z;
     private static final int SHAKE_THRESHOLD = 600;
 
-    String MIXING_MODE="mixing_mode";
+    String MIXING_MODE = "mixing_mode";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        //Set your theme first
-        //requestWindowFeature(Window.FEATURE_ACTION_BAR);
-
+//        Set your theme first
+        requestWindowFeature(Window.FEATURE_ACTION_BAR);
         context = DMPlayerBaseActivity.this;
+        sharedPreferences = getSharedPreferences("VALUES", Context.MODE_PRIVATE);
+
+        theme();
+
+
         new AssetsCopier(this).execute();
 
         //Set your Layout view
@@ -139,10 +146,10 @@ public class DMPlayerBaseActivity extends AppCompatActivity implements View.OnCl
         toolbarStatusBar();
         navigationDrawer();
 
-        sharedPreferences = getSharedPreferences("VALUES", Context.MODE_PRIVATE);
+
 
         initSlidingUpPanel();
-        theme();
+
         header();
 
         setFragment(0);
@@ -190,7 +197,6 @@ public class DMPlayerBaseActivity extends AppCompatActivity implements View.OnCl
             } else {
                 getFragmentManager().popBackStack();
             }
-
         }
     }
 
@@ -224,8 +230,8 @@ public class DMPlayerBaseActivity extends AppCompatActivity implements View.OnCl
                     MediaController.getInstance().storeFavoritePlay(context, MediaController.getInstance().getPlayingSongDetail(), v.isSelected() ? 0 : 1);
                     v.setSelected(!v.isSelected());
                     DMPlayerUtility.animateHeartButton(v);
-                    findViewById(R.id.ivLike).setSelected(!v.isSelected());
-                    DMPlayerUtility.animatePhotoLike(findViewById(R.id.vBgLike), findViewById(R.id.ivLike));
+                    findViewById(R.id.like).setSelected(!v.isSelected());
+                    DMPlayerUtility.animatePhotoLike(findViewById(R.id.big_like), findViewById(R.id.like));
                 }
                 break;
 
@@ -299,7 +305,6 @@ public class DMPlayerBaseActivity extends AppCompatActivity implements View.OnCl
     }
 
     public void navigationDrawer() {
-
         setDrawersRightMargin();
 
         setupDrawerIcon();
@@ -361,9 +366,6 @@ public class DMPlayerBaseActivity extends AppCompatActivity implements View.OnCl
             }
         });
 
-
-
-
         // RecyclerView item listener.
         ItemClickSupport itemClickSupport = ItemClickSupport.addTo(recyclerViewDrawer);
         itemClickSupport.setOnItemClickListener(new ItemClickSupport.OnItemClickListener() {
@@ -413,7 +415,7 @@ public class DMPlayerBaseActivity extends AppCompatActivity implements View.OnCl
 
     private void initSlidingUpPanel() {
         mLayout = (SlidingUpPanelLayout) findViewById(R.id.sliding_layout);
-        songAlbumbg = (ImageView) findViewById(R.id.image_songAlbumbg_mid);
+        songBackground = (ImageView) findViewById(R.id.image_songsAlbum);
         img_bottom_slideone = (ImageView) findViewById(R.id.img_bottom_slideone);
         img_bottom_slidetwo = (ImageView) findViewById(R.id.img_bottom_slidetwo);
 
@@ -428,9 +430,11 @@ public class DMPlayerBaseActivity extends AppCompatActivity implements View.OnCl
         btn_playpausePanel = (PlayPauseView) findViewById(R.id.bottombar_play);
         img_Favorite = (ImageView) findViewById(R.id.bottombar_img_Favorite);
 
+        //TODO: Attention! Resolving attributes
         TypedValue typedvaluecoloraccent = new TypedValue();
         getTheme().resolveAttribute(R.attr.colorAccent, typedvaluecoloraccent, true);
         final int coloraccent = typedvaluecoloraccent.data;
+
         audio_progress.setBackgroundColor(coloraccent);
         audio_progress.setValue(0);
 
@@ -586,16 +590,14 @@ public class DMPlayerBaseActivity extends AppCompatActivity implements View.OnCl
     }
 
     public void theme() {
-        sharedPreferences = getSharedPreferences("VALUES", Context.MODE_PRIVATE);
-        theme = sharedPreferences.getInt("THEME", 0);
+        int theme = sharedPreferences.getInt("THEME", 0);
+
         DMPlayerUtility.settingTheme(context, theme);
     }
 
     public void header() {
         setBackgroundImage();
-
         setAvatarImage();
-
         setUserName();
     }
 
@@ -651,7 +653,7 @@ public class DMPlayerBaseActivity extends AppCompatActivity implements View.OnCl
 
     private void loadAlreadyPlaying() {
         SongDetail mSongDetail = MusicPreferance.getLastSong(context);
-        ArrayList<SongDetail> playlist = MusicPreferance.getPlaylist(context);
+        List<SongDetail> playlist = MusicPreferance.getPlaylist(context);
         if (mSongDetail != null) {
             updateTitle(false);
         }
@@ -677,7 +679,7 @@ public class DMPlayerBaseActivity extends AppCompatActivity implements View.OnCl
 
     public void loadSongsDetails(SongDetail mDetail) {
         String contentURI = "content://media/external/audio/media/" + mDetail.getId() + "/albumart";
-        imageLoader.displayImage(contentURI, songAlbumbg, options, animateFirstListener);
+        imageLoader.displayImage(contentURI, songBackground, options, animateFirstListener);
         imageLoader.displayImage(contentURI, img_bottom_slideone, options, animateFirstListener);
         imageLoader.displayImage(contentURI, img_bottom_slidetwo, options, animateFirstListener);
 
@@ -732,7 +734,7 @@ public class DMPlayerBaseActivity extends AppCompatActivity implements View.OnCl
     private void updateProgress(SongDetail mSongDetail) {
         if (audio_progress != null) {
             // When SeekBar Draging Don't Show Progress
-            if (!isDragingStart) {
+            if (!isDraggingStart) {
                 // Progress Value comming in point it range 0 to 1
                 audio_progress.setValue((int) (mSongDetail.audioProgress * 100));
             }
@@ -803,12 +805,8 @@ public class DMPlayerBaseActivity extends AppCompatActivity implements View.OnCl
         }
 
     }
-    String getMixingMode() {
-        sharedPreferences = getPreferences(MODE_PRIVATE);
-        String savedText = sharedPreferences.getString(MIXING_MODE, "");
-        return savedText;
-        // etText.setText(savedText);
-        // Toast.makeText(this, "Text loaded", Toast.LENGTH_SHORT).show();
+    private String getMixingMode() {
+        return sharedPreferences.getString(MIXING_MODE, "");
     }
     private static class AnimateFirstDisplayListener extends SimpleImageLoadingListener {
         static final List<String> displayedImages = Collections.synchronizedList(new LinkedList<String>());

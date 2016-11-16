@@ -48,14 +48,13 @@ public class FragmentSettings extends Fragment implements View.OnClickListener {
     public final static String NAME = "NAME";
 
     private SharedPreferences sharedPreferences;
-    private SharedPreferences.Editor editor;
 
     private String TAG = "FragmentSettings";
 
     private ArrayList<Uri> mSongUri = new ArrayList<>();
     private ArrayList<SongDetail> songList = new ArrayList<>();
-    String MIXING_MODE="mixing_mode";
-    TextView textViewMixingMode;
+    private String MIXING_MODE="mixing_mode";
+    private TextView textViewMixingMode;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -87,7 +86,7 @@ public class FragmentSettings extends Fragment implements View.OnClickListener {
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.relativeLayout_choose_theme:
-                showColorChooseDialog();
+                showThemeDialog();
                 break;
 
             case R.id.relativeLayout_customize_profile:
@@ -217,33 +216,28 @@ public class FragmentSettings extends Fragment implements View.OnClickListener {
         }
     }
 
-    public void setThemeFragment(int theme) {
-        editor = sharedPreferences.edit();
-        editor.putInt("THEME", theme).apply();
-    }
-
     public void setHeaderBackground(String picture) {
-        editor = sharedPreferences.edit();
-        editor.putString(HEADER_BACKGROUND, picture).apply();
+        sharedPreferences.edit()
+                .putString(HEADER_BACKGROUND, picture)
+                .apply();
     }
 
-    private void showColorChooseDialog() {
+    private void showThemeDialog() {
         FragmentManager fragmentManager = getActivity().getFragmentManager();
         ThemeDialog dialog = new ThemeDialog();
-        dialog.setOnItemChoose(new ThemeDialog.OnItemChoose() {
+        dialog.setOnItemChoose(new OnWorkDone() {
             @Override
-            public void onClick(int position) {
-                setThemeFragment(position);
-            }
-
-            @Override
-            public void onSaveChange() {
+            public void onAgree() {
                 startActivity(new Intent(getActivity(), DMPlayerBaseActivity.class));
                 getActivity().finish();
                 getActivity().overridePendingTransition(0, 0);
             }
+
+            @Override
+            public void onRefuse() {
+            }
         });
-        dialog.show(fragmentManager, "fragment_color_chooser");
+        dialog.show(fragmentManager, "fragment_theme");
     }
 
     private void showColorProfileDialog() {
@@ -251,14 +245,14 @@ public class FragmentSettings extends Fragment implements View.OnClickListener {
         ProfileDialog dialog = new ProfileDialog();
         dialog.setOnWorkDone(new OnWorkDone() {
             @Override
-            public void onPositiveAnswer() {
+            public void onAgree() {
                 startActivity(new Intent(getActivity(), DMPlayerBaseActivity.class));
                 getActivity().finish();
                 getActivity().overridePendingTransition(0, 0);
             }
 
             @Override
-            public void onNegativeAnswer() {
+            public void onRefuse() {
             }
         });
         dialog.setCancelable(false);

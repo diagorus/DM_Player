@@ -35,6 +35,8 @@
         android:text="@string/try_again"
         android:textStyle="italic"
         android:textSize="28sp"
-        android:textColor="@color/selector_text_like_button_textcolor"
-        app:selectable_background="@color/selector_text_like_button_background"/>
+        app:backgroundColor_default="@android:color/white"
+        app:backgroundColor_pressed="?attr/colorAccent"
+        app:textColor_default="?attr/colorAccent"
+        app:textColor_pressed="@android:color/white"/>
 </LinearLayout>

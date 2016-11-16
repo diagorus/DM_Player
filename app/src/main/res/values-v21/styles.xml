@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
+    <style name="AppThemeBlue" parent="Theme.AppCompat.Light.NoActionBar">
         <!-- Customize your theme here. -->
         <item name="colorPrimary">@color/md_blue_500</item>
         <item name="colorPrimaryDark">@color/md_blue_700</item>
@@ -20,7 +20,7 @@
         <item name="actionOverflowButtonStyle">@style/OverflowStyle</item>
     </style>
 
-    <style name="AppTheme2" parent="Theme.AppCompat.Light.NoActionBar">
+    <style name="AppThemeRed" parent="Theme.AppCompat.Light.NoActionBar">
         <!-- Customize your theme here. -->
         <item name="colorPrimary">@color/md_red_500</item>
         <item name="colorPrimaryDark">@color/md_red_700</item>
@@ -39,7 +39,7 @@
         <item name="actionOverflowButtonStyle">@style/OverflowStyle</item>
     </style>
 
-    <style name="AppTheme3" parent="Theme.AppCompat.Light.NoActionBar">
+    <style name="AppThemeGreen" parent="Theme.AppCompat.Light.NoActionBar">
         <!-- Customize your theme here. -->
         <item name="colorPrimary">@color/md_green_500</item>
         <item name="colorPrimaryDark">@color/md_green_700</item>
@@ -58,7 +58,7 @@
         <item name="android:actionOverflowButtonStyle">@style/OverflowStyle</item>
     </style>
 
-    <style name="AppTheme4" parent="Theme.AppCompat.Light.NoActionBar">
+    <style name="AppThemeOrange" parent="Theme.AppCompat.Light.NoActionBar">
         <!-- Customize your theme here. -->
         <item name="colorPrimary">@color/md_orange_500</item>
         <item name="colorPrimaryDark">@color/md_orange_700</item>
@@ -77,7 +77,7 @@
         <item name="actionOverflowButtonStyle">@style/OverflowStyle</item>
     </style>
 
-    <style name="AppTheme5" parent="Theme.AppCompat.Light.NoActionBar">
+    <style name="AppThemePink" parent="Theme.AppCompat.Light.NoActionBar">
         <!-- Customize your theme here. -->
         <item name="colorPrimary">@color/md_pink_500</item>
         <item name="colorPrimaryDark">@color/md_pink_700</item>
@@ -96,7 +96,7 @@
         <item name="android:actionOverflowButtonStyle">@style/OverflowStyle</item>
     </style>
 
-    <style name="AppTheme6" parent="Theme.AppCompat.Light.NoActionBar">
+    <style name="AppThemeIndigo" parent="Theme.AppCompat.Light.NoActionBar">
         <!-- Customize your theme here. -->
         <item name="colorPrimary">@color/md_indigo_500</item>
         <item name="colorPrimaryDark">@color/md_indigo_700</item>
@@ -115,7 +115,7 @@
         <item name="actionOverflowButtonStyle">@style/OverflowStyle</item>
     </style>
 
-    <style name="AppTheme7" parent="Theme.AppCompat.Light.NoActionBar">
+    <style name="AppThemeBrown" parent="Theme.AppCompat.Light.NoActionBar">
         <!-- Customize your theme here. -->
         <item name="colorPrimary">@color/md_brown_500</item>
         <item name="colorPrimaryDark">@color/md_brown_700</item>
@@ -134,7 +134,7 @@
         <item name="actionOverflowButtonStyle">@style/OverflowStyle</item>
     </style>
 
-    <style name="AppTheme8" parent="Theme.AppCompat.Light.NoActionBar">
+    <style name="AppThemeBluegrey" parent="Theme.AppCompat.Light.NoActionBar">
         <!-- Customize your theme here. -->
         <item name="colorPrimary">@color/md_blue_grey_500</item>
         <item name="colorPrimaryDark">@color/md_blue_grey_700</item>
@@ -153,7 +153,7 @@
         <item name="actionOverflowButtonStyle">@style/OverflowStyle</item>
     </style>
 
-    <style name="AppTheme9" parent="Theme.AppCompat.Light.NoActionBar">
+    <style name="AppThemeFalcon" parent="Theme.AppCompat.Light.NoActionBar">
         <!-- Customize your theme here. -->
         <item name="colorPrimary">@color/md_falcon_500</item>
         <item name="colorPrimaryDark">@color/md_falcon_700</item>
@@ -172,7 +172,7 @@
         <item name="actionOverflowButtonStyle">@style/OverflowStyle</item>
     </style>
 
-    <style name="AppTheme10" parent="Theme.AppCompat.Light.NoActionBar">
+    <style name="AppThemeLightblue" parent="Theme.AppCompat.Light.NoActionBar">
         <!-- Customize your theme here. -->
         <item name="colorPrimary">@color/md_light_blue_500</item>
         <item name="colorPrimaryDark">@color/md_light_blue_700</item>

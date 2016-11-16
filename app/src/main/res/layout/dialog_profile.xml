@@ -31,7 +31,7 @@
             android:layout_height="wrap_content"
             android:orientation="vertical">
             <com.dmplayer.uicomponent.CircleImageView
-                android:id="@+id/profile_dialog_avatar"
+                android:id="@+id/user_local_avatar"
                 android:layout_width="100dp"
                 android:layout_height="100dp"
                 android:layout_gravity="center"
@@ -40,7 +40,7 @@
                 android:src="@drawable/avatar_default_another" />
 
             <EditText
-                android:id="@+id/profile_dialog_name"
+                android:id="@+id/user_local_name"
                 android:imeOptions="actionDone"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -97,7 +97,7 @@
         android:layout_height="wrap_content"
         android:layout_gravity="end">
         <Button
-            android:id="@+id/buttonCancel"
+            android:id="@+id/button_cancel"
             style="?android:attr/borderlessButtonStyle"
             android:layout_width="wrap_content"
             android:layout_height="36dp"
@@ -108,7 +108,7 @@
             android:textColor="?attr/colorAccent" />
 
         <Button
-            android:id="@+id/buttonOK"
+            android:id="@+id/button_ok"
             style="?android:attr/borderlessButtonStyle"
             android:layout_width="wrap_content"
             android:layout_height="36dp"

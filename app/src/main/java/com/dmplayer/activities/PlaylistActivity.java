@@ -191,8 +191,8 @@ public class PlaylistActivity extends AppCompatActivity implements View.OnClickL
                     MediaController.getInstance().storeFavoritePlay(context, MediaController.getInstance().getPlayingSongDetail(), v.isSelected() ? 0 : 1);
                     v.setSelected(!v.isSelected());
                     DMPlayerUtility.animateHeartButton(v);
-                    findViewById(R.id.ivLike).setSelected(!v.isSelected());
-                    DMPlayerUtility.animatePhotoLike(findViewById(R.id.vBgLike), findViewById(R.id.ivLike));
+                    findViewById(R.id.like).setSelected(!v.isSelected());
+                    DMPlayerUtility.animatePhotoLike(findViewById(R.id.big_like), findViewById(R.id.like));
                 }
                 break;
 
@@ -564,7 +564,7 @@ public class PlaylistActivity extends AppCompatActivity implements View.OnClickL
     private void initSlidingUpPanel() {
         mLayout = (SlidingUpPanelLayout) findViewById(R.id.sliding_layout);
         // songAlbumbg = (ImageView) findViewById(R.id.image_songAlbumbg);
-        songAlbumbg = (ImageView) findViewById(R.id.image_songAlbumbg_mid);
+        songAlbumbg = (ImageView) findViewById(R.id.image_songsAlbum);
         img_bottom_slideone = (ImageView) findViewById(R.id.img_bottom_slideone);
         img_bottom_slidetwo = (ImageView) findViewById(R.id.img_bottom_slidetwo);
         txt_timeprogress = (TextView) findViewById(R.id.slidepanel_time_progress);

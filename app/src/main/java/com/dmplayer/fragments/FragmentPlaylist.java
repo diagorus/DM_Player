@@ -123,7 +123,6 @@ public class FragmentPlaylist extends Fragment {
                 @Override
                 public void onError(Exception e) {
                     progressBar.setVisibility(View.GONE);
-
                     errorLayout.setVisibility(View.VISIBLE);
 
                     errorInfo.setText("");

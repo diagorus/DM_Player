@@ -15,7 +15,7 @@ public class PlaylistItemView extends RelativeLayout {
     }
 
     private void init(PlaylistItem playlistItem) {
-        inflate(getContext(), R.layout.item_playlist, this);
+        inflate(getContext(), R.layout.expandable_item_playlist, this);
 
         ((TextView) findViewById(R.id.name)).setText(playlistItem.getName());
         ((TextView) findViewById(R.id.details)).setText(playlistItem.getDetails());

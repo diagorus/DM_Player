@@ -7,18 +7,15 @@ import android.os.Parcelable;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.view.animation.Transformation;
-import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.dmplayer.R;
-import com.dmplayer.phonemedia.DMPlayerUtility;
 
 public class ExpandableLayout extends LinearLayout {
     private static final String ANDROID_SCHEME = "http://schemas.android.com/apk/res/android";
@@ -121,19 +118,13 @@ public class ExpandableLayout extends LinearLayout {
             content.addView(child);
         }
 
-        FrameLayout divider = new FrameLayout(getContext());
-        divider.setLayoutParams(new LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, DMPlayerUtility.dp(2)));
-        divider.setBackgroundColor(getResources().getColor(R.color.md_divider));
-        content.addView(divider);
-
         setupHeader();
 
         content.setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT));
-
         addView(content);
         content.setVisibility(GONE);
 
-        setLayoutParams(new ViewGroup.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT));
+        setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT));
     }
 
     protected void setupHeader() {
@@ -146,9 +137,11 @@ public class ExpandableLayout extends LinearLayout {
 
         TextView title = (TextView) findViewById(R.id.title);
         title.setText(titleText);
+        title.setTextColor(getResources().getColor(R.color.md_black_1000));
 
         TextView details = (TextView) findViewById(R.id.details);
         details.setText(detailsText);
+        details.setTextColor(getResources().getColor(R.color.md_grey_600));
 
         ImageView image = (ImageView) findViewById(R.id.image);
         image.setImageResource(imageResource);
@@ -167,7 +160,9 @@ public class ExpandableLayout extends LinearLayout {
     }
 
     public void show() {
-        onExpandListener.OnExpand();
+        if (onExpandListener != null) {
+            onExpandListener.OnExpand(this);
+        }
         isExpanded = true;
         content.setVisibility(View.VISIBLE);
     }
@@ -185,8 +180,9 @@ public class ExpandableLayout extends LinearLayout {
     }
 
     public void expand() {
-        onExpandListener.OnExpand();
-
+        if (onExpandListener != null) {
+            onExpandListener.OnExpand(this);
+        }
         isExpanded = true;
 
         animateRotateStraight(icon);
@@ -264,12 +260,10 @@ public class ExpandableLayout extends LinearLayout {
     }
 
     private OnExpandListener onExpandListener;
-
     public void setOnExpandListener(OnExpandListener l) {
         this.onExpandListener = l;
     }
-
     public interface OnExpandListener {
-        void OnExpand();
+        void OnExpand(ExpandableLayout v);
     }
 }

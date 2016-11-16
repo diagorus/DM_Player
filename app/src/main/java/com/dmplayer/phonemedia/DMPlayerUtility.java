@@ -275,37 +275,37 @@ public final class DMPlayerUtility {
     public static void settingTheme(Context context, int theme) {
         switch (theme) {
             case 1:
-                context.setTheme(R.style.AppTheme);
+                context.setTheme(R.style.AppThemeBlue);
                 break;
             case 2:
-                context.setTheme(R.style.AppTheme2);
+                context.setTheme(R.style.AppThemeRed);
                 break;
             case 3:
-                context.setTheme(R.style.AppTheme3);
+                context.setTheme(R.style.AppThemeGreen);
                 break;
             case 4:
-                context.setTheme(R.style.AppTheme4);
+                context.setTheme(R.style.AppThemeOrange);
                 break;
             case 5:
-                context.setTheme(R.style.AppTheme5);
+                context.setTheme(R.style.AppThemePink);
                 break;
             case 6:
-                context.setTheme(R.style.AppTheme6);
+                context.setTheme(R.style.AppThemeIndigo);
                 break;
             case 7:
-                context.setTheme(R.style.AppTheme7);
+                context.setTheme(R.style.AppThemeBrown);
                 break;
             case 8:
-                context.setTheme(R.style.AppTheme8);
+                context.setTheme(R.style.AppThemeBluegrey);
                 break;
             case 9:
-                context.setTheme(R.style.AppTheme9);
+                context.setTheme(R.style.AppThemeFalcon);
                 break;
             case 10:
-                context.setTheme(R.style.AppTheme10);
+                context.setTheme(R.style.AppThemeLightblue);
                 break;
             default:
-                context.setTheme(R.style.AppTheme);
+                context.setTheme(R.style.AppThemeBlue);
                 break;
         }
     }

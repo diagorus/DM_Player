@@ -10,7 +10,6 @@ import com.dmplayer.DMPlayerApplication;
 import com.dmplayer.models.SongDetail;
 
 public class FavoritePlayTableHelper {
-
     public static final String TABLENAME = "ResentPlay";
 
     public static final String ID = "_id";
@@ -23,9 +22,9 @@ public class FavoritePlayTableHelper {
     public static final String AUDIOPROGRESS = "audioProgress";
     public static final String AUDIOPROGRESSSEC = "audioProgressSec";
     public static final String LastPlayTime = "lastplaytime";
-    public static final String ISFAVORITE = "isfavorite";
+    public static final String IS_FAVORITE = "isfavorite";
 
-    private static DMPLayerDBHelper dbHelper = null;
+    private static DMPLayerDBHelper dbHelper;
     private static FavoritePlayTableHelper mInstance;
     private SQLiteDatabase sampleDB;
 
@@ -39,14 +38,14 @@ public class FavoritePlayTableHelper {
 
     public Context context;
 
-    public FavoritePlayTableHelper(Context context_) {
-        this.context = context_;
+    public FavoritePlayTableHelper(Context context) {
+        this.context = context;
         if (dbHelper == null) {
-            dbHelper = ((DMPlayerApplication) context.getApplicationContext()).DB_HELPER;
+            dbHelper = ((DMPlayerApplication) this.context.getApplicationContext()).DB_HELPER;
         }
     }
 
-    public void inserSong(SongDetail songDetail, int isFav) {
+    public void insertSong(SongDetail songDetail, int isFav) {
         try {
 
             sampleDB = dbHelper.getDB();
@@ -84,7 +83,7 @@ public class FavoritePlayTableHelper {
         }
     }
 
-    private void closeCurcor(Cursor cursor) {
+    private void closeCursor(Cursor cursor) {
         if (cursor != null) {
             cursor.close();
             cursor = null;
@@ -94,11 +93,11 @@ public class FavoritePlayTableHelper {
     public Cursor getFavoriteSongList() {
         Cursor mCursor = null;
         try {
-            String sqlQuery = "Select * from " + TABLENAME + " where " + ISFAVORITE + "=1";
+            String sqlQuery = "Select * from " + TABLENAME + " where " + IS_FAVORITE + "=1";
             sampleDB = dbHelper.getDB();
             mCursor = sampleDB.rawQuery(sqlQuery, null);
         } catch (Exception e) {
-            closeCurcor(mCursor);
+            closeCursor(mCursor);
             e.printStackTrace();
         }
         return mCursor;
@@ -107,15 +106,15 @@ public class FavoritePlayTableHelper {
     public boolean getIsFavorite(SongDetail mDetail) {
         Cursor mCursor = null;
         try {
-            String sqlQuery = "Select * from " + TABLENAME + " where " + ID + "=" + mDetail.getId() + " and " + ISFAVORITE + "=1";
+            String sqlQuery = "Select * from " + TABLENAME + " where " + ID + "=" + mDetail.getId() + " and " + IS_FAVORITE + "=1";
             sampleDB = dbHelper.getDB();
             mCursor = sampleDB.rawQuery(sqlQuery, null);
             if (mCursor != null && mCursor.getCount() >= 1) {
-                closeCurcor(mCursor);
+                closeCursor(mCursor);
                 return true;
             }
         } catch (Exception e) {
-            closeCurcor(mCursor);
+            closeCursor(mCursor);
             e.printStackTrace();
         }
         return false;

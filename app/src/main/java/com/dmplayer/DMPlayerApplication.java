@@ -23,12 +23,12 @@ import com.vk.sdk.VKSdk;
 
 public class DMPlayerApplication extends Application {
 
-    public static Context applicationContext = null;
-    public static volatile Handler applicationHandler = null;
+    public static Context applicationContext;
+    public static volatile Handler applicationHandler;
     public static Point displaySize = new Point();
     public static float density = 1;
 
-    private static final String TAG = "DMPlayerApplication";
+    private static final String TAG = DMPlayerApplication.class.getSimpleName();
 
     @Override
     public void onCreate() {
@@ -40,7 +40,7 @@ public class DMPlayerApplication extends Application {
         /**
          * Data base initialize
          */
-        initilizeDB();
+        initializeDB();
         /*
          * Display Density Calculation so that Application not problem with All
 		 * resolution.
@@ -105,7 +105,7 @@ public class DMPlayerApplication extends Application {
      */
     public DMPLayerDBHelper DB_HELPER;
 
-    private void initilizeDB() {
+    private void initializeDB() {
         if (DB_HELPER == null) {
             DB_HELPER = new DMPLayerDBHelper(DMPlayerApplication.this);
         }

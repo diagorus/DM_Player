@@ -2,7 +2,8 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="64dp">
+    android:layout_height="64dp"
+    android:background="@color/md_grey_200">
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="2dp"
@@ -36,8 +37,10 @@
         android:layout_alignParentRight="true"
         android:scaleType="fitCenter"
         android:src="@drawable/ic_to_profile"
-        app:selectable_tint="@color/selector_image_like_button_tint"
-        app:selectable_background="@color/selector_image_like_button_background"/>
+        app:tint_default="?attr/colorAccent"
+        app:tint_pressed="@android:color/white"
+        app:backgroundColor_default="@android:color/white"
+        app:backgroundColor_pressed="?attr/colorAccent"/>
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="2dp"

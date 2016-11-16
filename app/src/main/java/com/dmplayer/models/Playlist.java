@@ -17,24 +17,20 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Playlist implements Serializable {
+    private static long count = 0;
 
-    private static int count = 0;
-
+    private long id;
     private String name;
     private transient String path;
     private List<SongDetail> songs;
 
-//    private boolean isVk;
-
     private static final String TAG = "Playlist";
 
     public Playlist() {
-        count++;
-
+        this.id = count++;
         this.name = "";
         this.path = "";
         this.songs = new ArrayList<>();
-//        this.isVk = false;
     }
 
     public Playlist(String name, List<SongDetail> songs) {
@@ -44,10 +40,9 @@ public class Playlist implements Serializable {
         this.songs = songs;
     }
 
-//    public Playlist(String name, boolean isVk) {
-//        this(name);
-//        this.isVk = isVk;
-//    }
+    public long getId() {
+        return id;
+    }
 
     public void addSong(SongDetail newSong){
         songs.add(newSong);
@@ -73,21 +68,13 @@ public class Playlist implements Serializable {
         this.path = path;
     }
 
-    public static int getCount() {
+    public static long getCount() {
         return count;
     }
 
     public String getPath() {
         return path;
     }
-
-//    public boolean isVk() {
-//        return isVk;
-//    }
-//
-//    public void setVk(boolean vk) {
-//        isVk = vk;
-//    }
 
     public Bundle getBundle() {
         Bundle bundle = new Bundle();

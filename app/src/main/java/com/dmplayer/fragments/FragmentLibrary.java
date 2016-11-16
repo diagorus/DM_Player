@@ -1,15 +1,15 @@
 package com.dmplayer.fragments;
 
-import android.app.Fragment;
 import android.app.FragmentManager;
 import android.os.Bundle;
-import android.view.LayoutInflater;
+import android.util.Log;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.dmplayer.R;
+import com.dmplayer.butterknifeabstraction.BaseFragment;
 import com.dmplayer.dialogs.OnWorkDone;
 import com.dmplayer.dialogs.ProfileDialog;
 import com.dmplayer.dialogs.SeveralPlaylistDialog;
@@ -31,59 +31,63 @@ import com.dmplayer.utility.PlaylistProvider;
 
 import java.util.List;
 
-public class FragmentLibrary extends Fragment {
+import butterknife.BindView;
+import butterknife.OnClick;
+
+public class FragmentLibrary extends BaseFragment {
+    private static final String TAG = "FragmentLibrary";
+
     private ExpandableLayoutManager expandableManager;
 
-    private ExpandableLayout expandableDefault;
+    @BindView(R.id.local_playlists)
+    ExpandableLayout expandableLocal;
+    @BindView(R.id.default_playlists)
+    ExpandableLayout expandableDefault;
+    @BindView(R.id.vk_playlists)
+    ExpandableLayoutExternalAccount expandableVk;
 
-    private ExpandableLayoutExternalAccount expandableVk;
+    @BindView(R.id.button_add_local_playlist)
+    ImageView buttonAddLocalPlaylist;
 
+    private List<PlaylistItem> localPlaylists;
     private List<PlaylistItem> defaultPlaylists;
     private List<PlaylistItem> vkPlaylists;
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View v = inflater.inflate(R.layout.fragment_library, null);
-        setupInitialViews(v);
-        return v;
+    public void onViewCreated(View view, Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        init();
     }
 
-    private void setupInitialViews(View v) {
-        expandableDefault = (ExpandableLayout) v.findViewById(R.id.default_playlists);
-        expandableDefault.setOnClickListener(new View.OnClickListener() {
+    @Override
+    protected int getFragmentLayout() {
+        return R.layout.fragment_library;
+    }
+
+    private void init() {
+        expandableLocal.setOnExpandListener(new ExpandableLayout.OnExpandListener() {
             @Override
-            public void onClick(View v) {
-                if(expandableDefault.isExpanded()) {
-                    expandableDefault.collapse();
-                } else {
-                    expandableDefault.expand();
-                }
+            public void OnExpand(ExpandableLayout v) {
+                expandableManager.collapseOthers(v);
+
+                setupLocalPlaylists();
             }
         });
+
+
         expandableDefault.setOnExpandListener(new ExpandableLayout.OnExpandListener() {
             @Override
-            public void OnExpand() {
-                expandableManager.collapseOthers(expandableDefault);
+            public void OnExpand(ExpandableLayout v) {
+                expandableManager.collapseOthers(v);
 
                 setupDefaultPlaylists();
             }
         });
 
-        expandableVk = (ExpandableLayoutExternalAccount) v.findViewById(R.id.vk_playlists);
-        expandableVk.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if(expandableVk.isExpanded()) {
-                    expandableVk.collapse();
-                } else {
-                    expandableVk.expand();
-                }
-            }
-        });
         expandableVk.setOnExpandListener(new ExpandableLayout.OnExpandListener() {
             @Override
-            public void OnExpand() {
-                expandableManager.collapseOthers(expandableVk);
+            public void OnExpand(ExpandableLayout v) {
+                expandableManager.collapseOthers(v);
 
                 setupVkPlaylists();
             }
@@ -91,8 +95,24 @@ public class FragmentLibrary extends Fragment {
         checkVkLogged();
 
         expandableManager = new ExpandableLayoutManager();
+        expandableManager.register(expandableLocal);
         expandableManager.register(expandableDefault);
         expandableManager.register(expandableVk);
+    }
+
+    @OnClick({R.id.local_playlists, R.id.default_playlists, R.id.vk_playlists})
+    public void changeExpandableState(RelativeLayout v) {
+        try {
+            ExpandableLayout expandable = (ExpandableLayout) v.getParent();
+
+            if(expandable.isExpanded()) {
+                expandable.collapse();
+            } else {
+                expandable.expand();
+            }
+        } catch (ClassCastException e) {
+            Log.e(TAG, "Unable to cast to ExpandableLayout", e);
+        }
     }
 
     private void checkVkLogged() {
@@ -112,19 +132,24 @@ public class FragmentLibrary extends Fragment {
                     final ProfileDialog dialog = new ProfileDialog();
                     dialog.setOnWorkDone(new OnWorkDone() {
                         @Override
-                        public void onPositiveAnswer() {
+                        public void onAgree() {
                             checkVkLogged();
                         }
 
                         @Override
-                        public void onNegativeAnswer() {
-                        }
+                        public void onRefuse() {}
                     });
                     dialog.show(fragmentManager, "fragment_profile");
                 }
             });
         } else {
             expandableVk.setUsualLayout();
+        }
+    }
+
+    private void setupLocalPlaylists() {
+        if(localPlaylists == null) {
+
         }
     }
 

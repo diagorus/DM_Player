@@ -72,4 +72,16 @@
     <string name="error">Error!</string>
     <string name="check_connection">Check your internet connection.</string>
     <string name="not_logged">Log in %1$s profile.</string>
+    <string name="theme_card_text_blue">Blue</string>
+    <string name="theme_card_text_red">Red</string>
+    <string name="theme_card_text_green">Green</string>
+    <string name="theme_card_text_orange">Orange</string>
+    <string name="theme_card_text_pink">Pink</string>
+    <string name="theme_card_text_indigo">Indigo</string>
+    <string name="theme_card_text_brown">Brown</string>
+    <string name="theme_card_text_bluegrey">Blue grey</string>
+    <string name="theme_card_text_falcon">Falcon</string>
+    <string name="theme_card_text_lightblue">Light Blue</string>
+    <string name="disagree">DISAGREE</string>
+    <string name="agree">AGREE</string>
 </resources>

@@ -1,6 +1,5 @@
 package com.dmplayer.dialogs;
 
-import android.app.DialogFragment;
 import android.app.FragmentManager;
 import android.content.Context;
 import android.graphics.Bitmap;
@@ -19,6 +18,7 @@ import android.widget.TextView;
 
 import com.dmplayer.R;
 import com.dmplayer.asynctask.TaskStateListener;
+import com.dmplayer.butterknifeabstraction.BaseDialogFragment;
 import com.dmplayer.fragments.FragmentPlaylist;
 import com.dmplayer.models.PlaylistItemInSeveral;
 import com.dmplayer.models.playlisitems.DefaultPlaylistCategorySeveral;
@@ -32,15 +32,29 @@ import com.nostra13.universalimageloader.core.ImageLoader;
 
 import java.util.List;
 
-public class SeveralPlaylistDialog extends DialogFragment {
-    private RecyclerView listOfPlaylists;
-    private PlaylistListAdapter playlistsAdapter;
+import butterknife.BindView;
+import butterknife.ButterKnife;
+import butterknife.OnClick;
 
-    private ProgressBar progressBar;
+public class SeveralPlaylistDialog extends BaseDialogFragment {
+    @BindView(R.id.recycler_playlists)
+    RecyclerView listOfPlaylists;
+    @BindView(R.id.progress_bar)
+    ProgressBar progressBar;
+    @BindView(R.id.error_layout)
+    LinearLayout errorLayout;
+    @BindView(R.id.error_info)
+    TextView errorInfo;
+    @BindView(R.id.error_reload)
+    TextView errorReload;
 
-    private LinearLayout errorLayout;
-    private TextView errorInfo;
-    private TextView errorReload;
+    @BindView(R.id.button_close)
+    ImageView buttonClose;
+
+    @BindView(R.id.title)
+    TextView textTitle;
+
+    PlaylistListAdapter playlistsAdapter;
 
     private static final String ARG_TYPE = "SeveralPlaylistDialog_type";
     private static final String ARG_CATEGORY = "SeveralPlaylistDialog_category";
@@ -77,24 +91,26 @@ public class SeveralPlaylistDialog extends DialogFragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View v = inflater.inflate(R.layout.dialog_playlistseveral, null);
-
         getDialog().requestWindowFeature(Window.FEATURE_NO_TITLE);
-
-        setupInitialViews(v);
-        loadPlaylist();
-        return v;
+        return super.onCreateView(inflater, container, savedInstanceState);
     }
 
-    private void setupInitialViews(View v) {
-        listOfPlaylists = (RecyclerView) v.findViewById(R.id.recycler_playlists);
+    @Override
+    public void onViewCreated(View view, Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+
+        init();
+        loadPlaylist();
+    }
+
+    @Override
+    protected int getFragmentLayout() {
+        return R.layout.dialog_playlistseveral;
+    }
+
+    private void init() {
         listOfPlaylists.setLayoutManager(new GridLayoutManager(getActivity(), 2));
 
-        progressBar = (ProgressBar) v.findViewById(R.id.progress_bar);
-
-        errorLayout = (LinearLayout) v.findViewById(R.id.error_layout);
-        errorInfo = (TextView) v.findViewById(R.id.error_info);
-        errorReload = (TextView) v.findViewById(R.id.error_reload);
         errorReload.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -104,11 +120,6 @@ public class SeveralPlaylistDialog extends DialogFragment {
             }
         });
 
-        setupHeader(v);
-    }
-
-    private void setupHeader(View v) {
-        ImageView buttonClose = (ImageView) v.findViewById(R.id.button_close);
         buttonClose.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -117,8 +128,6 @@ public class SeveralPlaylistDialog extends DialogFragment {
         });
 
         String title = getArguments().getString(ARG_NAME);
-
-        TextView textTitle = (TextView) v.findViewById(R.id.title);
         textTitle.setText(title);
     }
 
@@ -182,8 +191,7 @@ public class SeveralPlaylistDialog extends DialogFragment {
         factory.getTask(c).execute();
     }
 
-
-    private class PlaylistListAdapter extends RecyclerView.Adapter<PlaylistListAdapter.ViewHolder>{
+    protected class PlaylistListAdapter extends RecyclerView.Adapter<PlaylistListAdapter.ViewHolder> {
         private List<? extends PlaylistItemInSeveral> items;
         private int type;
 
@@ -253,23 +261,26 @@ public class SeveralPlaylistDialog extends DialogFragment {
             holder.title.setText(currentItem.getName());
         }
 
-        class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
+        class ViewHolder extends RecyclerView.ViewHolder {
+            @BindView(R.id.title)
             TextView title;
+            @BindView(R.id.details)
             TextView details;
+            @BindView(R.id.icon)
             ImageView icon;
 
             public ViewHolder(View itemView) {
                 super(itemView);
-                title = (TextView) itemView.findViewById(R.id.title);
-                details = (TextView) itemView.findViewById(R.id.details);
-                icon = (ImageView) itemView.findViewById(R.id.icon);
-                icon.setScaleType(ImageView.ScaleType.CENTER_CROP);
-
-                itemView.setOnClickListener(this);
+                ButterKnife.bind(this, itemView);
+                init();
             }
 
-            @Override
-            public void onClick(View view) {
+            private void init() {
+                icon.setScaleType(ImageView.ScaleType.CENTER_CROP);
+            }
+
+            @OnClick
+            public void showSinglePlaylist() {
                 dismiss();
 
                 FragmentPlaylist f;
@@ -287,7 +298,6 @@ public class SeveralPlaylistDialog extends DialogFragment {
 
                         f = FragmentPlaylist
                                 .newInstance(vkItem.getCategory(), vkItem.getId(), vkItem.getName());
-
                         break;
                     default:
                         throw new IllegalArgumentException("Default statement reached!");

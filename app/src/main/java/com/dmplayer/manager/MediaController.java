@@ -26,7 +26,6 @@ import com.dmplayer.models.SongDetail;
 import com.dmplayer.phonemedia.DMPlayerUtility;
 
 import java.io.File;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -126,7 +125,7 @@ public class MediaController implements NotificationManager.NotificationCenterDe
     }
 
     public void playPreviousSong() {
-        ArrayList<SongDetail> currentPlayList = shuffleMusic ? MusicPreferance.shuffledPlaylist : MusicPreferance.playlist;
+        List<SongDetail> currentPlayList = shuffleMusic ? MusicPreferance.shuffledPlaylist : MusicPreferance.playlist;
 
         currentPlaylistNum--;
         if (currentPlaylistNum < 0) {
@@ -249,14 +248,14 @@ public class MediaController implements NotificationManager.NotificationCenterDe
             DMPlayerApplication.applicationContext.stopService(intent);
         }
 
-        storeResendPlay(DMPlayerApplication.applicationContext, mSongDetail);
+        storeResentPlay(DMPlayerApplication.applicationContext, mSongDetail);
         NotificationManager.getInstance().notifyNewSongLoaded(NotificationManager.newaudioloaded, mSongDetail);
 
         return true;
     }
 
     private void playNextSong(boolean byStop) {
-        ArrayList<SongDetail> currentPlayList = shuffleMusic ? MusicPreferance.shuffledPlaylist : MusicPreferance.playlist;
+        List<SongDetail> currentPlayList = shuffleMusic ? MusicPreferance.shuffledPlaylist : MusicPreferance.playlist;
 
         if (byStop && repeatMode == 2) {
             cleanupPlayer(false, false);
@@ -535,12 +534,12 @@ public class MediaController implements NotificationManager.NotificationCenterDe
     /**
      * Store Recent Play Data
      */
-    public synchronized void storeResendPlay(final Context context, final SongDetail mDetail) {
+    public synchronized void storeResentPlay(final Context context, final SongDetail mDetail) {
         new AsyncTask<Void, Void, Void>() {
             @Override
             protected Void doInBackground(Void... voids) {
                 try {
-                    MostAndRecentPlayTableHelper.getInstance(context).inserSong(mDetail);
+                    MostAndRecentPlayTableHelper.getInstance(context).insertSong(mDetail);
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -557,7 +556,7 @@ public class MediaController implements NotificationManager.NotificationCenterDe
             @Override
             protected Void doInBackground(Void... voids) {
                 try {
-                    FavoritePlayTableHelper.getInstance(context).inserSong(mDetail, isFav);
+                    FavoritePlayTableHelper.getInstance(context).insertSong(mDetail, isFav);
                 } catch (Exception e) {
                     Log.e(TAG, "Error adding song into favourites: ", e);
                 }
@@ -565,6 +564,7 @@ public class MediaController implements NotificationManager.NotificationCenterDe
             }
         }.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
     }
+
     //TODO: change exceptions output with Log.e(...)
     public synchronized void checkIsFavorite(final Context context, final SongDetail mDetail, final View v) {
         new AsyncTask<Void, Void, Void>() {
@@ -587,6 +587,7 @@ public class MediaController implements NotificationManager.NotificationCenterDe
             }
         }.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
     }
+
     public boolean playAudioFromStream(MediaPlayer mediaPlayer) {
 //        if (mSongDetail == null) {
 //            return false;
@@ -678,7 +679,7 @@ public class MediaController implements NotificationManager.NotificationCenterDe
 //            ApplicationDMPlayer.applicationContext.stopService(intent);
 //        }
 
-        //storeResendPlay(ApplicationDMPlayer.applicationContext, mSongDetail);
+        //storeResentPlay(ApplicationDMPlayer.applicationContext, mSongDetail);
        // NotificationManager.getInstance().notifyNewSongLoaded(NotificationManager.newaudioloaded, mSongDetail);
 
         return true;

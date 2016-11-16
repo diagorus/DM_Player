@@ -48,7 +48,7 @@ public class SongsPagerAdapter extends PagerAdapter {
     @Override
     public View instantiateItem(ViewGroup container, final int position) {
         View infV = inflater.inflate(R.layout.inflate_albumart_pager, container, false);
-        ImageView artImage = (ImageView) infV.findViewById(R.id.image_songAlbumbg_mid);
+        ImageView artImage = (ImageView) infV.findViewById(R.id.image_songsAlbum);
         String contentURI = "content://media/external/audio/media/" + MusicPreferance.playlist.get(position).getId() + "/albumart";
         imageLoader.displayImage(contentURI, artImage, options, animateFirstListener);
         container.addView(infV);
