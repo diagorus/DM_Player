@@ -10,7 +10,7 @@ import com.dmplayer.DMPlayerApplication;
 import com.dmplayer.models.SongDetail;
 
 public class FavoritePlayTableHelper {
-    public static final String TABLENAME = "ResentPlay";
+    public static final String TABLE_NAME = "Favourite";
 
     public static final String ID = "_id";
     public static final String ALBUM_ID = "album_id";
@@ -19,39 +19,35 @@ public class FavoritePlayTableHelper {
     public static final String DISPLAY_NAME = "display_name";
     public static final String DURATION = "duration";
     public static final String PATH = "path";
-    public static final String AUDIOPROGRESS = "audioProgress";
-    public static final String AUDIOPROGRESSSEC = "audioProgressSec";
-    public static final String LastPlayTime = "lastplaytime";
-    public static final String IS_FAVORITE = "isfavorite";
+    public static final String AUDIO_PROGRESS = "audio_progress";
+    public static final String AUDIO_PROGRESS_SEC = "audio_progress_sec";
+    public static final String LAST_PLAY_TIME = "last_play_time";
+    public static final String IS_FAVORITE = "is_favorite";
 
-    private static DMPLayerDBHelper dbHelper;
-    private static FavoritePlayTableHelper mInstance;
+    private DMPLayerDBHelper dbHelper;
     private SQLiteDatabase sampleDB;
 
+    private static FavoritePlayTableHelper instance;
 
     public static synchronized FavoritePlayTableHelper getInstance(Context context) {
-        if (mInstance == null) {
-            mInstance = new FavoritePlayTableHelper(context);
+        if (instance == null) {
+            instance = new FavoritePlayTableHelper(context);
         }
-        return mInstance;
+        return instance;
     }
 
-    public Context context;
-
     public FavoritePlayTableHelper(Context context) {
-        this.context = context;
         if (dbHelper == null) {
-            dbHelper = ((DMPlayerApplication) this.context.getApplicationContext()).DB_HELPER;
+            dbHelper = ((DMPlayerApplication) context.getApplicationContext()).DB_HELPER;
         }
     }
 
     public void insertSong(SongDetail songDetail, int isFav) {
         try {
-
             sampleDB = dbHelper.getDB();
             sampleDB.beginTransaction();
 
-            String sql = "Insert or Replace into " + TABLENAME + " values(?,?,?,?,?,?,?,?,?,?,?);";
+            String sql = "Insert or Replace into " + TABLE_NAME + " values(?,?,?,?,?,?,?,?,?,?,?);";
             SQLiteStatement insert = sampleDB.compileStatement(sql);
 
             try {
@@ -86,35 +82,34 @@ public class FavoritePlayTableHelper {
     private void closeCursor(Cursor cursor) {
         if (cursor != null) {
             cursor.close();
-            cursor = null;
         }
     }
 
     public Cursor getFavoriteSongList() {
-        Cursor mCursor = null;
+        Cursor cursor = null;
         try {
-            String sqlQuery = "Select * from " + TABLENAME + " where " + IS_FAVORITE + "=1";
+            String sqlQuery = "Select * from " + TABLE_NAME + " where " + IS_FAVORITE + "=1";
             sampleDB = dbHelper.getDB();
-            mCursor = sampleDB.rawQuery(sqlQuery, null);
+            cursor = sampleDB.rawQuery(sqlQuery, null);
         } catch (Exception e) {
-            closeCursor(mCursor);
+            closeCursor(cursor);
             e.printStackTrace();
         }
-        return mCursor;
+        return cursor;
     }
 
     public boolean getIsFavorite(SongDetail mDetail) {
-        Cursor mCursor = null;
+        Cursor cursor = null;
         try {
-            String sqlQuery = "Select * from " + TABLENAME + " where " + ID + "=" + mDetail.getId() + " and " + IS_FAVORITE + "=1";
+            String sqlQuery = "Select * from " + TABLE_NAME + " where " + ID + "=" + mDetail.getId() + " and " + IS_FAVORITE + "=1";
             sampleDB = dbHelper.getDB();
-            mCursor = sampleDB.rawQuery(sqlQuery, null);
-            if (mCursor != null && mCursor.getCount() >= 1) {
-                closeCursor(mCursor);
+            cursor = sampleDB.rawQuery(sqlQuery, null);
+            if (cursor != null && cursor.getCount() >= 1) {
+                closeCursor(cursor);
                 return true;
             }
         } catch (Exception e) {
-            closeCursor(mCursor);
+            closeCursor(cursor);
             e.printStackTrace();
         }
         return false;

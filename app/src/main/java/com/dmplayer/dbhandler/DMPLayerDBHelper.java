@@ -35,12 +35,12 @@ public class DMPLayerDBHelper extends SQLiteOpenHelper {
 
     @Override
     public void onCreate(SQLiteDatabase db) {
-
-
         try {
             db.execSQL(sqlForCreateMostPlay());
             db.execSQL(sqlForCreateFavoritePlay());
             db.execSQL(sqlForCreatePlaylistTable());
+            db.execSQL(sqlForCreatePlaylistSongsTable());
+            db.execSQL(sqlForCreateSongsTable());
         } catch (SQLException e) {
             Log.e(TAG, "Error creating database:", e);
         }
@@ -49,8 +49,11 @@ public class DMPLayerDBHelper extends SQLiteOpenHelper {
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         try {
-            db.execSQL("DROP TABLE IF EXISTS " + MostAndRecentPlayTableHelper.TABLENAME);
-            db.execSQL("DROP TABLE IF EXISTS " + FavoritePlayTableHelper.TABLENAME);
+            db.execSQL("DROP TABLE IF EXISTS " + MostAndRecentPlayTableHelper.TABLE_NAME);
+            db.execSQL("DROP TABLE IF EXISTS " + FavoritePlayTableHelper.TABLE_NAME);
+            db.execSQL("DROP TABLE IF EXISTS " + PlaylistTableHelper.TABLE_NAME);
+            db.execSQL("DROP TABLE IF EXISTS " + PlaylistSongsTableHelper.TABLE_NAME);
+            db.execSQL("DROP TABLE IF EXISTS " + SongsTableHelper.TABLE_NAME);
             onCreate(db);
         } catch (SQLException e) {
             Log.e(TAG, "Error updating database:", e);
@@ -71,7 +74,7 @@ public class DMPLayerDBHelper extends SQLiteOpenHelper {
     }
 
     private static String sqlForCreateMostPlay() {
-        String sql = "CREATE TABLE " + MostAndRecentPlayTableHelper.TABLENAME + " ("
+        return "CREATE TABLE " + MostAndRecentPlayTableHelper.TABLE_NAME + " ("
                 + MostAndRecentPlayTableHelper.ID + " INTEGER NOT NULL PRIMARY KEY,"
                 + MostAndRecentPlayTableHelper.ALBUM_ID + " INTEGER NOT NULL,"
                 + MostAndRecentPlayTableHelper.ARTIST + " TEXT NOT NULL,"
@@ -81,13 +84,12 @@ public class DMPLayerDBHelper extends SQLiteOpenHelper {
                 + MostAndRecentPlayTableHelper.PATH + " TEXT NOT NULL,"
                 + MostAndRecentPlayTableHelper.AUDIO_PROGRESS + " TEXT NOT NULL,"
                 + MostAndRecentPlayTableHelper.AUDIO_PROGRESS_SEC + " INTEGER NOT NULL,"
-                + MostAndRecentPlayTableHelper.LastPlayTime + " TEXT NOT NULL,"
+                + MostAndRecentPlayTableHelper.LAST_PLAY_TIME + " TEXT NOT NULL,"
                 + MostAndRecentPlayTableHelper.PLAY_COUNT + " INTEGER NOT NULL);";
-        return sql;
     }
 
     private static String sqlForCreateFavoritePlay() {
-        String sql = "CREATE TABLE " + FavoritePlayTableHelper.TABLENAME + " ("
+        return "CREATE TABLE " + FavoritePlayTableHelper.TABLE_NAME + " ("
                 + FavoritePlayTableHelper.ID + " INTEGER NOT NULL PRIMARY KEY,"
                 + FavoritePlayTableHelper.ALBUM_ID + " INTEGER NOT NULL,"
                 + FavoritePlayTableHelper.ARTIST + " TEXT NOT NULL,"
@@ -95,17 +97,33 @@ public class DMPLayerDBHelper extends SQLiteOpenHelper {
                 + FavoritePlayTableHelper.DISPLAY_NAME + " TEXT NOT NULL,"
                 + FavoritePlayTableHelper.DURATION + " TEXT NOT NULL,"
                 + FavoritePlayTableHelper.PATH + " TEXT NOT NULL,"
-                + FavoritePlayTableHelper.AUDIOPROGRESS + " TEXT NOT NULL,"
-                + FavoritePlayTableHelper.AUDIOPROGRESSSEC + " INTEGER NOT NULL,"
-                + FavoritePlayTableHelper.LastPlayTime + " TEXT NOT NULL,"
+                + FavoritePlayTableHelper.AUDIO_PROGRESS + " TEXT NOT NULL,"
+                + FavoritePlayTableHelper.AUDIO_PROGRESS_SEC + " INTEGER NOT NULL,"
+                + FavoritePlayTableHelper.LAST_PLAY_TIME + " TEXT NOT NULL,"
                 + FavoritePlayTableHelper.IS_FAVORITE + " INTEGER NOT NULL);";
-        return sql;
     }
 
     private static String sqlForCreatePlaylistTable() {
-        String sql = "CREATE TABLE " + PlaylistTableHelper.TABLE_NAME + " ("
+        return "CREATE TABLE " + PlaylistTableHelper.TABLE_NAME + " ("
                 + PlaylistTableHelper.ID + " INTEGER NOT NULL PRIMARY KEY,"
                 + PlaylistTableHelper.NAME + " TEXT NOT NULL);";
-        return sql;
+    }
+
+    private static String sqlForCreatePlaylistSongsTable() {
+        return "CREATE TABLE " + PlaylistSongsTableHelper.TABLE_NAME + " ("
+                + PlaylistSongsTableHelper.ID + " INTEGER NOT NULL PRIMARY KEY,"
+                + PlaylistSongsTableHelper.PLAYLIST_ID + " INTEGER NOT NULL,"
+                + PlaylistSongsTableHelper.SONG_ID + " INTEGER NOT NULL);";
+    }
+
+    private static String sqlForCreateSongsTable() {
+        return "CREATE TABLE " + SongsTableHelper.TABLE_NAME + " ("
+                + SongsTableHelper.ID + " INTEGER NOT NULL PRIMARY KEY,"
+                + SongsTableHelper.ALBUM_ID + " INTEGER NOT NULL,"
+                + SongsTableHelper.ARTIST + " TEXT NOT NULL,"
+                + SongsTableHelper.TITLE + " TEXT NOT NULL,"
+                + SongsTableHelper.DISPLAY_NAME + " TEXT NOT NULL,"
+                + SongsTableHelper.DURATION + " TEXT NOT NULL,"
+                + SongsTableHelper.PATH + " TEXT NOT NULL);";
     }
 }

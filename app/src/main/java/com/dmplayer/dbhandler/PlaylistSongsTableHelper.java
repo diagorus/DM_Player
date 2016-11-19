@@ -7,29 +7,29 @@ import android.database.sqlite.SQLiteStatement;
 import android.util.Log;
 
 import com.dmplayer.DMPlayerApplication;
-import com.dmplayer.models.Playlist;
 
-public class PlaylistTableHelper {
-    public static final String TABLE_NAME = "Local_Playlists";
+public class PlaylistSongsTableHelper {
+    public static final String TABLE_NAME = "Local_PlaylistSongs";
 
     public static final String ID = "_id";
-    public static final String NAME = "name";
+    public static final String PLAYLIST_ID = "playlist_id";
+    public static final String SONG_ID = "song_id";
 
-    private static final String TAG = PlaylistTableHelper.class.getSimpleName();
+    private static final String TAG = PlaylistSongsTableHelper.class.getSimpleName();
 
     private DMPLayerDBHelper dbHelper;
     private SQLiteDatabase db;
 
-    private static PlaylistTableHelper instance;
+    private static PlaylistSongsTableHelper instance;
 
-    public static synchronized PlaylistTableHelper getInstance(Context context) {
+    public static synchronized PlaylistSongsTableHelper getInstance(Context context) {
         if (instance == null) {
-            instance = new PlaylistTableHelper(context);
+            instance = new PlaylistSongsTableHelper(context);
         }
         return instance;
     }
 
-    private PlaylistTableHelper(Context context) {
+    private PlaylistSongsTableHelper(Context context) {
         if (dbHelper == null) {
             dbHelper = ((DMPlayerApplication) context.getApplicationContext()).DB_HELPER;
         }
@@ -41,7 +41,7 @@ public class PlaylistTableHelper {
         }
     }
 
-    public void insertPlaylist(Playlist playlist) {
+    public void addSongToPlaylist(int playlistId, int songId) {
         try {
             db = dbHelper.getDB();
             db.beginTransaction();
@@ -50,14 +50,12 @@ public class PlaylistTableHelper {
             SQLiteStatement insert = db.compileStatement(sql);
 
             try {
-                if (playlist != null) {
-                    insert.clearBindings();
+                insert.clearBindings();
 
-                    insert.bindLong(1, playlist.getId());
-                    insert.bindString(2, playlist.getName());
+                insert.bindLong(1, playlistId);
+                insert.bindLong(2, songId);
 
-                    insert.execute();
-                }
+                insert.execute();
             } catch (Exception e) {
                 Log.e(TAG, "Inserting error:", e);
             }
@@ -67,18 +65,5 @@ public class PlaylistTableHelper {
         } finally {
             db.endTransaction();
         }
-    }
-
-    public Cursor getPlaylists() {
-        Cursor cursor = null;
-        try {
-            String sqlQuery = "SELECT * FROM " + TABLE_NAME;
-            db = dbHelper.getDB();
-            cursor = db.rawQuery(sqlQuery, null);
-        } catch (Exception e) {
-            closeCursor(cursor);
-            Log.e(TAG, "Sql execution exception:", e);
-        }
-        return cursor;
     }
 }

@@ -226,16 +226,16 @@ public class PhoneMediaControl {
         try {
             if (cursor != null && cursor.getCount() >= 1) {
                 while (cursor.moveToNext()) {
-                    long ID = cursor.getLong(cursor.getColumnIndex(FavoritePlayTableHelper.ID));
-                    long album_id = cursor.getLong(cursor.getColumnIndex(FavoritePlayTableHelper.ALBUM_ID));
-                    String ARTIST = cursor.getString(cursor.getColumnIndex(FavoritePlayTableHelper.ARTIST));
-                    String TITLE = cursor.getString(cursor.getColumnIndex(FavoritePlayTableHelper.TITLE));
-                    String DISPLAY_NAME = cursor.getString(cursor.getColumnIndex(FavoritePlayTableHelper.DISPLAY_NAME));
-                    String DURATION = cursor.getString(cursor.getColumnIndex(FavoritePlayTableHelper.DURATION));
-                    String Path = cursor.getString(cursor.getColumnIndex(FavoritePlayTableHelper.PATH));
+                    long id = cursor.getLong(cursor.getColumnIndex(FavoritePlayTableHelper.ID));
+                    long albumId = cursor.getLong(cursor.getColumnIndex(FavoritePlayTableHelper.ALBUM_ID));
+                    String artist = cursor.getString(cursor.getColumnIndex(FavoritePlayTableHelper.ARTIST));
+                    String title = cursor.getString(cursor.getColumnIndex(FavoritePlayTableHelper.TITLE));
+                    String displayName = cursor.getString(cursor.getColumnIndex(FavoritePlayTableHelper.DISPLAY_NAME));
+                    String duration = cursor.getString(cursor.getColumnIndex(FavoritePlayTableHelper.DURATION));
+                    String path = cursor.getString(cursor.getColumnIndex(FavoritePlayTableHelper.PATH));
 
-                    SongDetail mSongDetail = new SongDetail((int) ID, (int) album_id, ARTIST,
-                            TITLE, Path, DISPLAY_NAME, "" + (Long.parseLong(DURATION) * 1000));
+                    SongDetail mSongDetail = new SongDetail((int) id, (int) albumId, artist,
+                            title, path, displayName, "" + (Long.parseLong(duration) * 1000));
                     songList.add(mSongDetail);
                 }
             }

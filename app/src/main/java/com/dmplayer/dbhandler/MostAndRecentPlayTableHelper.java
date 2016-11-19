@@ -11,8 +11,7 @@ import com.dmplayer.DMPlayerApplication;
 import com.dmplayer.models.SongDetail;
 
 public class MostAndRecentPlayTableHelper {
-
-    public static final String TABLENAME = "MostPlay";
+    public static final String TABLE_NAME = "MostPlay";
 
     public static final String ID = "_id";
     public static final String ALBUM_ID = "album_id";
@@ -21,28 +20,26 @@ public class MostAndRecentPlayTableHelper {
     public static final String DISPLAY_NAME = "display_name";
     public static final String DURATION = "duration";
     public static final String PATH = "path";
-    public static final String AUDIO_PROGRESS = "audioProgress";
-    public static final String AUDIO_PROGRESS_SEC = "audioProgressSec";
-    public static final String LastPlayTime = "lastplaytime";
-    public static final String PLAY_COUNT = "playcount";
+    public static final String AUDIO_PROGRESS = "audio_progress";
+    public static final String AUDIO_PROGRESS_SEC = "audio_progress_sec";
+    public static final String LAST_PLAY_TIME = "last_play_time";
+    public static final String PLAY_COUNT = "play_count";
 
+    public static final String TAG = MostAndRecentPlayTableHelper.class.getSimpleName();
 
-    private static DMPLayerDBHelper dbHelper = null;
-    private static MostAndRecentPlayTableHelper mInstance;
-    private SQLiteDatabase sampleDB;
+    private DMPLayerDBHelper dbHelper;
+    private SQLiteDatabase db;
 
+    private static MostAndRecentPlayTableHelper instance;
 
     public static synchronized MostAndRecentPlayTableHelper getInstance(Context context) {
-        if (mInstance == null) {
-            mInstance = new MostAndRecentPlayTableHelper(context);
+        if (instance == null) {
+            instance = new MostAndRecentPlayTableHelper(context);
         }
-        return mInstance;
+        return instance;
     }
 
-    public Context context;
-
-    private MostAndRecentPlayTableHelper(Context context_) {
-        this.context = context_;
+    private MostAndRecentPlayTableHelper(Context context) {
         if (dbHelper == null) {
             dbHelper = ((DMPlayerApplication) context.getApplicationContext()).DB_HELPER;
         }
@@ -54,11 +51,11 @@ public class MostAndRecentPlayTableHelper {
                 return;
             }
 
-            sampleDB = dbHelper.getDB();
-            sampleDB.beginTransaction();
+            db = dbHelper.getDB();
+            db.beginTransaction();
 
-            String sql = "Insert or Replace into " + TABLENAME + " values(?,?,?,?,?,?,?,?,?,?,?);";
-            SQLiteStatement insert = sampleDB.compileStatement(sql);
+            String sql = "Insert or Replace into " + TABLE_NAME + " values(?,?,?,?,?,?,?,?,?,?,?);";
+            SQLiteStatement insert = db.compileStatement(sql);
 
             try {
                 insert.clearBindings();
@@ -78,12 +75,12 @@ public class MostAndRecentPlayTableHelper {
             } catch (Exception e) {
                 e.printStackTrace();
             }
-            sampleDB.setTransactionSuccessful();
+            db.setTransactionSuccessful();
 
         } catch (Exception e) {
             Log.e("XML:", e.toString());
         } finally {
-            sampleDB.endTransaction();
+            db.endTransaction();
         }
     }
 
@@ -92,9 +89,9 @@ public class MostAndRecentPlayTableHelper {
         Cursor mCursor = null;
         boolean isExist = false;
         try {
-            String sqlQuery = "select * from " + TABLENAME + " where " + ID + "=" + id;
-            sampleDB = dbHelper.getDB();
-            mCursor = sampleDB.rawQuery(sqlQuery, null);
+            String sqlQuery = "select * from " + TABLE_NAME + " where " + ID + "=" + id;
+            db = dbHelper.getDB();
+            mCursor = db.rawQuery(sqlQuery, null);
             if (mCursor != null && mCursor.getCount() >= 1) {
                 mCursor.moveToNext();
                 long count = mCursor.getLong(mCursor.getColumnIndex(PLAY_COUNT));
@@ -114,7 +111,7 @@ public class MostAndRecentPlayTableHelper {
         try {
             ContentValues values = new ContentValues();
             values.put(PLAY_COUNT, count);
-            long success = sampleDB.update(TABLENAME, values, ID + "=?", new String[]{String.valueOf(musicid)});
+            long success = db.update(TABLE_NAME, values, ID + "=?", new String[]{String.valueOf(musicid)});
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -129,9 +126,9 @@ public class MostAndRecentPlayTableHelper {
     public Cursor getMostPlay() {
         Cursor mCursor = null;
         try {
-            String sqlQuery = "SELECT * FROM " + TABLENAME + " WHERE " + PLAY_COUNT + ">=2 ORDER BY " + LastPlayTime + " ASC LIMIT 20";
-            sampleDB = dbHelper.getDB();
-            mCursor = sampleDB.rawQuery(sqlQuery, null);
+            String sqlQuery = "SELECT * FROM " + TABLE_NAME + " WHERE " + PLAY_COUNT + ">=2 ORDER BY " + LAST_PLAY_TIME + " ASC LIMIT 20";
+            db = dbHelper.getDB();
+            mCursor = db.rawQuery(sqlQuery, null);
         } catch (Exception e) {
             closeCursor(mCursor);
             e.printStackTrace();
