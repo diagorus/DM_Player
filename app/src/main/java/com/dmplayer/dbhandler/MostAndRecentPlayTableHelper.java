@@ -11,7 +11,7 @@ import com.dmplayer.DMPlayerApplication;
 import com.dmplayer.models.SongDetail;
 
 public class MostAndRecentPlayTableHelper {
-    public static final String TABLE_NAME = "MostPlay";
+    public static final String TABLE_NAME = "MostAndRecent";
 
     public static final String ID = "_id";
     public static final String ALBUM_ID = "album_id";
