@@ -28,9 +28,9 @@ import com.dmplayer.R;
 import com.dmplayer.butterknifeabstraction.BaseDialogFragment;
 import com.dmplayer.externalprofilelayout.ExternalProfileLayout;
 import com.dmplayer.fragments.FragmentSettings;
-import com.dmplayer.phonemedia.DMPlayerUtility;
 import com.dmplayer.presenters.VkProfilePresenter;
 import com.dmplayer.uicomponent.CircleImageView;
+import com.dmplayer.utility.DMPlayerUtility;
 import com.vk.sdk.VKAccessToken;
 import com.vk.sdk.VKCallback;
 import com.vk.sdk.VKSdk;
@@ -49,7 +49,7 @@ public class ProfileDialog extends BaseDialogFragment {
     public static final String AVATAR_TEMP_FILE_PATH = PHOTO_DIR_PATH + "/photo_avatar_temp.jpg";
     public static final String AVATAR_VK_FILE_PATH = PHOTO_DIR_PATH + "/vk_photo.jpg";
 
-    private String TAG = "ProfileDialog_Error";
+    private static final String TAG = ProfileDialog.class.getSimpleName();
 
     @BindView(R.id.button_ok)
     Button buttonOk;
@@ -62,9 +62,7 @@ public class ProfileDialog extends BaseDialogFragment {
     @BindView(R.id.vk_profile_view)
     ExternalProfileLayout vkProfileView;
 
-    VkProfilePresenter vkProfilePresenter;
-
-
+    private VkProfilePresenter vkProfilePresenter;
 
     private SharedPreferences sharedPreferences;
     private Uri photoFromGallery;

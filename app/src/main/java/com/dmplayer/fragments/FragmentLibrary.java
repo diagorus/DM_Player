@@ -100,20 +100,7 @@ public class FragmentLibrary extends BaseFragment {
         expandableManager.register(expandableVk);
     }
 
-    @OnClick({R.id.local_playlists, R.id.default_playlists, R.id.vk_playlists})
-    public void changeExpandableState(RelativeLayout v) {
-        try {
-            ExpandableLayout expandable = (ExpandableLayout) v.getParent();
 
-            if(expandable.isExpanded()) {
-                expandable.collapse();
-            } else {
-                expandable.expand();
-            }
-        } catch (ClassCastException e) {
-            Log.e(TAG, "Unable to cast to ExpandableLayout", e);
-        }
-    }
 
     private void checkVkLogged() {
         VkProfileHelper vkHelper = new VkProfileHelper.Builder(getActivity()).build();
@@ -229,6 +216,33 @@ public class FragmentLibrary extends BaseFragment {
                 expandableVk.addContent(itemView);
             }
         }
+    }
+
+    @OnClick({R.id.local_playlists, R.id.default_playlists, R.id.vk_playlists})
+    public void changeExpandableState(RelativeLayout v) {
+        try {
+            ExpandableLayout expandable = (ExpandableLayout) v.getParent();
+
+            if(expandable.isExpanded()) {
+                expandable.collapse();
+            } else {
+                expandable.expand();
+            }
+        } catch (ClassCastException e) {
+            Log.e(TAG, "Unable to cast to ExpandableLayout", e);
+        }
+    }
+
+    @OnClick(R.id.button_add_local_playlist)
+    public void showMusicChooserFragment() {
+        FragmentManager fm = getFragmentManager();
+
+        FragmentMusicChooser f = new FragmentMusicChooser();
+
+        fm.beginTransaction()
+                .replace(R.id.fragment, f)
+                .addToBackStack(null)
+                .commit();
     }
 
     private void replaceFragmentToPlaylist(DefaultPlaylistCategorySingle category, String name) {

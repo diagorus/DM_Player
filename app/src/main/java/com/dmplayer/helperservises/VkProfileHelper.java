@@ -14,7 +14,7 @@ import com.dmplayer.models.VkObjects.VkAlbumsResponse.VkAlbumsWrapper;
 import com.dmplayer.models.VkObjects.VkProfileUserDataResponse.VkUserData;
 import com.dmplayer.models.VkObjects.VkProfileUserDataResponse.VkUserDataCollection;
 import com.dmplayer.models.VkProfileModel;
-import com.dmplayer.phonemedia.DMPlayerUtility;
+import com.dmplayer.utility.DMPlayerUtility;
 
 import java.io.IOException;
 

@@ -27,7 +27,7 @@ import com.dmplayer.dialogs.ProfileDialog;
 import com.dmplayer.dialogs.ThemeDialog;
 import com.dmplayer.models.Playlist;
 import com.dmplayer.models.SongDetail;
-import com.dmplayer.phonemedia.DMPlayerUtility;
+import com.dmplayer.utility.DMPlayerUtility;
 import com.dmplayer.utility.LogWriter;
 
 import java.io.File;
@@ -201,7 +201,7 @@ public class FragmentSettings extends Fragment implements View.OnClickListener {
                 break;
 
             case PICKER_REQUEST:
-                if(resultCode==Activity.RESULT_OK){
+                if(resultCode == Activity.RESULT_OK){
                     try {
                         songList = (ArrayList<SongDetail>) returnedIntent.getExtras()
                                 .getSerializable("songs");
@@ -234,8 +234,7 @@ public class FragmentSettings extends Fragment implements View.OnClickListener {
             }
 
             @Override
-            public void onRefuse() {
-            }
+            public void onRefuse() {}
         });
         dialog.show(fragmentManager, "fragment_theme");
     }

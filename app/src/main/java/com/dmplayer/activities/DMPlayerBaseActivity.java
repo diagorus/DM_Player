@@ -48,13 +48,13 @@ import com.dmplayer.manager.MusicPreferance;
 import com.dmplayer.manager.NotificationManager;
 import com.dmplayer.models.DrawerItem;
 import com.dmplayer.models.SongDetail;
-import com.dmplayer.phonemedia.DMPlayerUtility;
 import com.dmplayer.recyclerviewutils.ItemClickSupport;
 import com.dmplayer.slidinguppanelhelper.SlidingUpPanelLayout;
 import com.dmplayer.uicomponent.CircleImageView;
 import com.dmplayer.uicomponent.PlayPauseView;
 import com.dmplayer.uicomponent.Slider;
 import com.dmplayer.utility.AssetsCopier;
+import com.dmplayer.utility.DMPlayerUtility;
 import com.dmplayer.utility.LogWriter;
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.ImageLoader;
@@ -269,7 +269,7 @@ public class DMPlayerBaseActivity extends AppCompatActivity implements View.OnCl
     }
 
     public void toolbarStatusBar() {
-        toolbar = (Toolbar) findViewById(R.id.toolbar);
+        toolbar = (Toolbar) findViewById(R.id.toolbar_actionbar);
         setSupportActionBar(toolbar);
     }
 
@@ -630,13 +630,10 @@ public class DMPlayerBaseActivity extends AppCompatActivity implements View.OnCl
     private void setUserName() {
         TextView nameText = (TextView) findViewById(R.id.profileName);
 
-        String name = sharedPreferences.getString(FragmentSettings.NAME, "");
+        String name = sharedPreferences.getString(FragmentSettings.NAME,
+                getResources().getString(R.string.profile_defult_name));
 
-        if (!name.equals("")) {
-            nameText.setText(name);
-        } else {
-            nameText.setText(R.string.profile_defult_name);
-        }
+        nameText.setText(name);
     }
 
     private void loadImageLoaderOption() {

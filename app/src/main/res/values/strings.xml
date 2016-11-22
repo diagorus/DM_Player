@@ -4,7 +4,7 @@
     <string name="app_name">DM_Player</string>
 
     <!-- DataBase Name And Version -->
-    <string name="DataBaseName_Version">1</string>
+    <string name="DataBaseName_Version">2</string>
     <string name="DataBaseName">DMPlayer</string>
 
     <integer name="com_vk_sdk_AppId">5573236</integer>
@@ -54,8 +54,6 @@
         <item>@drawable/ic_settings</item>
     </array>
 
-    <!-- TODO: Remove or change this placeholder text -->
-
     <string name="profile_defult_name">Anonymous</string>
 
     <string name="loading_message">Loading…</string>
@@ -79,9 +77,13 @@
     <string name="theme_card_text_pink">Pink</string>
     <string name="theme_card_text_indigo">Indigo</string>
     <string name="theme_card_text_brown">Brown</string>
-    <string name="theme_card_text_bluegrey">Blue grey</string>
+    <string name="theme_card_text_blue_grey">Blue grey</string>
     <string name="theme_card_text_falcon">Falcon</string>
-    <string name="theme_card_text_lightblue">Light Blue</string>
+    <string name="theme_card_text_light_blue">Light Blue</string>
     <string name="disagree">DISAGREE</string>
     <string name="agree">AGREE</string>
+    <string name="add">add</string>
+    <string name="new_playlist_name">Playlist</string>
+    <string name="new_playlist_invitation">Enter playlist name:</string>
+    <string name="new_playlist_title">Creating playlists</string>
 </resources>

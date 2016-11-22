@@ -23,7 +23,7 @@ import com.dmplayer.DMPlayerApplication;
 import com.dmplayer.dbhandler.FavoritePlayTableHelper;
 import com.dmplayer.dbhandler.MostAndRecentPlayTableHelper;
 import com.dmplayer.models.SongDetail;
-import com.dmplayer.phonemedia.DMPlayerUtility;
+import com.dmplayer.utility.DMPlayerUtility;
 
 import java.io.File;
 import java.util.List;
@@ -366,8 +366,7 @@ public class MediaController implements NotificationManager.NotificationCenterDe
                 audioTrackPlayer.pause();
                 audioTrackPlayer.flush();
             }
-        } catch (Exception e) {
-        }
+        } catch (Exception e) {}
         try {
             if (audioPlayer != null) {
                 audioPlayer.release();
@@ -378,8 +377,7 @@ public class MediaController implements NotificationManager.NotificationCenterDe
                     audioTrackPlayer = null;
                 }
             }
-        } catch (Exception e) {
-        }
+        } catch (Exception e) {}
         stopProgressTimer();
         isPaused = false;
 

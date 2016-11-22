@@ -30,9 +30,9 @@ import com.dmplayer.R;
 import com.dmplayer.activities.PlaylistActivity;
 import com.dmplayer.models.Genre;
 import com.dmplayer.models.SongDetail;
-import com.dmplayer.phonemedia.DMPlayerUtility;
 import com.dmplayer.phonemedia.MusicAlphabetIndexer;
 import com.dmplayer.phonemedia.PhoneMediaControl;
+import com.dmplayer.utility.DMPlayerUtility;
 
 import java.util.ArrayList;
 import java.util.List;

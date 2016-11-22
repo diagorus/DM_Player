@@ -16,7 +16,6 @@ import com.dmplayer.models.SongDetail;
 import com.dmplayer.models.playlisitems.DefaultPlaylistCategorySeveral;
 import com.dmplayer.models.playlisitems.DefaultPlaylistCategorySingle;
 import com.dmplayer.models.playlisitems.DefaultPlaylistItemInSeveral;
-import com.dmplayer.phonemedia.DMPlayerUtility;
 import com.dmplayer.phonemedia.PhoneMediaControl;
 
 import java.util.ArrayList;

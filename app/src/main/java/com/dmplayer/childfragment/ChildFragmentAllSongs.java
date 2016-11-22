@@ -25,9 +25,9 @@ import com.dmplayer.R;
 import com.dmplayer.activities.DMPlayerBaseActivity;
 import com.dmplayer.manager.MediaController;
 import com.dmplayer.models.SongDetail;
-import com.dmplayer.phonemedia.DMPlayerUtility;
 import com.dmplayer.phonemedia.PhoneMediaControl;
 import com.dmplayer.phonemedia.PhoneMediaControl.PhoneMediaControlInterface;
+import com.dmplayer.utility.DMPlayerUtility;
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.ImageLoader;
 
@@ -113,10 +113,10 @@ public class ChildFragmentAllSongs extends Fragment {
             if (convertView == null) {
                 mViewHolder = new ViewHolder();
                 convertView = layoutInflater.inflate(R.layout.item_song, null);
-                mViewHolder.songName = (TextView) convertView.findViewById(R.id.inflate_allsong_textsongname);
-                mViewHolder.artistAndDuration = (TextView) convertView.findViewById(R.id.inflate_allsong_textsongArtisName_duration);
-                mViewHolder.songImage = (ImageView) convertView.findViewById(R.id.inflate_allsong_imgSongThumb);
-                mViewHolder.menuImage = (ImageView) convertView.findViewById(R.id.img_moreicon);
+                mViewHolder.songName = (TextView) convertView.findViewById(R.id.song_name);
+                mViewHolder.artistAndDuration = (TextView) convertView.findViewById(R.id.song_details);
+                mViewHolder.songImage = (ImageView) convertView.findViewById(R.id.song_icon_art);
+                mViewHolder.menuImage = (ImageView) convertView.findViewById(R.id.song_icon_option_more);
                 convertView.setTag(mViewHolder);
             } else {
                 mViewHolder = (ViewHolder) convertView.getTag();

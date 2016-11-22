@@ -5,6 +5,6 @@
         android:id="@+id/cab_add"
         android:icon="@android:drawable/ic_menu_add"
         android:orderInCategory="1"
-        app:showAsAction="ifRoom"
-        android:title="add"/>
+        android:title="@string/add"
+        app:showAsAction="ifRoom"/>
 </menu>

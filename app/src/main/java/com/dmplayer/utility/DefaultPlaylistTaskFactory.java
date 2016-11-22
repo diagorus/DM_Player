@@ -22,7 +22,6 @@ public final class DefaultPlaylistTaskFactory {
         this.listener = listener;
     }
 
-    //TODO: move handling some of phonemediacontrol exceptions here
     public AsyncTask<Void, Void, AsyncTaskResult<Playlist>> getLoadPlaylistTask(DefaultPlaylistCategorySingle category,
                                                                       final int id, final String name) {
         switch (category) {

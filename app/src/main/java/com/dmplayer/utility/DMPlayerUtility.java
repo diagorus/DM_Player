@@ -3,7 +3,7 @@
  * You should have received a copy of the license in this archive (see LICENSE).
  * Copyright @Dibakar_Mistry, 2015.
  */
-package com.dmplayer.phonemedia;
+package com.dmplayer.utility;
 
 import android.app.Activity;
 import android.content.ContentResolver;
@@ -217,7 +217,8 @@ public final class DMPlayerUtility {
         long minutes = (totalSecs % 3600) / 60;
         long seconds = totalSecs % 60;
 
-        String duration = "";
+        //TODO: resolve this using string resource
+        String duration;
         if (hours != 0) {
             duration = String.format("%02d:%02d:%02d", hours, minutes, seconds);
         } else {

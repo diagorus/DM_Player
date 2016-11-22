@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:materialdesign="http://schemas.android.com/apk/res-auto"
     xmlns:playpauseview="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -25,10 +24,10 @@
                 android:layout_centerVertical="true"
                 android:paddingLeft="4dp"
                 android:paddingRight="4dp"
-                android:singleLine="true"
                 android:text="03.45"
                 android:textColor="@android:color/white"
-                android:textSize="14sp" />
+                android:textSize="14sp"
+                android:maxLines="1" />
 
             <com.dmplayer.uicomponent.Slider
                 android:id="@+id/audio_progress_control"
@@ -40,7 +39,6 @@
                 android:background="#1E88E5"
                 app:max="100"
                 app:min="0" />
-
             <TextView
                 android:id="@+id/slidepanel_time_total"
                 android:layout_width="wrap_content"
@@ -49,13 +47,12 @@
                 android:layout_centerVertical="true"
                 android:paddingLeft="4dp"
                 android:paddingRight="4dp"
-                android:singleLine="true"
                 android:text="03.45"
                 android:textColor="@android:color/white"
-                android:textSize="14sp" />
+                android:textSize="14sp"
+                android:maxLines="1" />
         </RelativeLayout>
     </LinearLayout>
-
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -71,7 +68,6 @@
             android:paddingBottom="15dp"
             android:paddingTop="15dp"
             android:src="@drawable/ic_shuffle_dark" />
-
         <ImageView
             android:id="@+id/btn_backward"
             android:layout_width="0dp"
@@ -82,7 +78,6 @@
             android:paddingBottom="15dp"
             android:paddingTop="15dp"
             android:src="@drawable/ic_rew_dark" />
-
         <RelativeLayout
             android:layout_width="0dp"
             android:layout_height="match_parent"
@@ -98,7 +93,6 @@
                 android:foreground="?android:selectableItemBackground"
                 playpauseview:isCircleDraw="true" />
         </RelativeLayout>
-
         <ImageView
             android:id="@+id/btn_forward"
             android:layout_width="0dp"
@@ -109,7 +103,6 @@
             android:paddingBottom="15dp"
             android:paddingTop="15dp"
             android:src="@drawable/ic_fwd_dark" />
-
         <ImageView
             android:id="@+id/btn_toggle"
             android:layout_width="0dp"
