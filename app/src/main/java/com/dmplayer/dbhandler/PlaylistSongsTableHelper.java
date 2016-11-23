@@ -7,9 +7,11 @@ import android.database.sqlite.SQLiteStatement;
 import android.util.Log;
 
 import com.dmplayer.DMPlayerApplication;
+import com.dmplayer.models.Playlist;
+import com.dmplayer.models.SongDetail;
 
 public class PlaylistSongsTableHelper {
-    public static final String TABLE_NAME = "Local_PlaylistSongs";
+    public static final String TABLE_NAME = "local_playlist_and_song";
 
     public static final String ID = "_id";
     public static final String PLAYLIST_ID = "playlist_id";
@@ -41,23 +43,24 @@ public class PlaylistSongsTableHelper {
         }
     }
 
-    public void addSongToPlaylist(int playlistId, int songId) {
+    public void insertPlaylistSongs(Playlist playlist) {
         try {
             db = dbHelper.getDB();
             db.beginTransaction();
 
             String sql = "INSERT OR REPLACE INTO " + TABLE_NAME + " VALUES (?,?);";
             SQLiteStatement insert = db.compileStatement(sql);
+            for (SongDetail song : playlist.getSongs()) {
+                try {
+                    insert.clearBindings();
 
-            try {
-                insert.clearBindings();
+                    insert.bindLong(1, playlist.getId());
+                    insert.bindLong(2, song.getId());
 
-                insert.bindLong(1, playlistId);
-                insert.bindLong(2, songId);
-
-                insert.execute();
-            } catch (Exception e) {
-                Log.e(TAG, "Inserting error:", e);
+                    insert.execute();
+                } catch (Exception e) {
+                    Log.e(TAG, "Inserting error:", e);
+                }
             }
             db.setTransactionSuccessful();
         } catch (Exception e) {

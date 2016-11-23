@@ -10,7 +10,7 @@ import com.dmplayer.DMPlayerApplication;
 import com.dmplayer.models.Playlist;
 
 public class PlaylistTableHelper {
-    public static final String TABLE_NAME = "Local_Playlists";
+    public static final String TABLE_NAME = "local_playlist";
 
     public static final String ID = "_id";
     public static final String NAME = "name";

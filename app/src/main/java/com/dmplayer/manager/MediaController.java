@@ -571,7 +571,7 @@ public class MediaController implements NotificationManager.NotificationCenterDe
             @Override
             protected Void doInBackground(Void... voids) {
                 try {
-                    isFavorite = FavoritePlayTableHelper.getInstance(context).getIsFavorite(mDetail);
+                    isFavorite = FavoritePlayTableHelper.getInstance(context).isSongFavorite(mDetail);
                 } catch (Exception e) {
                     e.printStackTrace();
                 }

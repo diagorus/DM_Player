@@ -82,9 +82,6 @@ public class DMPLayerDBHelper extends SQLiteOpenHelper {
                 + MostAndRecentPlayTableHelper.DISPLAY_NAME + " TEXT NOT NULL,"
                 + MostAndRecentPlayTableHelper.DURATION + " TEXT NOT NULL,"
                 + MostAndRecentPlayTableHelper.PATH + " TEXT NOT NULL,"
-                + MostAndRecentPlayTableHelper.AUDIO_PROGRESS + " TEXT NOT NULL,"
-                + MostAndRecentPlayTableHelper.AUDIO_PROGRESS_SEC + " INTEGER NOT NULL,"
-                + MostAndRecentPlayTableHelper.LAST_PLAY_TIME + " TEXT NOT NULL,"
                 + MostAndRecentPlayTableHelper.PLAY_COUNT + " INTEGER NOT NULL);";
     }
 
@@ -97,9 +94,6 @@ public class DMPLayerDBHelper extends SQLiteOpenHelper {
                 + FavoritePlayTableHelper.DISPLAY_NAME + " TEXT NOT NULL,"
                 + FavoritePlayTableHelper.DURATION + " TEXT NOT NULL,"
                 + FavoritePlayTableHelper.PATH + " TEXT NOT NULL,"
-                + FavoritePlayTableHelper.AUDIO_PROGRESS + " TEXT NOT NULL,"
-                + FavoritePlayTableHelper.AUDIO_PROGRESS_SEC + " INTEGER NOT NULL,"
-                + FavoritePlayTableHelper.LAST_PLAY_TIME + " TEXT NOT NULL,"
                 + FavoritePlayTableHelper.IS_FAVORITE + " INTEGER NOT NULL);";
     }
 

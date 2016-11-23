@@ -3,6 +3,7 @@ package com.dmplayer.fragments;
 import android.app.FragmentManager;
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.util.SparseBooleanArray;
@@ -22,6 +23,8 @@ import android.widget.TextView;
 import com.dmplayer.R;
 import com.dmplayer.asynctask.TaskStateListener;
 import com.dmplayer.butterknifeabstraction.BaseFragment;
+import com.dmplayer.dbhandler.PlaylistSongsTableHelper;
+import com.dmplayer.dbhandler.SongsTableHelper;
 import com.dmplayer.dialogs.InputDialog;
 import com.dmplayer.dialogs.OnWorkDoneWithResult;
 import com.dmplayer.models.Playlist;
@@ -88,6 +91,27 @@ public class FragmentMusicChooser extends BaseFragment {
 
         DefaultPlaylistTaskFactory factory = new DefaultPlaylistTaskFactory(getActivity(), listener);
         factory.getLoadPlaylistTask(DefaultPlaylistCategorySingle.ALL_SONGS, -1, "All songs").execute();
+    }
+
+    public void storeSongs() {
+
+    }
+
+    public void storeLocalPlaylist(final Context context, final Playlist playlist) {
+        new AsyncTask<Void, Void, Void>() {
+
+            @Override
+            protected Void doInBackground(Void... params) {
+                try {
+                    SongsTableHelper.getInstance(context).
+                    PlaylistTableHelper.getInstance(context).insertPlaylist(playlist);
+                    PlaylistSongsTableHelper.getInstance(context).insertPlaylistSongs(playlist);
+                } catch (Exception e) {
+                    Log.e(TAG, "Error inserting playlist:", e);
+                }
+                return null;
+            }
+        }.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
     }
 
     class MusicChooserAdapter extends BaseAdapter {

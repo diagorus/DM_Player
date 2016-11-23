@@ -11,7 +11,7 @@ import com.dmplayer.DMPlayerApplication;
 import com.dmplayer.models.SongDetail;
 
 public class MostAndRecentPlayTableHelper {
-    public static final String TABLE_NAME = "MostAndRecent";
+    public static final String TABLE_NAME = "song_most_and_recent";
 
     public static final String ID = "_id";
     public static final String ALBUM_ID = "album_id";
@@ -20,12 +20,9 @@ public class MostAndRecentPlayTableHelper {
     public static final String DISPLAY_NAME = "display_name";
     public static final String DURATION = "duration";
     public static final String PATH = "path";
-    public static final String AUDIO_PROGRESS = "audio_progress";
-    public static final String AUDIO_PROGRESS_SEC = "audio_progress_sec";
-    public static final String LAST_PLAY_TIME = "last_play_time";
     public static final String PLAY_COUNT = "play_count";
 
-    public static final String TAG = MostAndRecentPlayTableHelper.class.getSimpleName();
+    private static final String TAG = MostAndRecentPlayTableHelper.class.getSimpleName();
 
     private DMPLayerDBHelper dbHelper;
     private SQLiteDatabase db;
@@ -54,22 +51,19 @@ public class MostAndRecentPlayTableHelper {
             db = dbHelper.getDB();
             db.beginTransaction();
 
-            String sql = "Insert or Replace into " + TABLE_NAME + " values(?,?,?,?,?,?,?,?,?,?,?);";
+            String sql = "INSERT OR REPLACE INTO " + TABLE_NAME + " VALUES (?,?,?,?,?,?,?,?);";
             SQLiteStatement insert = db.compileStatement(sql);
 
             try {
                 insert.clearBindings();
                 insert.bindLong(1, songDetail.getId());
-                insert.bindLong(2, songDetail.getAlbum_id());
+                insert.bindLong(2, songDetail.getAlbumId());
                 insert.bindString(3, songDetail.getArtist());
                 insert.bindString(4, songDetail.getTitle());
-                insert.bindString(5, songDetail.getDisplay_name());
+                insert.bindString(5, songDetail.getDisplayName());
                 insert.bindString(6, songDetail.getDuration());
                 insert.bindString(7, songDetail.getPath());
-                insert.bindString(8, songDetail.audioProgress + "");
-                insert.bindString(9, songDetail.audioProgressSec + "");
-                insert.bindString(10, System.currentTimeMillis() + "");
-                insert.bindLong(11, 1);
+                insert.bindLong(8, 1); //play count for the first time
 
                 insert.execute();
             } catch (Exception e) {
@@ -78,42 +72,55 @@ public class MostAndRecentPlayTableHelper {
             db.setTransactionSuccessful();
 
         } catch (Exception e) {
-            Log.e("XML:", e.toString());
+            Log.e(TAG, "Error while inserting songs to most played table", e);
         } finally {
             db.endTransaction();
         }
     }
 
-
-    private boolean isSongExist(int id) {
+    public Cursor getMostPlayed() {
         Cursor mCursor = null;
-        boolean isExist = false;
         try {
-            String sqlQuery = "select * from " + TABLE_NAME + " where " + ID + "=" + id;
+            String sqlQuery = "SELECT * FROM " + TABLE_NAME + " WHERE " + PLAY_COUNT + ">=2 ORDER BY " + PLAY_COUNT + " ASC LIMIT 20";
             db = dbHelper.getDB();
             mCursor = db.rawQuery(sqlQuery, null);
-            if (mCursor != null && mCursor.getCount() >= 1) {
-                mCursor.moveToNext();
-                long count = mCursor.getLong(mCursor.getColumnIndex(PLAY_COUNT));
+        } catch (Exception e) {
+            Log.e(TAG, "Error while getting most played songs", e);
+        }
+        return mCursor;
+    }
+
+    private boolean isSongExist(int id) {
+        Cursor cursor = null;
+        boolean isExist = false;
+        try {
+            db = dbHelper.getDB();
+
+            String sqlQuery = "SELECT * FROM " + TABLE_NAME + " WHERE " + ID + "=?";
+            cursor = db.rawQuery(sqlQuery, new String[] {String.valueOf(id)});
+
+            if (cursor != null && cursor.getCount() >= 1) {
+                cursor.moveToNext();
+                long count = cursor.getLong(cursor.getColumnIndex(PLAY_COUNT));
                 count++;
                 updateStatus(count, id);
                 isExist = true;
             }
-            closeCursor(mCursor);
         } catch (Exception e) {
-            closeCursor(mCursor);
-            e.printStackTrace();
+            Log.e(TAG, "Error checking if song exists", e);
+        } finally {
+            closeCursor(cursor);
         }
         return isExist;
     }
 
-    private void updateStatus(long count, int musicid) {
+    private void updateStatus(long count, int musicId) {
         try {
             ContentValues values = new ContentValues();
             values.put(PLAY_COUNT, count);
-            long success = db.update(TABLE_NAME, values, ID + "=?", new String[]{String.valueOf(musicid)});
+            db.update(TABLE_NAME, values, ID + "=?", new String[] {String.valueOf(musicId)});
         } catch (Exception e) {
-            e.printStackTrace();
+            Log.e(TAG, "Error while updating status", e);
         }
     }
 
@@ -121,18 +128,5 @@ public class MostAndRecentPlayTableHelper {
         if (cursor != null) {
             cursor.close();
         }
-    }
-
-    public Cursor getMostPlay() {
-        Cursor mCursor = null;
-        try {
-            String sqlQuery = "SELECT * FROM " + TABLE_NAME + " WHERE " + PLAY_COUNT + ">=2 ORDER BY " + LAST_PLAY_TIME + " ASC LIMIT 20";
-            db = dbHelper.getDB();
-            mCursor = db.rawQuery(sqlQuery, null);
-        } catch (Exception e) {
-            closeCursor(mCursor);
-            e.printStackTrace();
-        }
-        return mCursor;
     }
 }

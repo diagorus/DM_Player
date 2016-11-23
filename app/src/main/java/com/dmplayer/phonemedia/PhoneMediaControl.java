@@ -144,7 +144,7 @@ public class PhoneMediaControl {
                 break;
 
             case MostPlay:
-                cursor = MostAndRecentPlayTableHelper.getInstance(context).getMostPlay();
+                cursor = MostAndRecentPlayTableHelper.getInstance(context).getMostPlayed();
                 songsList = getSongsFromSQLDBCursor(cursor);
                 break;
 

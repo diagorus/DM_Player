@@ -3,11 +3,15 @@ package com.dmplayer.dbhandler;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.database.sqlite.SQLiteStatement;
+import android.util.Log;
 
 import com.dmplayer.DMPlayerApplication;
+import com.dmplayer.models.Playlist;
+import com.dmplayer.models.SongDetail;
 
 public class SongsTableHelper {
-    public static final String TABLE_NAME = "Local_Songs";
+    public static final String TABLE_NAME = "local_song";
 
     public static final String ID = "_id";
     public static final String ALBUM_ID = "album_id";
@@ -37,10 +41,46 @@ public class SongsTableHelper {
         }
     }
 
+    public void insertSongs(Playlist playlist) {
+        try {
+            db = dbHelper.getDB();
+            db.beginTransaction();
+
+            String sql = "INSERT OR REPLACE INTO " + TABLE_NAME + " VALUES (?,?,?,?,?,?,?);";
+            SQLiteStatement insert = db.compileStatement(sql);
+
+            for (SongDetail song : playlist.getSongs()) {
+                try {
+                    if (song != null) {
+                        insert.clearBindings();
+                        insert.bindLong(1, song.getId());
+                        insert.bindLong(2, song.getAlbumId());
+                        insert.bindString(3, song.getArtist());
+                        insert.bindString(4, song.getTitle());
+                        insert.bindString(5, song.getDisplayName());
+                        insert.bindString(6, song.getDuration());
+                        insert.bindString(7, song.getPath());
+
+                        insert.execute();
+                    }
+                } catch (Exception e) {
+                    Log.e(TAG, "Inserting error:", e);
+                }
+            }
+
+            db.setTransactionSuccessful();
+
+        } catch (Exception e) {
+            Log.e("XML:", e.toString());
+        } finally {
+            db.endTransaction();
+        }
+    }
+
     public Cursor getSongsList() {
         Cursor cursor = null;
         try {
-            String sqlQuery = "Select * from " + TABLE_NAME;
+            String sqlQuery = "SELECT * FROM " + TABLE_NAME;
             db = dbHelper.getDB();
             cursor = db.rawQuery(sqlQuery, null);
         } catch (Exception e) {

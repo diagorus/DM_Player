@@ -10,7 +10,7 @@ import com.dmplayer.DMPlayerApplication;
 import com.dmplayer.models.SongDetail;
 
 public class FavoritePlayTableHelper {
-    public static final String TABLE_NAME = "Favourite";
+    public static final String TABLE_NAME = "song_favourite";
 
     public static final String ID = "_id";
     public static final String ALBUM_ID = "album_id";
@@ -19,10 +19,9 @@ public class FavoritePlayTableHelper {
     public static final String DISPLAY_NAME = "display_name";
     public static final String DURATION = "duration";
     public static final String PATH = "path";
-    public static final String AUDIO_PROGRESS = "audio_progress";
-    public static final String AUDIO_PROGRESS_SEC = "audio_progress_sec";
-    public static final String LAST_PLAY_TIME = "last_play_time";
     public static final String IS_FAVORITE = "is_favorite";
+
+    private static final String TAG = FavoritePlayTableHelper.class.getSimpleName();
 
     private DMPLayerDBHelper dbHelper;
     private SQLiteDatabase sampleDB;
@@ -36,82 +35,77 @@ public class FavoritePlayTableHelper {
         return instance;
     }
 
-    public FavoritePlayTableHelper(Context context) {
+    private FavoritePlayTableHelper(Context context) {
         if (dbHelper == null) {
             dbHelper = ((DMPlayerApplication) context.getApplicationContext()).DB_HELPER;
         }
     }
 
-    public void insertSong(SongDetail songDetail, int isFav) {
+    public void insertSong(SongDetail song, int isFav) {
         try {
             sampleDB = dbHelper.getDB();
             sampleDB.beginTransaction();
 
-            String sql = "Insert or Replace into " + TABLE_NAME + " values(?,?,?,?,?,?,?,?,?,?,?);";
+            String sql = "INSERT OR REPLACE INTO " + TABLE_NAME + " VALUES (?,?,?,?,?,?,?,?);";
             SQLiteStatement insert = sampleDB.compileStatement(sql);
 
             try {
-                if (songDetail != null) {
+                if (song != null) {
                     insert.clearBindings();
-                    insert.bindLong(1, songDetail.getId());
-                    insert.bindLong(2, songDetail.getAlbum_id());
-                    insert.bindString(3, songDetail.getArtist());
-                    insert.bindString(4, songDetail.getTitle());
-                    insert.bindString(5, songDetail.getDisplay_name());
-                    insert.bindString(6, songDetail.getDuration());
-                    insert.bindString(7, songDetail.getPath());
-                    insert.bindString(8, songDetail.audioProgress + "");
-                    insert.bindString(9, songDetail.audioProgressSec + "");
-                    insert.bindString(10, System.currentTimeMillis() + "");
-                    insert.bindLong(11, isFav);
+                    insert.bindLong(1, song.getId());
+                    insert.bindLong(2, song.getAlbumId());
+                    insert.bindString(3, song.getArtist());
+                    insert.bindString(4, song.getTitle());
+                    insert.bindString(5, song.getDisplayName());
+                    insert.bindString(6, song.getDuration());
+                    insert.bindString(7, song.getPath());
+                    insert.bindLong(8, isFav);
 
                     insert.execute();
                 }
             } catch (Exception e) {
-                e.printStackTrace();
+                Log.e(TAG, "Failed executing SQLiteStatement", e);
             }
             sampleDB.setTransactionSuccessful();
-
         } catch (Exception e) {
-            Log.e("XML:", e.toString());
+            Log.e(TAG, "Favourite song transaction failure", e);
         } finally {
             sampleDB.endTransaction();
-        }
-    }
-
-    private void closeCursor(Cursor cursor) {
-        if (cursor != null) {
-            cursor.close();
         }
     }
 
     public Cursor getFavoriteSongList() {
         Cursor cursor = null;
         try {
-            String sqlQuery = "Select * from " + TABLE_NAME + " where " + IS_FAVORITE + "=1";
+            String sqlQuery = "SELECT * FROM " + TABLE_NAME + " WHERE " + IS_FAVORITE + "=1";
             sampleDB = dbHelper.getDB();
             cursor = sampleDB.rawQuery(sqlQuery, null);
         } catch (Exception e) {
-            closeCursor(cursor);
-            e.printStackTrace();
+            Log.e(TAG, "Fail getting favourite song list", e);
         }
         return cursor;
     }
 
-    public boolean getIsFavorite(SongDetail mDetail) {
+    public boolean isSongFavorite(SongDetail song) {
         Cursor cursor = null;
         try {
-            String sqlQuery = "Select * from " + TABLE_NAME + " where " + ID + "=" + mDetail.getId() + " and " + IS_FAVORITE + "=1";
+            String sqlQuery = "SELECT * FROM " + TABLE_NAME + " WHERE " + ID + "=" + song.getId() + " AND " + IS_FAVORITE + "=1";
             sampleDB = dbHelper.getDB();
             cursor = sampleDB.rawQuery(sqlQuery, null);
             if (cursor != null && cursor.getCount() >= 1) {
-                closeCursor(cursor);
                 return true;
             }
         } catch (Exception e) {
+            Log.e(TAG, "Fail executing isSongFavourite", e);
+        } finally {
             closeCursor(cursor);
-            e.printStackTrace();
         }
         return false;
+    }
+
+    private void closeCursor(Cursor cursor) {
+        if (cursor != null) {
+            cursor.close();
+        }
     }
 }
