@@ -176,7 +176,7 @@ public class FragmentSettings extends Fragment implements View.OnClickListener {
     }
 
     String getMixingMode() {
-        sharedPreferences = getActivity().getPreferences(MODE_PRIVATE);
+        sharedPreferences = getActivity().getSharedPreferences("VALUES",MODE_PRIVATE);
         String savedText = sharedPreferences.getString(MIXING_MODE, "");
         return savedText;
        // etText.setText(savedText);
