@@ -1,18 +1,10 @@
 package com.dmplayer.utils;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
 import java.net.InetAddress;
 import java.net.NetworkInterface;
 import java.util.Collections;
 import java.util.List;
 
-/**
- * Created by Alexvojander on 09.09.2016.
- */
 public class Utils {
 
     public static String getIPAddress(boolean useIPv4) {
@@ -24,11 +16,12 @@ public class Utils {
                     if (!addr.isLoopbackAddress()) {
                         String sAddr = addr.getHostAddress();
                         //boolean isIPv4 = InetAddressUtils.isIPv4Address(sAddr);
-                        boolean isIPv4 = sAddr.indexOf(':')<0;
+                        boolean isIPv4 = sAddr.indexOf(':') < 0;
 
                         if (useIPv4) {
-                            if (isIPv4)
+                            if (isIPv4) {
                                 return sAddr;
+                            }
                         } else {
                             if (!isIPv4) {
                                 int delim = sAddr.indexOf('%'); // drop ip6 zone suffix

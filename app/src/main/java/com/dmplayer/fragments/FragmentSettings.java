@@ -27,7 +27,7 @@ import com.dmplayer.dialogs.ProfileDialog;
 import com.dmplayer.dialogs.ThemeDialog;
 import com.dmplayer.models.Playlist;
 import com.dmplayer.models.SongDetail;
-import com.dmplayer.phonemedia.DMPlayerUtility;
+import com.dmplayer.utility.DMPlayerUtility;
 import com.dmplayer.utility.LogWriter;
 
 import java.io.File;
@@ -39,7 +39,6 @@ import java.util.ArrayList;
 import static android.content.Context.MODE_PRIVATE;
 
 public class FragmentSettings extends Fragment implements View.OnClickListener {
-
     public final static int GALLERY_REQUEST = 1;
     public final static int CAMERA_REQUEST = 2;
     public final static int PICKER_REQUEST = 3;
@@ -49,20 +48,19 @@ public class FragmentSettings extends Fragment implements View.OnClickListener {
     public final static String NAME = "NAME";
 
     private SharedPreferences sharedPreferences;
-    private SharedPreferences.Editor editor;
 
     private String TAG = "FragmentSettings";
 
     private ArrayList<Uri> mSongUri = new ArrayList<>();
     private ArrayList<SongDetail> songList = new ArrayList<>();
-    String MIXING_MODE="mixing_mode";
-    TextView textViewMixingMode;
+    private String MIXING_MODE="mixing_mode";
+    private TextView textViewMixingMode;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View rootview = inflater.inflate(R.layout.fragment_settings, null);
-        setupInitialViews(rootview);
-        return rootview;
+        View view = inflater.inflate(R.layout.fragment_settings, null);
+        setupInitialViews(view);
+        return view;
     }
 
     @Override
@@ -71,16 +69,16 @@ public class FragmentSettings extends Fragment implements View.OnClickListener {
     }
 
 
-    private void setupInitialViews(View rootview) {
+    private void setupInitialViews(View view) {
         sharedPreferences = getActivity().getSharedPreferences("VALUES", MODE_PRIVATE);
 
-        rootview.findViewById(R.id.relativeLayout_choose_theme).setOnClickListener(this);
-        rootview.findViewById(R.id.relativeLayout_customize_profile).setOnClickListener(this);
-        rootview.findViewById(R.id.relativeLayout_change_header_back).setOnClickListener(this);
-        rootview.findViewById(R.id.relativeLayoutCreatePlaylist).setOnClickListener(this);
-        rootview.findViewById(R.id.relativeLayoutMusicChooser).setOnClickListener(this);
-        rootview.findViewById(R.id.relativeLayoutMusicMixEnabled).setOnClickListener(this);
-        textViewMixingMode=(TextView)rootview.findViewById(R.id.textViewMusicMixEnabledDescription);
+        view.findViewById(R.id.relativeLayout_choose_theme).setOnClickListener(this);
+        view.findViewById(R.id.relativeLayout_customize_profile).setOnClickListener(this);
+        view.findViewById(R.id.relativeLayout_change_header_back).setOnClickListener(this);
+        view.findViewById(R.id.relativeLayoutCreatePlaylist).setOnClickListener(this);
+        view.findViewById(R.id.relativeLayoutMusicChooser).setOnClickListener(this);
+        view.findViewById(R.id.relativeLayoutMusicMixEnabled).setOnClickListener(this);
+        textViewMixingMode = (TextView) view.findViewById(R.id.textViewMusicMixEnabledDescription);
         setMixingModeInTextView();
     }
 
@@ -88,7 +86,7 @@ public class FragmentSettings extends Fragment implements View.OnClickListener {
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.relativeLayout_choose_theme:
-                showColorChooseDialog();
+                showThemeDialog();
                 break;
 
             case R.id.relativeLayout_customize_profile:
@@ -117,7 +115,7 @@ public class FragmentSettings extends Fragment implements View.OnClickListener {
 //                        for (Uri uri :
 //                                mSongUri) {
 //                            mPhoneMediaControl.loadMusicList(getActivity(), -1, PhoneMediaControl
-//                                            .SongsLoadFor.Playlist,
+//                                            .SongsLoadFor.LOCAL_PLAYLIST,
 //                                    uri.getPath());
 //
 //                        }
@@ -160,34 +158,27 @@ public class FragmentSettings extends Fragment implements View.OnClickListener {
         }
     }
 
-    void setMixingMode() {
-        sharedPreferences = getActivity().getPreferences(MODE_PRIVATE);
+    private void setMixingMode() {
         String mixing_mode = sharedPreferences.getString(MIXING_MODE, "");
-        SharedPreferences.Editor ed = sharedPreferences.edit();
+        SharedPreferences.Editor editor = sharedPreferences.edit();
         if(mixing_mode.equals("ON")){
-            ed.putString(MIXING_MODE, "OFF");
+            editor.putString(MIXING_MODE, "OFF");
         } else if(mixing_mode.equals("OFF")){
-            ed.putString(MIXING_MODE, "ON");
+            editor.putString(MIXING_MODE, "ON");
         } else if(mixing_mode.equals("")){
-            ed.putString(MIXING_MODE, "OFF");
+            editor.putString(MIXING_MODE, "OFF");
         }
-        ed.commit();
-       // Toast.makeText(this, "Text saved", Toast.LENGTH_SHORT).show();
+        editor.apply();
     }
 
-    String getMixingMode() {
-        sharedPreferences = getActivity().getPreferences(MODE_PRIVATE);
+    void setMixingModeInTextView() {
         String savedText = sharedPreferences.getString(MIXING_MODE, "");
-        return savedText;
-       // etText.setText(savedText);
-       // Toast.makeText(this, "Text loaded", Toast.LENGTH_SHORT).show();
-    }
-    void setMixingModeInTextView(){
-        if (getMixingMode().equals("ON")) {
+
+        if (savedText.equals("ON")) {
             textViewMixingMode.setText("Mixing mode on");
-        }else if(getMixingMode().equals("OFF")){
+        } else if(savedText.equals("OFF")) {
             textViewMixingMode.setText("Mixing mode off");
-        }else if(getMixingMode().equals("")){
+        } else if(savedText.equals("")) {
             textViewMixingMode.setText("Mixing mode off");
         }
     }
@@ -210,7 +201,7 @@ public class FragmentSettings extends Fragment implements View.OnClickListener {
                 break;
 
             case PICKER_REQUEST:
-                if(resultCode==Activity.RESULT_OK){
+                if(resultCode == Activity.RESULT_OK){
                     try {
                         songList = (ArrayList<SongDetail>) returnedIntent.getExtras()
                                 .getSerializable("songs");
@@ -225,33 +216,27 @@ public class FragmentSettings extends Fragment implements View.OnClickListener {
         }
     }
 
-    public void setThemeFragment(int theme) {
-        editor = sharedPreferences.edit();
-        editor.putInt("THEME", theme).apply();
-    }
-
     public void setHeaderBackground(String picture) {
-        editor = sharedPreferences.edit();
-        editor.putString(HEADER_BACKGROUND, picture.toString()).apply();
+        sharedPreferences.edit()
+                .putString(HEADER_BACKGROUND, picture)
+                .apply();
     }
 
-    private void showColorChooseDialog() {
+    private void showThemeDialog() {
         FragmentManager fragmentManager = getActivity().getFragmentManager();
         ThemeDialog dialog = new ThemeDialog();
-        dialog.setOnItemChoose(new ThemeDialog.OnItemChoose() {
+        dialog.setOnItemChoose(new OnWorkDone() {
             @Override
-            public void onClick(int position) {
-                setThemeFragment(position);
-            }
-
-            @Override
-            public void onSaveChange() {
+            public void onAgree() {
                 startActivity(new Intent(getActivity(), DMPlayerBaseActivity.class));
                 getActivity().finish();
                 getActivity().overridePendingTransition(0, 0);
             }
+
+            @Override
+            public void onRefuse() {}
         });
-        dialog.show(fragmentManager, "fragment_color_chooser");
+        dialog.show(fragmentManager, "fragment_theme");
     }
 
     private void showColorProfileDialog() {
@@ -259,14 +244,14 @@ public class FragmentSettings extends Fragment implements View.OnClickListener {
         ProfileDialog dialog = new ProfileDialog();
         dialog.setOnWorkDone(new OnWorkDone() {
             @Override
-            public void onPositiveAnswer() {
+            public void onAgree() {
                 startActivity(new Intent(getActivity(), DMPlayerBaseActivity.class));
                 getActivity().finish();
                 getActivity().overridePendingTransition(0, 0);
             }
 
             @Override
-            public void onNegativeAnswer() {
+            public void onRefuse() {
             }
         });
         dialog.setCancelable(false);

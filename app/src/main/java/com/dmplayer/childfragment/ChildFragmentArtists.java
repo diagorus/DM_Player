@@ -32,9 +32,9 @@ import android.widget.TextView;
 import com.dmplayer.R;
 import com.dmplayer.activities.PlaylistActivity;
 import com.dmplayer.adapter.CursorRecyclerViewAdapter;
-import com.dmplayer.phonemedia.DMPlayerUtility;
 import com.dmplayer.phonemedia.MusicAlphabetIndexer;
 import com.dmplayer.phonemedia.PhoneMediaControl;
+import com.dmplayer.utility.DMPlayerUtility;
 import com.dmplayer.utility.LogWriter;
 
 public class ChildFragmentArtists extends Fragment {
@@ -238,9 +238,9 @@ public class ChildFragmentArtists extends Fragment {
                     Intent mIntent = new Intent(context, PlaylistActivity.class);
                     Bundle mBundle = new Bundle();
                     mBundle.putLong("id", artisID);
-                    mBundle.putLong("tagfor", PhoneMediaControl.SongsLoadFor.Artist.ordinal());
+                    mBundle.putLong("tagfor", PhoneMediaControl.SongsLoadFor.ARTIST.ordinal());
                     mBundle.putString("albumname", ((TextView) view.findViewById(R.id.title)).getText().toString().trim());
-                    mBundle.putString("title_one", "All my songs");
+                    mBundle.putString("title_one", "ALL my songs");
                     mBundle.putString("title_sec", ((TextView) view.findViewById(R.id.details)).getText().toString().trim());
                     mIntent.putExtras(mBundle);
                     context.startActivity(mIntent);

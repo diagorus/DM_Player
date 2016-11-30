@@ -23,22 +23,26 @@ import com.dmplayer.models.Playlist;
 import com.dmplayer.models.SongDetail;
 import com.dmplayer.models.playlisitems.DefaultPlaylistCategorySingle;
 import com.dmplayer.models.playlisitems.VkPlaylistCategorySingle;
-import com.dmplayer.phonemedia.DMPlayerUtility;
+import com.dmplayer.utility.DMPlayerUtility;
 import com.dmplayer.utility.DefaultPlaylistTaskFactory;
 import com.dmplayer.utility.VkPlaylistTaskFactory;
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.ImageLoader;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class FragmentPlaylist extends Fragment {
+
     private RecyclerView listOfSongs;
-    private SongListAdapter songAdapter;
     private FrameLayout progressBar;
 
     private LinearLayout errorLayout;
     private TextView errorInfo;
     private TextView errorReload;
+
+    private SongListAdapter songAdapter;
+    private List<SongDetail> songList;
 
     private static final String ARG_TYPE = "FragmentPlaylist_type";
     private static final String ARG_CATEGORY = "FragmentPlaylist_category";
@@ -48,7 +52,7 @@ public class FragmentPlaylist extends Fragment {
     private static final int TYPE_DEFAULT = 0;
     private static final int TYPE_VK = 1;
 
-    private static final String TAG = "FragmentPlaylist";
+    private static final String TAG = FragmentPlaylist.class.getSimpleName();
 
     public static FragmentPlaylist newInstance(DefaultPlaylistCategorySingle category, int id,
                                                String name) {
@@ -87,8 +91,12 @@ public class FragmentPlaylist extends Fragment {
     }
 
     private void setupInitialViews(View v) {
+        songList = new ArrayList<>();
+        songAdapter = new SongListAdapter(getActivity(), songList);
+
         listOfSongs = (RecyclerView) v.findViewById(R.id.list_of_songs);
         listOfSongs.setLayoutManager(new LinearLayoutManager(getActivity()));
+        listOfSongs.setAdapter(songAdapter);
 
         progressBar = (FrameLayout) v.findViewById(R.id.layout_progress_bar);
 
@@ -105,8 +113,7 @@ public class FragmentPlaylist extends Fragment {
     }
 
     private void loadPlaylist() {
-        TaskStateListener<Playlist> listener =
-            new TaskStateListener<Playlist>() {
+        TaskStateListener<Playlist> listener = new TaskStateListener<Playlist>() {
                 @Override
                 public void onLoadingStarted() {
                     progressBar.setVisibility(View.VISIBLE);
@@ -114,8 +121,9 @@ public class FragmentPlaylist extends Fragment {
 
                 @Override
                 public void onLoadingSuccessful(Playlist result) {
-                    songAdapter = new SongListAdapter(getActivity(), result.getSongs());
-                    listOfSongs.setAdapter(songAdapter);
+                    songList.clear();
+                    songList.addAll(result.getSongs());
+                    songAdapter.notifyDataSetChanged();
 
                     progressBar.setVisibility(View.GONE);
                 }
@@ -123,7 +131,6 @@ public class FragmentPlaylist extends Fragment {
                 @Override
                 public void onError(Exception e) {
                     progressBar.setVisibility(View.GONE);
-
                     errorLayout.setVisibility(View.VISIBLE);
 
                     errorInfo.setText("");
@@ -142,9 +149,11 @@ public class FragmentPlaylist extends Fragment {
             case TYPE_DEFAULT:
                 loadDefaultPlaylist(category, id, name, listener);
                 break;
+
             case TYPE_VK:
                 loadVkPlaylist(category, id, name, listener);
                 break;
+
             default:
                 throw new IllegalArgumentException("Default statement reached!");
         }
@@ -154,7 +163,7 @@ public class FragmentPlaylist extends Fragment {
         DefaultPlaylistCategorySingle c = DefaultPlaylistCategorySingle.valueOf(category);
 
         DefaultPlaylistTaskFactory factory = new DefaultPlaylistTaskFactory(getActivity(), l);
-        factory.getLoadPlaylistTask(c, id, name).execute();
+        factory.getTask(c, id, name).execute();
     }
 
     private void loadVkPlaylist(int c, int id, String name, TaskStateListener<Playlist> l) {
@@ -165,6 +174,7 @@ public class FragmentPlaylist extends Fragment {
     }
 
     private class SongListAdapter extends RecyclerView.Adapter<SongListAdapter.ViewHolder> {
+
         List<SongDetail> songList;
 
         private DisplayImageOptions options;
@@ -218,11 +228,11 @@ public class FragmentPlaylist extends Fragment {
 
             public ViewHolder(View itemView) {
                 super(itemView);
-                songName = (TextView) itemView.findViewById(R.id.inflate_allsong_textsongname);
-                artistAndDuration = (TextView) itemView.findViewById(R.id.inflate_allsong_textsongArtisName_duration);
-                songImage = (ImageView) itemView.findViewById(R.id.inflate_allsong_imgSongThumb);
+                songName = (TextView) itemView.findViewById(R.id.song_name);
+                artistAndDuration = (TextView) itemView.findViewById(R.id.song_details);
+                songImage = (ImageView) itemView.findViewById(R.id.song_icon_art);
                 //TODO: problems with menu icon
-                menuImage = (ImageView) itemView.findViewById(R.id.img_moreicon);
+                menuImage = (ImageView) itemView.findViewById(R.id.song_icon_option_more);
 
                 itemView.setOnClickListener(this);
             }
@@ -237,7 +247,7 @@ public class FragmentPlaylist extends Fragment {
                 if (MediaController.getInstance().isPlayingAudio(song) && !MediaController.getInstance().isAudioPaused()) {
                     MediaController.getInstance().pauseAudio(song);
                 } else {
-                    //TODO: 3rd parameter is playlist type, to retrieve song when activity closes
+                    //TODO: 3rd parameter is playlist type, it used to retrieve song when activity closes
                     MediaController.getInstance().setPlaylist(songList, song, -1, -1);
                 }
             }

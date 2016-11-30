@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.res.TypedArray;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
+import android.view.View;
 
 import com.dmplayer.R;
 
@@ -35,13 +36,40 @@ public class ExpandableLayoutExternalAccount extends ExpandableLayout {
         }
     }
 
+    private OnClickListener savedOnClickListener;
+
+    @Override
+    public void setOnClickListener(OnClickListener l) {
+        super.setOnClickListener(l);
+
+        savedOnClickListener = l;
+    }
+
+    private OnExpandListener savedOnExpandListener;
+
+    @Override
+    public void setOnExpandListener(OnExpandListener l) {
+        super.setOnExpandListener(l);
+
+        savedOnExpandListener = l;
+    }
+
     public void setUsualLayout() {
-        removeAllViews();
+        removeViewAt(0);
         setupHeader();
+
+        if (savedOnClickListener != null) {
+            setOnClickListener(savedOnClickListener);
+        }
+
+        if (savedOnExpandListener != null) {
+            setOnExpandListener(savedOnExpandListener);
+        }
     }
 
     public void setMessageLayout() {
-        removeAllViews();
-        LayoutInflater.from(getContext()).inflate(messageLayout, this, true);
+        removeViewAt(0);
+        View v = LayoutInflater.from(getContext()).inflate(messageLayout, this, false);
+        addView(v, 0);
     }
 }

@@ -22,16 +22,16 @@ public final class DefaultPlaylistTaskFactory {
         this.listener = listener;
     }
 
-    //TODO: move handling some of phonemediacontrol exceptions here
-    public AsyncTask<Void, Void, AsyncTaskResult<Playlist>> getLoadPlaylistTask(DefaultPlaylistCategorySingle category,
-                                                                      final int id, final String name) {
+    public AsyncTask<Void, Void, AsyncTaskResult<Playlist>> getTask(DefaultPlaylistCategorySingle category,
+                                                                    final int id, final String name) {
         switch (category) {
             case ALL_SONGS:
                 return new AbstractSinglePlaylistTask(listener) {
                     @Override
                     protected AsyncTaskResult<Playlist> doInBackground(Void... params) {
                         List<SongDetail> songs = PhoneMediaControl.getInstance()
-                                .loadMusicList(context, id, PhoneMediaControl.SongsLoadFor.All, "");
+                                .loadMusicList(context, id, PhoneMediaControl.SongsLoadFor.ALL, "");
+
                         return new AsyncTaskResult<>(new Playlist(name, songs));
                     }
                 };
@@ -40,7 +40,7 @@ public final class DefaultPlaylistTaskFactory {
                     @Override
                     protected AsyncTaskResult<Playlist> doInBackground(Void... params) {
                         List<SongDetail> songs = PhoneMediaControl.getInstance()
-                                .loadMusicList(context, id, PhoneMediaControl.SongsLoadFor.MostPlay, "");
+                                .loadMusicList(context, id, PhoneMediaControl.SongsLoadFor.MOST_PLAY, "");
 
                         return new AsyncTaskResult<>(new Playlist(name, songs));
                     }
@@ -50,7 +50,7 @@ public final class DefaultPlaylistTaskFactory {
                     @Override
                     protected AsyncTaskResult<Playlist> doInBackground(Void... params) {
                         List<SongDetail> songs = PhoneMediaControl.getInstance()
-                                .loadMusicList(context, id, PhoneMediaControl.SongsLoadFor.Genre, "");
+                                .loadMusicList(context, id, PhoneMediaControl.SongsLoadFor.GENRE, "");
 
                         return new AsyncTaskResult<>(new Playlist(name, songs));
                     }
@@ -60,7 +60,7 @@ public final class DefaultPlaylistTaskFactory {
                     @Override
                     protected AsyncTaskResult<Playlist> doInBackground(Void... params) {
                         List<SongDetail> songs = PhoneMediaControl.getInstance()
-                                .loadMusicList(context, id, PhoneMediaControl.SongsLoadFor.Artist, "");
+                                .loadMusicList(context, id, PhoneMediaControl.SongsLoadFor.ARTIST, "");
 
                         return new AsyncTaskResult<>(new Playlist(name, songs));
                     }
@@ -70,7 +70,17 @@ public final class DefaultPlaylistTaskFactory {
                     @Override
                     protected AsyncTaskResult<Playlist> doInBackground(Void... params) {
                         List<SongDetail> songs = PhoneMediaControl.getInstance()
-                                .loadMusicList(context, id, PhoneMediaControl.SongsLoadFor.Album, "");
+                                .loadMusicList(context, id, PhoneMediaControl.SongsLoadFor.ALBUM, "");
+
+                        return new AsyncTaskResult<>(new Playlist(name, songs));
+                    }
+                };
+            case LOCAL:
+                return new AbstractSinglePlaylistTask(listener) {
+                    @Override
+                    protected AsyncTaskResult<Playlist> doInBackground(Void... params) {
+                        List<SongDetail> songs = PhoneMediaControl.getInstance()
+                                .loadMusicList(context, id, PhoneMediaControl.SongsLoadFor.LOCAL_PLAYLIST, "");
 
                         return new AsyncTaskResult<>(new Playlist(name, songs));
                     }

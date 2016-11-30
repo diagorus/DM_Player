@@ -47,12 +47,12 @@ import com.dmplayer.observablelib.ObservableScrollView;
 import com.dmplayer.observablelib.ObservableScrollViewCallbacks;
 import com.dmplayer.observablelib.ScrollState;
 import com.dmplayer.observablelib.ScrollUtils;
-import com.dmplayer.phonemedia.DMPlayerUtility;
 import com.dmplayer.phonemedia.PhoneMediaControl;
 import com.dmplayer.slidinguppanelhelper.SlidingUpPanelLayout;
 import com.dmplayer.uicomponent.ExpandableHeightListView;
 import com.dmplayer.uicomponent.PlayPauseView;
 import com.dmplayer.uicomponent.Slider;
+import com.dmplayer.utility.DMPlayerUtility;
 import com.nineoldandroids.animation.AnimatorSet;
 import com.nineoldandroids.animation.ObjectAnimator;
 import com.nineoldandroids.view.ViewHelper;
@@ -191,8 +191,8 @@ public class PlaylistActivity extends AppCompatActivity implements View.OnClickL
                     MediaController.getInstance().storeFavoritePlay(context, MediaController.getInstance().getPlayingSongDetail(), v.isSelected() ? 0 : 1);
                     v.setSelected(!v.isSelected());
                     DMPlayerUtility.animateHeartButton(v);
-                    findViewById(R.id.ivLike).setSelected(!v.isSelected());
-                    DMPlayerUtility.animatePhotoLike(findViewById(R.id.vBgLike), findViewById(R.id.ivLike));
+                    findViewById(R.id.like).setSelected(!v.isSelected());
+                    DMPlayerUtility.animatePhotoLike(findViewById(R.id.big_like), findViewById(R.id.like));
                 }
                 break;
 
@@ -239,12 +239,12 @@ public class PlaylistActivity extends AppCompatActivity implements View.OnClickL
     }
 
     private void initialize() {
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar_actionbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowTitleEnabled(false);
 
-        mToolbarView = findViewById(R.id.toolbar);
+        mToolbarView = findViewById(R.id.toolbar_actionbar);
 
         // Setup RecyclerView inside drawer
         final TypedValue typedValue = new TypedValue();
@@ -283,41 +283,41 @@ public class PlaylistActivity extends AppCompatActivity implements View.OnClickL
 
     private void getBundleValues() {
         Bundle bundle = getIntent().getExtras();
-        if (bundle != null) {
-            tagFor = bundle.getLong("tagfor");
-
-            if (tagFor == PhoneMediaControl.SongsLoadFor.VkPlaylist.ordinal()) {
-                vkType = bundle.getInt("playlisttype");
-                vkPlaylistName = bundle.getString("playlistname");
-                vkAlbumId = bundle.getString("playlistid");
-
-                title_one = bundle.getString("title_one");
-            } else if (tagFor == PhoneMediaControl.SongsLoadFor.Playlist.ordinal()) {
-
-            } else {
-                id = bundle.getLong("id");
-                tagFor = bundle.getLong("tagfor");
-                albumname = bundle.getString("albumname");
-                title_one = bundle.getString("title_one");
-                title_sec = bundle.getString("title_sec");
-            }
-        }
-
-        if (tagFor == PhoneMediaControl.SongsLoadFor.Genre.ordinal()) {
-            loadSongsGenres(id);
-        } else if (tagFor == PhoneMediaControl.SongsLoadFor.Album.ordinal()) {
-            loadSongsAlbum(id);
-        } else if (tagFor == PhoneMediaControl.SongsLoadFor.Artist.ordinal()) {
-            loadSongsArtist(id);
-        } else if (tagFor == PhoneMediaControl.SongsLoadFor.Playlist.ordinal()) {
-
-        } else if (tagFor == PhoneMediaControl.SongsLoadFor.VkPlaylist.ordinal()) {
-            loadVkPlaylist(vkType, vkAlbumId, vkPlaylistName);
-        }
-
-        displayMainString.setText(albumname);
-        displayFirstSubString.setText(title_one);
-        displaySecondSubString.setText(title_sec);
+//        if (bundle != null) {
+//            tagFor = bundle.getLong("tagfor");
+//
+//            if (tagFor == PhoneMediaControl.SongsLoadFor.VK_PLAYLIST.ordinal()) {
+//                vkType = bundle.getInt("playlisttype");
+//                vkPlaylistName = bundle.getString("playlistname");
+//                vkAlbumId = bundle.getString("playlistid");
+//
+//                title_one = bundle.getString("title_one");
+//            } else if (tagFor == PhoneMediaControl.SongsLoadFor.LOCAL_PLAYLIST.ordinal()) {
+//
+//            } else {
+//                id = bundle.getLong("id");
+//                tagFor = bundle.getLong("tagfor");
+//                albumname = bundle.getString("albumname");
+//                title_one = bundle.getString("title_one");
+//                title_sec = bundle.getString("title_sec");
+//            }
+//        }
+//
+//        if (tagFor == PhoneMediaControl.SongsLoadFor.GENRE.ordinal()) {
+//            loadSongsGenres(id);
+//        } else if (tagFor == PhoneMediaControl.SongsLoadFor.ALBUM.ordinal()) {
+//            loadSongsAlbum(id);
+//        } else if (tagFor == PhoneMediaControl.SongsLoadFor.ARTIST.ordinal()) {
+//            loadSongsArtist(id);
+//        } else if (tagFor == PhoneMediaControl.SongsLoadFor.LOCAL_PLAYLIST.ordinal()) {
+//
+//        } else if (tagFor == PhoneMediaControl.SongsLoadFor.VK_PLAYLIST.ordinal()) {
+//            loadVkPlaylist(vkType, vkAlbumId, vkPlaylistName);
+//        }
+//
+//        displayMainString.setText(albumname);
+//        displayFirstSubString.setText(title_one);
+//        displaySecondSubString.setText(title_sec);
     }
 
     private void loadSongsAlbum(long id) {
@@ -332,7 +332,7 @@ public class PlaylistActivity extends AppCompatActivity implements View.OnClickL
                 }
             }
         });
-        mPhoneMediaControl.loadMusicListAsync(context, id, PhoneMediaControl.SongsLoadFor.Album, "");
+        mPhoneMediaControl.loadMusicListAsync(context, id, PhoneMediaControl.SongsLoadFor.ALBUM, "");
 
         String contentURI = "content://media/external/audio/albumart/" + id;
         imageLoader.displayImage(contentURI, banner, options);
@@ -352,7 +352,7 @@ public class PlaylistActivity extends AppCompatActivity implements View.OnClickL
                 }
             }
         });
-        mPhoneMediaControl.loadMusicListAsync(context, id, PhoneMediaControl.SongsLoadFor.Artist, "");
+        mPhoneMediaControl.loadMusicListAsync(context, id, PhoneMediaControl.SongsLoadFor.ARTIST, "");
     }
 
     private void loadSongsGenres(long id) {
@@ -370,7 +370,7 @@ public class PlaylistActivity extends AppCompatActivity implements View.OnClickL
                 }
             }
         });
-        mPhoneMediaControl.loadMusicListAsync(context, id, PhoneMediaControl.SongsLoadFor.Genre, "");
+        mPhoneMediaControl.loadMusicListAsync(context, id, PhoneMediaControl.SongsLoadFor.GENRE, "");
     }
 
     private void loadSongsLocalPlaylist(long id) { }
@@ -436,11 +436,11 @@ public class PlaylistActivity extends AppCompatActivity implements View.OnClickL
             if (convertView == null) {
                 mViewHolder = new ViewHolder();
                 convertView = layoutInflater.inflate(R.layout.item_song, null);
-                mViewHolder.song_row = (LinearLayout) convertView.findViewById(R.id.inflate_allsong_row);
-                mViewHolder.textViewSongName = (TextView) convertView.findViewById(R.id.inflate_allsong_textsongname);
-                mViewHolder.textViewSongArtisNameAndDuration = (TextView) convertView.findViewById(R.id.inflate_allsong_textsongArtisName_duration);
-                mViewHolder.imageSongThm = (ImageView) convertView.findViewById(R.id.inflate_allsong_imgSongThumb);
-                mViewHolder.imagemore = (ImageView) convertView.findViewById(R.id.img_moreicon);
+                mViewHolder.song_row = (LinearLayout) convertView.findViewById(R.id.song_row);
+                mViewHolder.textViewSongName = (TextView) convertView.findViewById(R.id.song_name);
+                mViewHolder.textViewSongArtisNameAndDuration = (TextView) convertView.findViewById(R.id.song_details);
+                mViewHolder.imageSongThm = (ImageView) convertView.findViewById(R.id.song_icon_art);
+                mViewHolder.imagemore = (ImageView) convertView.findViewById(R.id.song_icon_option_more);
                 convertView.setTag(mViewHolder);
             } else {
                 mViewHolder = (ViewHolder) convertView.getTag();
@@ -531,7 +531,7 @@ public class PlaylistActivity extends AppCompatActivity implements View.OnClickL
         }
     }
 
-    /*-----------------All Work Related to Slide Panel-----------------*/
+    /*-----------------ALL Work Related to Slide Panel-----------------*/
 
     private static final String TAG = "ActivityPlaylist";
     private SlidingUpPanelLayout mLayout;
@@ -564,7 +564,7 @@ public class PlaylistActivity extends AppCompatActivity implements View.OnClickL
     private void initSlidingUpPanel() {
         mLayout = (SlidingUpPanelLayout) findViewById(R.id.sliding_layout);
         // songAlbumbg = (ImageView) findViewById(R.id.image_songAlbumbg);
-        songAlbumbg = (ImageView) findViewById(R.id.image_songAlbumbg_mid);
+        songAlbumbg = (ImageView) findViewById(R.id.image_songsAlbum);
         img_bottom_slideone = (ImageView) findViewById(R.id.img_bottom_slideone);
         img_bottom_slidetwo = (ImageView) findViewById(R.id.img_bottom_slidetwo);
         txt_timeprogress = (TextView) findViewById(R.id.slidepanel_time_progress);
