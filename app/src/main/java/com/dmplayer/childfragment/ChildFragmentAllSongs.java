@@ -73,7 +73,7 @@ public class ChildFragmentAllSongs extends Fragment {
                 mAllSongsListAdapter.notifyDataSetChanged();
             }
         });
-        mPhoneMediaControl.loadMusicListAsync(getActivity(), -1, PhoneMediaControl.SongsLoadFor.All, "");
+        mPhoneMediaControl.loadMusicListAsync(getActivity(), -1, PhoneMediaControl.SongsLoadFor.ALL, "");
     }
 
     public class AllSongsListAdapter extends BaseAdapter {
@@ -149,7 +149,7 @@ public class ChildFragmentAllSongs extends Fragment {
                         if (MediaController.getInstance().isPlayingAudio(mDetail) && !MediaController.getInstance().isAudioPaused()) {
                             MediaController.getInstance().pauseAudio(mDetail);
                         } else {
-                            MediaController.getInstance().setPlaylist(songList, mDetail, PhoneMediaControl.SongsLoadFor.All.ordinal(), -1);
+                            MediaController.getInstance().setPlaylist(songList, mDetail, PhoneMediaControl.SongsLoadFor.ALL.ordinal(), -1);
                         }
                     }
                 }

@@ -24,6 +24,7 @@ import com.dmplayer.R;
 import com.dmplayer.asynctask.TaskStateListener;
 import com.dmplayer.butterknifeabstraction.BaseFragment;
 import com.dmplayer.dbhandler.PlaylistSongsTableHelper;
+import com.dmplayer.dbhandler.PlaylistTableHelper;
 import com.dmplayer.dbhandler.SongsTableHelper;
 import com.dmplayer.dialogs.InputDialog;
 import com.dmplayer.dialogs.OnWorkDoneWithResult;
@@ -90,11 +91,7 @@ public class FragmentMusicChooser extends BaseFragment {
                 };
 
         DefaultPlaylistTaskFactory factory = new DefaultPlaylistTaskFactory(getActivity(), listener);
-        factory.getLoadPlaylistTask(DefaultPlaylistCategorySingle.ALL_SONGS, -1, "All songs").execute();
-    }
-
-    public void storeSongs() {
-
+        factory.getTask(DefaultPlaylistCategorySingle.ALL_SONGS, -1, "ALL songs").execute();
     }
 
     public void storeLocalPlaylist(final Context context, final Playlist playlist) {
@@ -103,7 +100,7 @@ public class FragmentMusicChooser extends BaseFragment {
             @Override
             protected Void doInBackground(Void... params) {
                 try {
-                    SongsTableHelper.getInstance(context).
+                    SongsTableHelper.getInstance(context).insertSongs(playlist);
                     PlaylistTableHelper.getInstance(context).insertPlaylist(playlist);
                     PlaylistSongsTableHelper.getInstance(context).insertPlaylistSongs(playlist);
                 } catch (Exception e) {
@@ -217,14 +214,6 @@ public class FragmentMusicChooser extends BaseFragment {
         @Override
         public boolean onActionItemClicked(ActionMode actionMode, MenuItem menuItem) {
             if (menuItem.getItemId() == R.id.cab_add) {
-                SparseBooleanArray selectedSongs = listView.getCheckedItemPositions();
-
-                for(int i = 0; i < selectedSongs.size(); i++) {
-                    if(selectedSongs.valueAt(i)){
-//                        arrayOut.add((SongDetail) listView.getItemAtPosition(i));
-                    }
-                }
-
                 FragmentManager fm = getFragmentManager();
                 OnWorkDoneWithResult l = new OnWorkDoneWithResult() {
                     @Override
@@ -235,12 +224,22 @@ public class FragmentMusicChooser extends BaseFragment {
                                     getString(R.string.new_playlist_name));
                         }
 
+                        List<SongDetail> selectedSongList = new ArrayList<>();
+                        SparseBooleanArray selectedSongs = listView.getCheckedItemPositions();
+                        for(int i = 0; i < selectedSongs.size(); i++) {
+                            if(selectedSongs.valueAt(i)) {
+                                selectedSongList.add((SongDetail) listView.getItemAtPosition(i));
+                            }
+                        }
 
+                        Playlist newPlaylist = new Playlist(newPlaylistName, selectedSongList);
+                        storeLocalPlaylist(getActivity(), newPlaylist);
                     }
 
                     @Override
                     public void onRefuse() {}
                 };
+
                 showInputDialog(fm, l);
             }
             return false;

@@ -5,6 +5,7 @@ import android.content.SharedPreferences;
 
 import com.dmplayer.converters.VkToSongDetailConverter;
 import com.dmplayer.internetservices.VkApiService;
+import com.dmplayer.models.PlaylistItem;
 import com.dmplayer.models.SongDetail;
 import com.dmplayer.models.VkGenres;
 import com.dmplayer.models.VkObjects.VkAlbumObject;
@@ -13,7 +14,7 @@ import com.dmplayer.models.VkObjects.VkAudioGetResponce.VkAudioWrapper;
 import com.dmplayer.models.VkObjects.VkAudioObject;
 import com.dmplayer.models.VkObjects.VkPopularAudioResponce.VkPopularCollection;
 import com.dmplayer.models.playlisitems.VkPlaylistCategorySingle;
-import com.dmplayer.models.playlisitems.VkPlaylistItemInSeveral;
+import com.dmplayer.models.playlisitems.VkPlaylistItemSingle;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -112,7 +113,7 @@ public class VkMusicHelper {
         return playlist;
     }
 
-    public List<VkPlaylistItemInSeveral> loadUserAlbums() throws IOException, NullPointerException {
+    public List<VkPlaylistItemSingle> loadUserAlbums() throws IOException, NullPointerException {
         Call<VkAlbumsWrapper> callForAlbums = createApiService()
                 .loadAlbums("0", "100", userId, token);
         Response<VkAlbumsWrapper> responseAlbums = callForAlbums.execute();
@@ -120,20 +121,20 @@ public class VkMusicHelper {
         ArrayList<VkAlbumObject> vkAllAlbums = new ArrayList<>(
                 Arrays.asList(responseAlbums.body().getResponse().getItems()));
 
-        List<VkPlaylistItemInSeveral> userPlaylists = new ArrayList<>();
+        List<VkPlaylistItemSingle> userPlaylists = new ArrayList<>();
         for (VkAlbumObject vkAlbum : vkAllAlbums) {
-            userPlaylists.add(new VkPlaylistItemInSeveral(Integer.valueOf(vkAlbum.getId()),
-                    vkAlbum.getTitle(), VkPlaylistCategorySingle.ALBUM));
+            userPlaylists.add(new VkPlaylistItemSingle(Integer.valueOf(vkAlbum.getId()), vkAlbum.getTitle(),
+                    PlaylistItem.NO_DETAILS, PlaylistItem.NO_IMAGE_RESOURCE, VkPlaylistCategorySingle.ALBUM));
         }
 
         return userPlaylists;
     }
 
-    public List<VkPlaylistItemInSeveral> loadPopularGenres() {
-        List<VkPlaylistItemInSeveral> popularGenres = new ArrayList<>();
+    public List<VkPlaylistItemSingle> loadPopularGenres() {
+        List<VkPlaylistItemSingle> popularGenres = new ArrayList<>();
         for (VkGenres genre : VkGenres.values()) {
-            popularGenres.add(new VkPlaylistItemInSeveral(genre.getId(), genre.getName(),
-                    VkPlaylistCategorySingle.GENRE));
+            popularGenres.add(new VkPlaylistItemSingle(genre.getId(), genre.getName(),
+                    PlaylistItem.NO_DETAILS, PlaylistItem.NO_IMAGE_RESOURCE, VkPlaylistCategorySingle.GENRE));
         }
 
         return popularGenres;

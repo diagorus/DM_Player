@@ -33,6 +33,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class FragmentPlaylist extends Fragment {
+
     private RecyclerView listOfSongs;
     private FrameLayout progressBar;
 
@@ -51,7 +52,7 @@ public class FragmentPlaylist extends Fragment {
     private static final int TYPE_DEFAULT = 0;
     private static final int TYPE_VK = 1;
 
-    private static final String TAG = "FragmentPlaylist";
+    private static final String TAG = FragmentPlaylist.class.getSimpleName();
 
     public static FragmentPlaylist newInstance(DefaultPlaylistCategorySingle category, int id,
                                                String name) {
@@ -112,8 +113,7 @@ public class FragmentPlaylist extends Fragment {
     }
 
     private void loadPlaylist() {
-        TaskStateListener<Playlist> listener =
-            new TaskStateListener<Playlist>() {
+        TaskStateListener<Playlist> listener = new TaskStateListener<Playlist>() {
                 @Override
                 public void onLoadingStarted() {
                     progressBar.setVisibility(View.VISIBLE);
@@ -149,9 +149,11 @@ public class FragmentPlaylist extends Fragment {
             case TYPE_DEFAULT:
                 loadDefaultPlaylist(category, id, name, listener);
                 break;
+
             case TYPE_VK:
                 loadVkPlaylist(category, id, name, listener);
                 break;
+
             default:
                 throw new IllegalArgumentException("Default statement reached!");
         }
@@ -161,7 +163,7 @@ public class FragmentPlaylist extends Fragment {
         DefaultPlaylistCategorySingle c = DefaultPlaylistCategorySingle.valueOf(category);
 
         DefaultPlaylistTaskFactory factory = new DefaultPlaylistTaskFactory(getActivity(), l);
-        factory.getLoadPlaylistTask(c, id, name).execute();
+        factory.getTask(c, id, name).execute();
     }
 
     private void loadVkPlaylist(int c, int id, String name, TaskStateListener<Playlist> l) {
@@ -172,6 +174,7 @@ public class FragmentPlaylist extends Fragment {
     }
 
     private class SongListAdapter extends RecyclerView.Adapter<SongListAdapter.ViewHolder> {
+
         List<SongDetail> songList;
 
         private DisplayImageOptions options;

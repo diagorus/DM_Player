@@ -5,9 +5,9 @@ import com.dmplayer.models.PlaylistItem;
 public class DefaultPlaylistItemSingle extends PlaylistItem {
     private final DefaultPlaylistCategorySingle category;
 
-    public DefaultPlaylistItemSingle(String name, String details, int imageResourceId,
+    public DefaultPlaylistItemSingle(int id, String name, String details, int imageResourceId,
                                      DefaultPlaylistCategorySingle category) {
-        super(name, details, imageResourceId);
+        super(id, name, details, imageResourceId);
 
         this.category = category;
     }

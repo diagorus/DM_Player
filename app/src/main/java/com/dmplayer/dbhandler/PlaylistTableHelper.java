@@ -59,11 +59,11 @@ public class PlaylistTableHelper {
                     insert.execute();
                 }
             } catch (Exception e) {
-                Log.e(TAG, "Inserting error:", e);
+                Log.e(TAG, Log.getStackTraceString(e));
             }
             db.setTransactionSuccessful();
         } catch (Exception e) {
-            Log.e(TAG, "XML:", e);
+            Log.e(TAG, Log.getStackTraceString(e));
         } finally {
             db.endTransaction();
         }
@@ -76,8 +76,7 @@ public class PlaylistTableHelper {
             db = dbHelper.getDB();
             cursor = db.rawQuery(sqlQuery, null);
         } catch (Exception e) {
-            closeCursor(cursor);
-            Log.e(TAG, "Sql execution exception:", e);
+            Log.e(TAG, Log.getStackTraceString(e));
         }
         return cursor;
     }

@@ -4,7 +4,7 @@
     <string name="app_name">DM_Player</string>
 
     <!-- DataBase Name And Version -->
-    <string name="DataBaseName_Version">2</string>
+    <string name="DataBaseName_Version">3</string>
     <string name="DataBaseName">DMPlayer</string>
 
     <integer name="com_vk_sdk_AppId">5573236</integer>

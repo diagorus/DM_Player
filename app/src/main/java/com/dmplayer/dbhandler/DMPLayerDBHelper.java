@@ -105,7 +105,7 @@ public class DMPLayerDBHelper extends SQLiteOpenHelper {
 
     private static String sqlForCreatePlaylistSongsTable() {
         return "CREATE TABLE " + PlaylistSongsTableHelper.TABLE_NAME + " ("
-                + PlaylistSongsTableHelper.ID + " INTEGER NOT NULL PRIMARY KEY,"
+                + PlaylistSongsTableHelper.ID + " INTEGER PRIMARY KEY AUTOINCREMENT,"
                 + PlaylistSongsTableHelper.PLAYLIST_ID + " INTEGER NOT NULL,"
                 + PlaylistSongsTableHelper.SONG_ID + " INTEGER NOT NULL);";
     }

@@ -68,7 +68,7 @@ public class FragmentFavorite extends Fragment {
                 mAllSongsListAdapter.notifyDataSetChanged();
             }
         });
-        mPhoneMediaControl.loadMusicListAsync(getActivity(), -1, PhoneMediaControl.SongsLoadFor.Favorite, "");
+        mPhoneMediaControl.loadMusicListAsync(getActivity(), -1, PhoneMediaControl.SongsLoadFor.FAVORITE, "");
     }
 
     public class AllSongsListAdapter extends BaseAdapter {
@@ -144,7 +144,7 @@ public class FragmentFavorite extends Fragment {
                         if (MediaController.getInstance().isPlayingAudio(mDetail) && !MediaController.getInstance().isAudioPaused()) {
                             MediaController.getInstance().pauseAudio(mDetail);
                         } else {
-                            MediaController.getInstance().setPlaylist(songList, mDetail, PhoneMediaControl.SongsLoadFor.Favorite.ordinal(), -1);
+                            MediaController.getInstance().setPlaylist(songList, mDetail, PhoneMediaControl.SongsLoadFor.FAVORITE.ordinal(), -1);
                         }
                     }
 

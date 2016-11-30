@@ -24,7 +24,7 @@ public class Playlist implements Serializable {
     private transient String path;
     private List<SongDetail> songs;
 
-    private static final String TAG = "Playlist";
+    private static final String TAG = "LOCAL_PLAYLIST";
 
     public Playlist() {
         this.id = count++;
@@ -79,10 +79,10 @@ public class Playlist implements Serializable {
     public Bundle getBundle() {
         Bundle bundle = new Bundle();
 
-        bundle.putLong("tagfor", PhoneMediaControl.SongsLoadFor.Playlist.ordinal());
+        bundle.putLong("tagfor", PhoneMediaControl.SongsLoadFor.LOCAL_PLAYLIST.ordinal());
         bundle.putString("playlistname", name);
         bundle.putString("playlistpath", path);
-        bundle.putString("title_one", "All my songs");
+        bundle.putString("title_one", "ALL my songs");
 
         return bundle;
     }

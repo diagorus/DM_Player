@@ -20,11 +20,11 @@ import com.dmplayer.R;
 import com.dmplayer.asynctask.TaskStateListener;
 import com.dmplayer.butterknifeabstraction.BaseDialogFragment;
 import com.dmplayer.fragments.FragmentPlaylist;
-import com.dmplayer.models.PlaylistItemInSeveral;
+import com.dmplayer.models.PlaylistItem;
 import com.dmplayer.models.playlisitems.DefaultPlaylistCategorySeveral;
-import com.dmplayer.models.playlisitems.DefaultPlaylistItemInSeveral;
+import com.dmplayer.models.playlisitems.DefaultPlaylistItemSingle;
 import com.dmplayer.models.playlisitems.VkPlaylistCategorySeveral;
-import com.dmplayer.models.playlisitems.VkPlaylistItemInSeveral;
+import com.dmplayer.models.playlisitems.VkPlaylistItemSingle;
 import com.dmplayer.utility.DefaultMultiPlaylistTaskFactory;
 import com.dmplayer.utility.VkMultiPlaylistTaskFactory;
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
@@ -134,15 +134,15 @@ public class SeveralPlaylistDialog extends BaseDialogFragment {
     private void loadPlaylist() {
         final int type = getArguments().getInt(ARG_TYPE);
 
-        TaskStateListener<List<? extends PlaylistItemInSeveral>> listener =
-                new TaskStateListener<List<? extends PlaylistItemInSeveral>>() {
+        TaskStateListener<List<? extends PlaylistItem>> listener =
+                new TaskStateListener<List<? extends PlaylistItem>>() {
                     @Override
                     public void onLoadingStarted() {
                         progressBar.setVisibility(View.VISIBLE);
                     }
 
                     @Override
-                    public void onLoadingSuccessful(List<? extends PlaylistItemInSeveral> result) {
+                    public void onLoadingSuccessful(List<? extends PlaylistItem> result) {
                         playlistsAdapter = new SeveralPlaylistDialog.PlaylistListAdapter(getActivity(), type,
                                 result);
                         listOfPlaylists.setAdapter(playlistsAdapter);
@@ -177,14 +177,14 @@ public class SeveralPlaylistDialog extends BaseDialogFragment {
         }
     }
 
-    private void loadPlaylistsFromDefault(int category, TaskStateListener<List<? extends PlaylistItemInSeveral>> l) {
+    private void loadPlaylistsFromDefault(int category, TaskStateListener<List<? extends PlaylistItem>> l) {
         DefaultPlaylistCategorySeveral c = DefaultPlaylistCategorySeveral.valueOf(category);
 
         DefaultMultiPlaylistTaskFactory factory = new DefaultMultiPlaylistTaskFactory(getActivity(), l);
         factory.getTask(c).execute();
     }
 
-    private void loadPlaylistsFromVk(int category, TaskStateListener<List<? extends PlaylistItemInSeveral>> l) {
+    private void loadPlaylistsFromVk(int category, TaskStateListener<List<? extends PlaylistItem>> l) {
         VkPlaylistCategorySeveral c = VkPlaylistCategorySeveral.valueOf(category);
 
         VkMultiPlaylistTaskFactory factory = new VkMultiPlaylistTaskFactory(getActivity(), l);
@@ -192,7 +192,7 @@ public class SeveralPlaylistDialog extends BaseDialogFragment {
     }
 
     protected class PlaylistListAdapter extends RecyclerView.Adapter<PlaylistListAdapter.ViewHolder> {
-        private List<? extends PlaylistItemInSeveral> items;
+        private List<? extends PlaylistItem> items;
         private int type;
 
         private String unknownPlaylistName;
@@ -201,7 +201,7 @@ public class SeveralPlaylistDialog extends BaseDialogFragment {
         private DisplayImageOptions options;
 
         protected PlaylistListAdapter(Context context, int type,
-                                      List<? extends PlaylistItemInSeveral> items) {
+                                      List<? extends PlaylistItem> items) {
             this.items = items;
             this.type = type;
 
@@ -241,8 +241,8 @@ public class SeveralPlaylistDialog extends BaseDialogFragment {
         }
 
         private void bindViewForDefault(ViewHolder holder, int position) {
-            DefaultPlaylistItemInSeveral currentItem =
-                    (DefaultPlaylistItemInSeveral) items.get(position);
+            DefaultPlaylistItemSingle currentItem =
+                    (DefaultPlaylistItemSingle) items.get(position);
 
             String playlistName = currentItem.getName();
             String contentURI = "content://media/external/audio/albumart/" + currentItem.getId();
@@ -256,7 +256,7 @@ public class SeveralPlaylistDialog extends BaseDialogFragment {
         }
 
         private void bindViewForVk(ViewHolder holder, int position) {
-            VkPlaylistItemInSeveral currentItem = (VkPlaylistItemInSeveral) items.get(position);
+            VkPlaylistItemSingle currentItem = (VkPlaylistItemSingle) items.get(position);
 
             holder.title.setText(currentItem.getName());
         }
@@ -286,15 +286,15 @@ public class SeveralPlaylistDialog extends BaseDialogFragment {
                 FragmentPlaylist f;
                 switch(type) {
                     case TYPE_DEFAULT:
-                        DefaultPlaylistItemInSeveral defaultItem =
-                                (DefaultPlaylistItemInSeveral) items.get(getAdapterPosition());
+                        DefaultPlaylistItemSingle defaultItem =
+                                (DefaultPlaylistItemSingle) items.get(getAdapterPosition());
 
                         f = FragmentPlaylist
                                 .newInstance(defaultItem.getCategory(), defaultItem.getId(), defaultItem.getName());
                         break;
                     case TYPE_VK:
-                        VkPlaylistItemInSeveral vkItem =
-                                (VkPlaylistItemInSeveral) items.get(getAdapterPosition());
+                        VkPlaylistItemSingle vkItem =
+                                (VkPlaylistItemSingle) items.get(getAdapterPosition());
 
                         f = FragmentPlaylist
                                 .newInstance(vkItem.getCategory(), vkItem.getId(), vkItem.getName());
@@ -302,7 +302,6 @@ public class SeveralPlaylistDialog extends BaseDialogFragment {
                     default:
                         throw new IllegalArgumentException("Default statement reached!");
                 }
-
 
                 FragmentManager fm = getActivity().getFragmentManager();
 

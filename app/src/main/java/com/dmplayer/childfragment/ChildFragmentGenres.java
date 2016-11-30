@@ -79,7 +79,7 @@ public class ChildFragmentGenres extends Fragment {
             genreId = c.getInt(0);
             genreName = c.getString(1);
 
-            songsList = mPhoneMediaControl.getList(getActivity(), genreId, PhoneMediaControl.SongsLoadFor.Genre, "");
+            songsList = mPhoneMediaControl.getList(getActivity(), genreId, PhoneMediaControl.SongsLoadFor.GENRE, "");
 
             if (songsList.size() > 0) {
                 genres.add(new Genre(genreId, genreName));
@@ -202,9 +202,9 @@ public class ChildFragmentGenres extends Fragment {
 
                     Bundle mBundle = new Bundle();
                     mBundle.putLong("id", genreId);
-                    mBundle.putLong("tagfor", PhoneMediaControl.SongsLoadFor.Genre.ordinal());
+                    mBundle.putLong("tagfor", PhoneMediaControl.SongsLoadFor.GENRE.ordinal());
                     mBundle.putString("albumname", ((TextView) view.findViewById(R.id.title)).getText().toString().trim());
-                    mBundle.putString("title_one", "All my songs");
+                    mBundle.putString("title_one", "ALL my songs");
                     mBundle.putString("title_sec", ((TextView) view.findViewById(R.id.details)).getText().toString().trim());
 
                     mIntent.putExtras(mBundle);

@@ -238,9 +238,9 @@ public class ChildFragmentArtists extends Fragment {
                     Intent mIntent = new Intent(context, PlaylistActivity.class);
                     Bundle mBundle = new Bundle();
                     mBundle.putLong("id", artisID);
-                    mBundle.putLong("tagfor", PhoneMediaControl.SongsLoadFor.Artist.ordinal());
+                    mBundle.putLong("tagfor", PhoneMediaControl.SongsLoadFor.ARTIST.ordinal());
                     mBundle.putString("albumname", ((TextView) view.findViewById(R.id.title)).getText().toString().trim());
-                    mBundle.putString("title_one", "All my songs");
+                    mBundle.putString("title_one", "ALL my songs");
                     mBundle.putString("title_sec", ((TextView) view.findViewById(R.id.details)).getText().toString().trim());
                     mIntent.putExtras(mBundle);
                     context.startActivity(mIntent);

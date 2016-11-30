@@ -15,19 +15,17 @@ import com.dmplayer.dialogs.ProfileDialog;
 import com.dmplayer.dialogs.SeveralPlaylistDialog;
 import com.dmplayer.helperservises.VkProfileHelper;
 import com.dmplayer.models.PlaylistItem;
-import com.dmplayer.models.playlisitems.DefaultPlaylistCategorySeveral;
-import com.dmplayer.models.playlisitems.DefaultPlaylistCategorySingle;
 import com.dmplayer.models.playlisitems.DefaultPlaylistItemSeveral;
 import com.dmplayer.models.playlisitems.DefaultPlaylistItemSingle;
-import com.dmplayer.models.playlisitems.VkPlaylistCategorySeveral;
-import com.dmplayer.models.playlisitems.VkPlaylistCategorySingle;
 import com.dmplayer.models.playlisitems.VkPlaylistItemSeveral;
 import com.dmplayer.models.playlisitems.VkPlaylistItemSingle;
 import com.dmplayer.uicomponent.ExpandableLayout;
 import com.dmplayer.uicomponent.ExpandableLayoutExternalAccount;
 import com.dmplayer.uicomponent.ExpandableLayoutManager;
 import com.dmplayer.uicomponent.PlaylistItemView;
+import com.dmplayer.utility.FragmentPlaylistFactory;
 import com.dmplayer.utility.PlaylistProvider;
+import com.dmplayer.utility.SeveralPlaylistDialogFactory;
 
 import java.util.List;
 
@@ -100,8 +98,6 @@ public class FragmentLibrary extends BaseFragment {
         expandableManager.register(expandableVk);
     }
 
-
-
     private void checkVkLogged() {
         VkProfileHelper vkHelper = new VkProfileHelper.Builder(getActivity()).build();
         if (!vkHelper.isLogged()) {
@@ -150,26 +146,18 @@ public class FragmentLibrary extends BaseFragment {
                 PlaylistItemView itemView = new PlaylistItemView(getActivity(), playlistItem);
 
                 if (playlistItem instanceof DefaultPlaylistItemSingle) {
-                    final DefaultPlaylistItemSingle defaultPlaylistItemSingle =
-                            (DefaultPlaylistItemSingle) playlistItem;
-
                     itemView.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
-                            replaceFragmentToPlaylist(defaultPlaylistItemSingle.getCategory(),
-                                    defaultPlaylistItemSingle.getName());
+                            replaceFragmentToPlaylist(playlistItem);
                         }
                     });
                 }
                 if (playlistItem instanceof DefaultPlaylistItemSeveral) {
-                    final DefaultPlaylistItemSeveral defaultPlaylistItemSeveral =
-                            (DefaultPlaylistItemSeveral) playlistItem;
-
                     itemView.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
-                            showSeveralPlaylistDialog(defaultPlaylistItemSeveral.getCategory(),
-                                    defaultPlaylistItemSeveral.getName());
+                            showSeveralPlaylistDialog(playlistItem);
                         }
                     });
                 }
@@ -189,26 +177,18 @@ public class FragmentLibrary extends BaseFragment {
                 PlaylistItemView itemView = new PlaylistItemView(getActivity(), playlistItem);
 
                 if (playlistItem instanceof VkPlaylistItemSingle) {
-                    final VkPlaylistItemSingle vkPlaylistItemSingle =
-                            (VkPlaylistItemSingle) playlistItem;
-
                     itemView.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
-                            replaceFragmentToPlaylist(vkPlaylistItemSingle.getCategory(),
-                                    vkPlaylistItemSingle.getName());
+                            replaceFragmentToPlaylist(playlistItem);
                         }
                     });
                 }
                 if (playlistItem instanceof VkPlaylistItemSeveral) {
-                    final VkPlaylistItemSeveral vkPlaylistItemSeveral =
-                            (VkPlaylistItemSeveral) playlistItem;
-
                     itemView.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
-                            showSeveralPlaylistDialog(vkPlaylistItemSeveral.getCategory(),
-                                    vkPlaylistItemSeveral.getName());
+                            showSeveralPlaylistDialog(playlistItem);
                         }
                     });
                 }
@@ -229,7 +209,7 @@ public class FragmentLibrary extends BaseFragment {
                 expandable.expand();
             }
         } catch (ClassCastException e) {
-            Log.e(TAG, "Unable to cast to ExpandableLayout", e);
+            Log.e(TAG, Log.getStackTraceString(e));
         }
     }
 
@@ -245,10 +225,10 @@ public class FragmentLibrary extends BaseFragment {
                 .commit();
     }
 
-    private void replaceFragmentToPlaylist(DefaultPlaylistCategorySingle category, String name) {
+    private void replaceFragmentToPlaylist(PlaylistItem item) {
         FragmentManager fm = getFragmentManager();
 
-        FragmentPlaylist f = FragmentPlaylist.newInstance(category, -1, name);
+        FragmentPlaylist f = new FragmentPlaylistFactory().getFragmentPlaylist(item);
 
         fm.beginTransaction()
                 .replace(R.id.fragment, f)
@@ -256,29 +236,11 @@ public class FragmentLibrary extends BaseFragment {
                 .commit();
     }
 
-    private void replaceFragmentToPlaylist(VkPlaylistCategorySingle category, String name) {
-        FragmentManager fm = getFragmentManager();
-
-        FragmentPlaylist f = FragmentPlaylist.newInstance(category, -1, name);
-
-        fm.beginTransaction()
-                .replace(R.id.fragment, f)
-                .addToBackStack(null)
-                .commit();
-    }
-
-    private void showSeveralPlaylistDialog(DefaultPlaylistCategorySeveral category, String name) {
+    private void showSeveralPlaylistDialog(PlaylistItem item) {
         FragmentManager fm = getActivity().getFragmentManager();
 
-        SeveralPlaylistDialog dialog = SeveralPlaylistDialog.newInstance(category, name);
-
-        dialog.show(fm, "fragment_playlistseveral");
-    }
-
-    private void showSeveralPlaylistDialog(VkPlaylistCategorySeveral category, String name) {
-        FragmentManager fm = getActivity().getFragmentManager();
-
-        SeveralPlaylistDialog dialog = SeveralPlaylistDialog.newInstance(category, name);
+        SeveralPlaylistDialog dialog = new SeveralPlaylistDialogFactory()
+                .getSeveralPlaylistDialog(item);
 
         dialog.show(fm, "fragment_playlistseveral");
     }

@@ -9,7 +9,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 
 import com.dmplayer.R;
-import com.dmplayer.manager.MusicPreferance;
+import com.dmplayer.manager.MusicPreference;
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.display.FadeInBitmapDisplayer;
@@ -38,10 +38,10 @@ public class SongsPagerAdapter extends PagerAdapter {
 
     @Override
     public int getCount() {
-        if (MusicPreferance.playlist == null) {
+        if (MusicPreference.playlist == null) {
             return 0;
         } else {
-            return MusicPreferance.playlist.size();
+            return MusicPreference.playlist.size();
         }
     }
 
@@ -49,7 +49,7 @@ public class SongsPagerAdapter extends PagerAdapter {
     public View instantiateItem(ViewGroup container, final int position) {
         View infV = inflater.inflate(R.layout.inflate_albumart_pager, container, false);
         ImageView artImage = (ImageView) infV.findViewById(R.id.image_songsAlbum);
-        String contentURI = "content://media/external/audio/media/" + MusicPreferance.playlist.get(position).getId() + "/albumart";
+        String contentURI = "content://media/external/audio/media/" + MusicPreference.playlist.get(position).getId() + "/albumart";
         imageLoader.displayImage(contentURI, artImage, options, animateFirstListener);
         container.addView(infV);
         return infV;

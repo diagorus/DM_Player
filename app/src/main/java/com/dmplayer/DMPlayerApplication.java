@@ -42,7 +42,7 @@ public class DMPlayerApplication extends Application {
          */
         initializeDB();
         /*
-         * Display Density Calculation so that Application not problem with All
+         * Display Density Calculation so that Application not problem with ALL
 		 * resolution.
 		 */
         checkDisplaySize();

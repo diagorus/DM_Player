@@ -64,11 +64,11 @@ public class FavoritePlayTableHelper {
                     insert.execute();
                 }
             } catch (Exception e) {
-                Log.e(TAG, "Failed executing SQLiteStatement", e);
+                Log.e(TAG, Log.getStackTraceString(e));
             }
             sampleDB.setTransactionSuccessful();
         } catch (Exception e) {
-            Log.e(TAG, "Favourite song transaction failure", e);
+            Log.e(TAG, Log.getStackTraceString(e));
         } finally {
             sampleDB.endTransaction();
         }
@@ -81,7 +81,7 @@ public class FavoritePlayTableHelper {
             sampleDB = dbHelper.getDB();
             cursor = sampleDB.rawQuery(sqlQuery, null);
         } catch (Exception e) {
-            Log.e(TAG, "Fail getting favourite song list", e);
+            Log.e(TAG, Log.getStackTraceString(e));
         }
         return cursor;
     }
@@ -96,7 +96,7 @@ public class FavoritePlayTableHelper {
                 return true;
             }
         } catch (Exception e) {
-            Log.e(TAG, "Fail executing isSongFavourite", e);
+            Log.e(TAG, Log.getStackTraceString(e));
         } finally {
             closeCursor(cursor);
         }

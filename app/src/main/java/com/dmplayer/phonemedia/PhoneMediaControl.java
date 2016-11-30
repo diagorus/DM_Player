@@ -15,12 +15,10 @@ import android.util.Log;
 
 import com.dmplayer.dbhandler.FavoritePlayTableHelper;
 import com.dmplayer.dbhandler.MostAndRecentPlayTableHelper;
+import com.dmplayer.dbhandler.SongsTableHelper;
 import com.dmplayer.manager.MediaController;
-import com.dmplayer.models.Playlist;
 import com.dmplayer.models.SongDetail;
 
-import java.io.FileInputStream;
-import java.io.ObjectInputStream;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -31,7 +29,7 @@ public class PhoneMediaControl {
     private static final String TAG = "PhoneMediaControl";
 
     public enum SongsLoadFor {
-        All, Genre, Artist, Album, MusicIntent, MostPlay, Favorite, ResentPlay, Playlist, VkPlaylist
+        ALL, GENRE, ARTIST, ALBUM, MUSIC_INTENT, MOST_PLAY, FAVORITE, LOCAL_PLAYLIST
     }
 
     public static PhoneMediaControl getInstance() {
@@ -98,90 +96,76 @@ public class PhoneMediaControl {
         }
     }
 
-    public void addMusicToList(List<SongDetail> songsList) {
-        if (phonemediacontrolinterface != null) {
-            phonemediacontrolinterface.loadSongsComplete(songsList);
-        }
-    }
-
     public List<SongDetail> getList(final Context context, final long id, final SongsLoadFor songsLoadFor, final String path) {
         List<SongDetail> songsList = new ArrayList<>();
+        final String[] projectionSongs = {MediaStore.Audio.Media._ID,
+                MediaStore.Audio.Media.ARTIST,
+                MediaStore.Audio.Media.TITLE,
+                MediaStore.Audio.Media.DATA,
+                MediaStore.Audio.Media.DISPLAY_NAME,
+                MediaStore.Audio.Media.DURATION};
+
         String sortOrder;
+        String selection;
         switch (songsLoadFor) {
-            case All:
-                String selection = MediaStore.Audio.Media.IS_MUSIC + " != 0";
+            case ALL:
+                selection = MediaStore.Audio.Media.IS_MUSIC + " != 0";
                 sortOrder = MediaStore.Audio.Media.DEFAULT_SORT_ORDER;
-                cursor = context.getContentResolver().query(MediaStore.Audio.Media.EXTERNAL_CONTENT_URI, projectionSongs, selection, null, sortOrder);
+                cursor = context.getContentResolver().query(MediaStore.Audio.Media.EXTERNAL_CONTENT_URI,
+                        projectionSongs, selection, null, sortOrder);
+
                 songsList = getSongsFromCursor(cursor);
                 break;
 
-            case Genre:
+            case GENRE:
                 Uri uri = MediaStore.Audio.Genres.Members.getContentUri("external", id);
                 sortOrder = MediaStore.Audio.Media.DEFAULT_SORT_ORDER;
-                cursor = context.getContentResolver().query(uri, projectionSongs, null, null, sortOrder);
+                cursor = context.getContentResolver().query(uri,
+                        projectionSongs, null, null, sortOrder);
+
                 songsList = getSongsFromCursor(cursor);
                 break;
 
-            case Artist:
-                String where = MediaStore.Audio.Media.ARTIST_ID + "=" + id + " AND " + MediaStore.Audio.Media.IS_MUSIC + "=1";
+            case ARTIST:
+                selection = MediaStore.Audio.Media.ARTIST_ID + "=" + id + " AND " + MediaStore.Audio.Media.IS_MUSIC + "=1";
                 sortOrder = MediaStore.Audio.Media.DEFAULT_SORT_ORDER;
-                cursor = context.getContentResolver().query(MediaStore.Audio.Media.EXTERNAL_CONTENT_URI, projectionSongs, where, null, sortOrder);
+                cursor = context.getContentResolver().query(MediaStore.Audio.Media.EXTERNAL_CONTENT_URI,
+                        projectionSongs, selection, null, sortOrder);
+
                 songsList = getSongsFromCursor(cursor);
                 break;
 
-            case Album:
-                String wherecls = MediaStore.Audio.Media.ALBUM_ID + "=" + id + " AND " + MediaStore.Audio.Media.IS_MUSIC + "=1";
+            case ALBUM:
+                selection = MediaStore.Audio.Media.ALBUM_ID + "=" + id + " AND " + MediaStore.Audio.Media.IS_MUSIC + "=1";
                 sortOrder = MediaStore.Audio.Media.DEFAULT_SORT_ORDER;
-                cursor = context.getContentResolver().query(MediaStore.Audio.Media.EXTERNAL_CONTENT_URI, projectionSongs, wherecls, null, sortOrder);
+                cursor = context.getContentResolver().query(MediaStore.Audio.Media.EXTERNAL_CONTENT_URI,
+                        projectionSongs, selection, null, sortOrder);
+
                 songsList = getSongsFromCursor(cursor);
                 break;
 
-            case MusicIntent:
-                String condition = MediaStore.Audio.Media.DATA + "='" + path + "' AND " + MediaStore.Audio.Media.IS_MUSIC + "=1";
+            case MUSIC_INTENT:
+                selection = MediaStore.Audio.Media.DATA + "='" + path + "' AND " + MediaStore.Audio.Media.IS_MUSIC + "=1";
                 sortOrder = MediaStore.Audio.Media.DEFAULT_SORT_ORDER;
-                cursor = context.getContentResolver().query(MediaStore.Audio.Media.EXTERNAL_CONTENT_URI, projectionSongs, condition, null, sortOrder);
+                cursor = context.getContentResolver().query(MediaStore.Audio.Media.EXTERNAL_CONTENT_URI,
+                        projectionSongs, selection, null, sortOrder);
+
                 songsList = getSongsFromCursor(cursor);
                 break;
 
-            case MostPlay:
+            case MOST_PLAY:
                 cursor = MostAndRecentPlayTableHelper.getInstance(context).getMostPlayed();
                 songsList = getSongsFromSQLDBCursor(cursor);
                 break;
 
-            case Favorite:
+            case FAVORITE:
                 cursor = FavoritePlayTableHelper.getInstance(context).getFavoriteSongList();
                 songsList = getSongsFromSQLDBCursor(cursor);
                 break;
 
-            case Playlist:
-                StringBuilder plCondition = new StringBuilder(MediaStore.Audio.Media.DATA);
-                if (path.endsWith(".dpl")){
-                    try {
-                        ObjectInputStream fin = new ObjectInputStream(new FileInputStream(path));
-
-                        Playlist current = (Playlist) fin.readObject();
-                        current.setPath(path);
-
-                        plCondition.append("='");
-                        List<SongDetail> sList = current.getSongs();
-                        for(int i = 0; i < sList.size() - 1; i++) {
-                            plCondition.append(sList.get(i).getPath());
-                            plCondition.append("' OR ");
-                        }
-                        plCondition.append(sList.get(sList.size()));
-                    } catch (Exception e) {
-                        Log.e(TAG, "Error while extracting local playlist");
-                    }
-                } else {
-                    plCondition.append("='");
-                    plCondition.append(path);
-                    plCondition.append("'");
-                }
-                sortOrder = MediaStore.Audio.Media.DEFAULT_SORT_ORDER;
-                cursor = context.getContentResolver()
-                        .query(MediaStore.Audio.Media.EXTERNAL_CONTENT_URI, projectionSongs,
-                                plCondition.toString(), null, sortOrder);
-                songsList = getSongsFromCursor(cursor);
+            case LOCAL_PLAYLIST:
+                cursor = SongsTableHelper.getInstance(context).getSongsList(id);
+                songsList = getSongsFromSQLDBCursor(cursor);
                 break;
 
         }
@@ -256,13 +240,6 @@ public class PhoneMediaControl {
             }
         }
     }
-
-    private final String[] projectionSongs = {MediaStore.Audio.Media._ID,
-            MediaStore.Audio.Media.ARTIST,
-            MediaStore.Audio.Media.TITLE,
-            MediaStore.Audio.Media.DATA,
-            MediaStore.Audio.Media.DISPLAY_NAME,
-            MediaStore.Audio.Media.DURATION};
 
 
     private static PhoneMediaControlInterface phonemediacontrolinterface;

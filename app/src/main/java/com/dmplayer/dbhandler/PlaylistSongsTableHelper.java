@@ -14,8 +14,8 @@ public class PlaylistSongsTableHelper {
     public static final String TABLE_NAME = "local_playlist_and_song";
 
     public static final String ID = "_id";
-    public static final String PLAYLIST_ID = "playlist_id";
-    public static final String SONG_ID = "song_id";
+    public static final String PLAYLIST_ID = "local_playlist_id";
+    public static final String SONG_ID = "local_song_id";
 
     private static final String TAG = PlaylistSongsTableHelper.class.getSimpleName();
 
@@ -48,7 +48,8 @@ public class PlaylistSongsTableHelper {
             db = dbHelper.getDB();
             db.beginTransaction();
 
-            String sql = "INSERT OR REPLACE INTO " + TABLE_NAME + " VALUES (?,?);";
+            String sql = "INSERT OR REPLACE INTO " + TABLE_NAME +
+                    "(" + PLAYLIST_ID + ", " + SONG_ID +") VALUES (?,?);";
             SQLiteStatement insert = db.compileStatement(sql);
             for (SongDetail song : playlist.getSongs()) {
                 try {
@@ -59,14 +60,26 @@ public class PlaylistSongsTableHelper {
 
                     insert.execute();
                 } catch (Exception e) {
-                    Log.e(TAG, "Inserting error:", e);
+                    Log.e(TAG, Log.getStackTraceString(e));
                 }
             }
             db.setTransactionSuccessful();
         } catch (Exception e) {
-            Log.e(TAG, "XML:", e);
+            Log.e(TAG, Log.getStackTraceString(e));
         } finally {
             db.endTransaction();
         }
+    }
+
+    public Cursor getPlaylistSongs(long id) {
+        Cursor cursor = null;
+        try {
+            String sqlQuery = "SELECT * FROM " + TABLE_NAME + " WHERE " + PLAYLIST_ID + "=?";
+            db = dbHelper.getDB();
+            cursor = db.rawQuery(sqlQuery, new String [] {String.valueOf(id)});
+        } catch (Exception e) {
+            Log.e(TAG, Log.getStackTraceString(e));
+        }
+        return cursor;
     }
 }

@@ -67,27 +67,27 @@ public class MostAndRecentPlayTableHelper {
 
                 insert.execute();
             } catch (Exception e) {
-                e.printStackTrace();
+                Log.e(TAG, Log.getStackTraceString(e));
             }
             db.setTransactionSuccessful();
 
         } catch (Exception e) {
-            Log.e(TAG, "Error while inserting songs to most played table", e);
+            Log.e(TAG, Log.getStackTraceString(e));
         } finally {
             db.endTransaction();
         }
     }
 
     public Cursor getMostPlayed() {
-        Cursor mCursor = null;
+        Cursor cursor = null;
         try {
             String sqlQuery = "SELECT * FROM " + TABLE_NAME + " WHERE " + PLAY_COUNT + ">=2 ORDER BY " + PLAY_COUNT + " ASC LIMIT 20";
             db = dbHelper.getDB();
-            mCursor = db.rawQuery(sqlQuery, null);
+            cursor = db.rawQuery(sqlQuery, null);
         } catch (Exception e) {
-            Log.e(TAG, "Error while getting most played songs", e);
+            Log.e(TAG, Log.getStackTraceString(e));
         }
-        return mCursor;
+        return cursor;
     }
 
     private boolean isSongExist(int id) {
@@ -107,7 +107,7 @@ public class MostAndRecentPlayTableHelper {
                 isExist = true;
             }
         } catch (Exception e) {
-            Log.e(TAG, "Error checking if song exists", e);
+            Log.e(TAG, Log.getStackTraceString(e));
         } finally {
             closeCursor(cursor);
         }
@@ -120,7 +120,7 @@ public class MostAndRecentPlayTableHelper {
             values.put(PLAY_COUNT, count);
             db.update(TABLE_NAME, values, ID + "=?", new String[] {String.valueOf(musicId)});
         } catch (Exception e) {
-            Log.e(TAG, "Error while updating status", e);
+            Log.e(TAG, Log.getStackTraceString(e));
         }
     }
 

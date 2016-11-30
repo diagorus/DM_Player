@@ -44,7 +44,7 @@ import com.dmplayer.fragments.FragmentLibrary;
 import com.dmplayer.fragments.FragmentSettings;
 import com.dmplayer.fragments.FragmentStream;
 import com.dmplayer.manager.MediaController;
-import com.dmplayer.manager.MusicPreferance;
+import com.dmplayer.manager.MusicPreference;
 import com.dmplayer.manager.NotificationManager;
 import com.dmplayer.models.DrawerItem;
 import com.dmplayer.models.SongDetail;
@@ -251,9 +251,9 @@ public class DMPlayerBaseActivity extends AppCompatActivity implements View.OnCl
                     String path = data.getPath();
                     if (!TextUtils.isEmpty(path)) {
                         MediaController.getInstance().cleanupPlayer(context, true, true);
-                        MusicPreferance.getPlaylist(context, path);
+                        MusicPreference.getPlaylist(context, path);
                         updateTitle(false);
-                        MediaController.getInstance().playAudio(MusicPreferance.playingSongDetail);
+                        MediaController.getInstance().playAudio(MusicPreference.playingSongDetail);
                         mLayout.setPanelState(SlidingUpPanelLayout.PanelState.EXPANDED);
                     }
                 }
@@ -552,7 +552,7 @@ public class DMPlayerBaseActivity extends AppCompatActivity implements View.OnCl
                 FragmentFavorite fragmentfavorite = new FragmentFavorite();
                 fragmentTransaction.replace(R.id.fragment, fragmentfavorite);
                 fragmentTransaction.commit();
-                toolbar.setTitle("Favorite");
+                toolbar.setTitle("FAVORITE");
                 break;
 
             case 2:
@@ -649,8 +649,8 @@ public class DMPlayerBaseActivity extends AppCompatActivity implements View.OnCl
     }
 
     private void loadAlreadyPlaying() {
-        SongDetail mSongDetail = MusicPreferance.getLastSong(context);
-        List<SongDetail> playlist = MusicPreferance.getPlaylist(context);
+        SongDetail mSongDetail = MusicPreference.getLastSong(context);
+        List<SongDetail> playlist = MusicPreference.getPlaylist(context);
         if (mSongDetail != null) {
             updateTitle(false);
         }

@@ -108,11 +108,11 @@ public class MediaController implements NotificationManager.NotificationCenterDe
     }
 
     public SongDetail getPlayingSongDetail() {
-        return MusicPreferance.playingSongDetail;
+        return MusicPreference.playingSongDetail;
     }
 
     public boolean isPlayingAudio(SongDetail messageObject) {
-        return !(audioTrackPlayer == null && audioPlayer == null || messageObject == null || MusicPreferance.playingSongDetail == null || MusicPreferance.playingSongDetail != null);
+        return !(audioTrackPlayer == null && audioPlayer == null || messageObject == null || MusicPreference.playingSongDetail == null || MusicPreference.playingSongDetail != null);
     }
 
     public boolean isAudioPaused() {
@@ -125,7 +125,7 @@ public class MediaController implements NotificationManager.NotificationCenterDe
     }
 
     public void playPreviousSong() {
-        List<SongDetail> currentPlayList = shuffleMusic ? MusicPreferance.shuffledPlaylist : MusicPreferance.playlist;
+        List<SongDetail> currentPlayList = shuffleMusic ? MusicPreference.shuffledPlaylist : MusicPreference.playlist;
 
         currentPlaylistNum--;
         if (currentPlaylistNum < 0) {
@@ -135,8 +135,8 @@ public class MediaController implements NotificationManager.NotificationCenterDe
             return;
         }
         playMusicAgain = true;
-        MusicPreferance.playingSongDetail.audioProgress = 0.0f;
-        MusicPreferance.playingSongDetail.audioProgressSec = 0;
+        MusicPreference.playingSongDetail.audioProgress = 0.0f;
+        MusicPreference.playingSongDetail.audioProgressSec = 0;
         playAudio(currentPlayList.get(currentPlaylistNum));
     }
 
@@ -176,8 +176,8 @@ public class MediaController implements NotificationManager.NotificationCenterDe
             return false;
         }
         if ((audioTrackPlayer != null || audioPlayer != null) &&
-                MusicPreferance.playingSongDetail != null &&
-                mSongDetail.getId() == MusicPreferance.playingSongDetail.getId()) {
+                MusicPreference.playingSongDetail != null &&
+                mSongDetail.getId() == MusicPreference.playingSongDetail.getId()) {
             if (isPaused) {
                 resumeAudio(mSongDetail);
             }
@@ -197,9 +197,9 @@ public class MediaController implements NotificationManager.NotificationCenterDe
             audioPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
                 @Override
                 public void onCompletion(MediaPlayer mediaPlayer) {
-                    MusicPreferance.playingSongDetail.audioProgress = 0.0f;
-                    MusicPreferance.playingSongDetail.audioProgressSec = 0;
-                    if (!MusicPreferance.playlist.isEmpty() && MusicPreferance.playlist.size() > 1) {
+                    MusicPreference.playingSongDetail.audioProgress = 0.0f;
+                    MusicPreference.playingSongDetail.audioProgressSec = 0;
+                    if (!MusicPreference.playlist.isEmpty() && MusicPreference.playlist.size() > 1) {
                         playNextSong(true);
                     } else {
                         cleanupPlayer(true, true);
@@ -214,33 +214,33 @@ public class MediaController implements NotificationManager.NotificationCenterDe
                 audioPlayer.release();
                 audioPlayer = null;
                 isPaused = false;
-                MusicPreferance.playingSongDetail = null;
+                MusicPreference.playingSongDetail = null;
             }
             return false;
         }
         isPaused = false;
         lastProgress = 0;
-        MusicPreferance.playingSongDetail = mSongDetail;
+        MusicPreference.playingSongDetail = mSongDetail;
         NotificationManager.getInstance().postNotificationName(NotificationManager.audioDidStarted, mSongDetail);
 
         if (audioPlayer != null) {
             try {
-                if (MusicPreferance.playingSongDetail.audioProgress != 0) {
-                    int seekTo = (int) (audioPlayer.getDuration() * MusicPreferance.playingSongDetail.audioProgress);
+                if (MusicPreference.playingSongDetail.audioProgress != 0) {
+                    int seekTo = (int) (audioPlayer.getDuration() * MusicPreference.playingSongDetail.audioProgress);
                     audioPlayer.seekTo(seekTo);
                 }
             } catch (Exception e2) {
-                MusicPreferance.playingSongDetail.audioProgress = 0;
-                MusicPreferance.playingSongDetail.audioProgressSec = 0;
+                MusicPreference.playingSongDetail.audioProgress = 0;
+                MusicPreference.playingSongDetail.audioProgressSec = 0;
             }
         } else if (audioTrackPlayer != null) {
-            if (MusicPreferance.playingSongDetail.audioProgress == 1) {
-                MusicPreferance.playingSongDetail.audioProgress = 0;
+            if (MusicPreference.playingSongDetail.audioProgress == 1) {
+                MusicPreference.playingSongDetail.audioProgress = 0;
             }
 
         }
 
-        if (MusicPreferance.playingSongDetail != null) {
+        if (MusicPreference.playingSongDetail != null) {
             Intent intent = new Intent(DMPlayerApplication.applicationContext, MusicPlayerService.class);
             DMPlayerApplication.applicationContext.startService(intent);
         } else {
@@ -255,7 +255,7 @@ public class MediaController implements NotificationManager.NotificationCenterDe
     }
 
     private void playNextSong(boolean byStop) {
-        List<SongDetail> currentPlayList = shuffleMusic ? MusicPreferance.shuffledPlaylist : MusicPreferance.playlist;
+        List<SongDetail> currentPlayList = shuffleMusic ? MusicPreference.shuffledPlaylist : MusicPreference.playlist;
 
         if (byStop && repeatMode == 2) {
             cleanupPlayer(false, false);
@@ -295,9 +295,9 @@ public class MediaController implements NotificationManager.NotificationCenterDe
                     stopProgressTimer();
                     lastProgress = 0;
                     isPaused = true;
-                    MusicPreferance.playingSongDetail.audioProgress = 0.0f;
-                    MusicPreferance.playingSongDetail.audioProgressSec = 0;
-                    NotificationManager.getInstance().postNotificationName(NotificationManager.audioPlayStateChanged, MusicPreferance.playingSongDetail.getId());
+                    MusicPreference.playingSongDetail.audioProgress = 0.0f;
+                    MusicPreference.playingSongDetail.audioProgressSec = 0;
+                    NotificationManager.getInstance().postNotificationName(NotificationManager.audioPlayStateChanged, MusicPreference.playingSongDetail.getId());
                 }
                 return;
             }
@@ -306,15 +306,15 @@ public class MediaController implements NotificationManager.NotificationCenterDe
             return;
         }
         playMusicAgain = true;
-        MusicPreferance.playingSongDetail.audioProgress = 0.0f;
-        MusicPreferance.playingSongDetail.audioProgressSec = 0;
+        MusicPreference.playingSongDetail.audioProgress = 0.0f;
+        MusicPreference.playingSongDetail.audioProgressSec = 0;
         playAudio(currentPlayList.get(currentPlaylistNum));
     }
 
     public boolean pauseAudio(SongDetail messageObject) {
         stopProximitySensor();
-        if (audioTrackPlayer == null && audioPlayer == null || messageObject == null || MusicPreferance.playingSongDetail == null || MusicPreferance.playingSongDetail != null
-                && MusicPreferance.playingSongDetail.getId() != messageObject.getId()) {
+        if (audioTrackPlayer == null && audioPlayer == null || messageObject == null || MusicPreference.playingSongDetail == null || MusicPreference.playingSongDetail != null
+                && MusicPreference.playingSongDetail.getId() != messageObject.getId()) {
             return false;
         }
         stopProgressTimer();
@@ -325,7 +325,7 @@ public class MediaController implements NotificationManager.NotificationCenterDe
                 audioTrackPlayer.pause();
             }
             isPaused = true;
-            NotificationManager.getInstance().postNotificationName(NotificationManager.audioPlayStateChanged, MusicPreferance.playingSongDetail.getId());
+            NotificationManager.getInstance().postNotificationName(NotificationManager.audioPlayStateChanged, MusicPreference.playingSongDetail.getId());
         } catch (Exception e) {
             Log.e("tmessages", e.toString());
             isPaused = true;
@@ -335,8 +335,8 @@ public class MediaController implements NotificationManager.NotificationCenterDe
     }
 
     public boolean resumeAudio(SongDetail messageObject) {
-        if (audioTrackPlayer == null && audioPlayer == null || messageObject == null || MusicPreferance.playingSongDetail == null || MusicPreferance.playingSongDetail != null
-                && MusicPreferance.playingSongDetail.getId() != messageObject.getId()) {
+        if (audioTrackPlayer == null && audioPlayer == null || messageObject == null || MusicPreference.playingSongDetail == null || MusicPreference.playingSongDetail != null
+                && MusicPreference.playingSongDetail.getId() != messageObject.getId()) {
             return false;
         }
         try {
@@ -347,7 +347,7 @@ public class MediaController implements NotificationManager.NotificationCenterDe
                 audioTrackPlayer.play();
             }
             isPaused = false;
-            NotificationManager.getInstance().postNotificationName(NotificationManager.audioPlayStateChanged, MusicPreferance.playingSongDetail.getId());
+            NotificationManager.getInstance().postNotificationName(NotificationManager.audioPlayStateChanged, MusicPreference.playingSongDetail.getId());
         } catch (Exception e) {
             return false;
         }
@@ -356,7 +356,7 @@ public class MediaController implements NotificationManager.NotificationCenterDe
 
     public void stopAudio() {
         stopProximitySensor();
-        if (audioTrackPlayer == null && audioPlayer == null || MusicPreferance.playingSongDetail == null) {
+        if (audioTrackPlayer == null && audioPlayer == null || MusicPreference.playingSongDetail == null) {
             return;
         }
         try {
@@ -403,7 +403,7 @@ public class MediaController implements NotificationManager.NotificationCenterDe
                         DMPlayerUtility.runOnUIThread(new Runnable() {
                             @Override
                             public void run() {
-                                if (MusicPreferance.playingSongDetail != null && (audioPlayer != null || audioTrackPlayer != null) && !isPaused) {
+                                if (MusicPreference.playingSongDetail != null && (audioPlayer != null || audioTrackPlayer != null) && !isPaused) {
                                     try {
                                         if (ignoreFirstProgress != 0) {
                                             ignoreFirstProgress--;
@@ -425,10 +425,10 @@ public class MediaController implements NotificationManager.NotificationCenterDe
                                             }
                                         }
                                         lastProgress = progress;
-                                        MusicPreferance.playingSongDetail.audioProgress = value;
-                                        MusicPreferance.playingSongDetail.audioProgressSec = lastProgress / 1000;
+                                        MusicPreference.playingSongDetail.audioProgress = value;
+                                        MusicPreference.playingSongDetail.audioProgressSec = lastProgress / 1000;
                                         NotificationManager.getInstance().postNotificationName(NotificationManager.audioProgressDidChanged,
-                                                MusicPreferance.playingSongDetail.getId(), value);
+                                                MusicPreference.playingSongDetail.getId(), value);
                                     } catch (Exception e) {
                                     }
                                 }
@@ -444,19 +444,19 @@ public class MediaController implements NotificationManager.NotificationCenterDe
         this.type = type;
         this.id = id;
 
-        if (MusicPreferance.playingSongDetail == current) {
+        if (MusicPreference.playingSongDetail == current) {
             return playAudio(current);
         }
-        playMusicAgain = !MusicPreferance.playlist.isEmpty();
-        MusicPreferance.playlist.clear();
+        playMusicAgain = !MusicPreference.playlist.isEmpty();
+        MusicPreference.playlist.clear();
         if (allSongsList != null && allSongsList.size() >= 1) {
-            MusicPreferance.playlist.addAll(allSongsList);
+            MusicPreference.playlist.addAll(allSongsList);
         }
 
-        currentPlaylistNum = MusicPreferance.playlist.indexOf(current);
+        currentPlaylistNum = MusicPreference.playlist.indexOf(current);
         if (currentPlaylistNum == -1) {
-            MusicPreferance.playlist.clear();
-            MusicPreferance.shuffledPlaylist.clear();
+            MusicPreference.playlist.clear();
+            MusicPreference.shuffledPlaylist.clear();
             return false;
         }
         if (shuffleMusic) {
@@ -482,11 +482,11 @@ public class MediaController implements NotificationManager.NotificationCenterDe
     }
 
     public void cleanupPlayer(Context context, boolean notify, boolean stopService) {
-        MusicPreferance.saveLastSong(context, getPlayingSongDetail());
-        MusicPreferance.saveLastSongListType(context, type);
-        MusicPreferance.saveLastAlbID(context, id);
-        MusicPreferance.saveLastPosition(context, currentPlaylistNum);
-        MusicPreferance.saveLastPath(context, path);
+        MusicPreference.saveLastSong(context, getPlayingSongDetail());
+        MusicPreference.saveLastSongListType(context, type);
+        MusicPreference.saveLastAlbID(context, id);
+        MusicPreference.saveLastPosition(context, currentPlaylistNum);
+        MusicPreference.saveLastPath(context, path);
         cleanupPlayer(notify, stopService);
     }
 
@@ -547,7 +547,7 @@ public class MediaController implements NotificationManager.NotificationCenterDe
     }
 
     /**
-     * Store Favorite Play Data
+     * Store FAVORITE Play Data
      */
     public synchronized void storeFavoritePlay(final Context context, final SongDetail mDetail, final int isFav) {
         new AsyncTask<Void, Void, Void>() {
@@ -591,8 +591,8 @@ public class MediaController implements NotificationManager.NotificationCenterDe
 //            return false;
 //        }
 //        if ((audioTrackPlayer != null || audioPlayer != null) &&
-//                MusicPreferance.playingSongDetail != null &&
-//                mSongDetail.getId() == MusicPreferance.playingSongDetail.getId()) {
+//                MusicPreference.playingSongDetail != null &&
+//                mSongDetail.getId() == MusicPreference.playingSongDetail.getId()) {
 //            if (isPaused) {
 //                resumeAudio(mSongDetail);
 //            }
@@ -610,7 +610,7 @@ public class MediaController implements NotificationManager.NotificationCenterDe
 
             }
             isPaused = true;
-           // NotificationManager.getInstance().postNotificationName(NotificationManager.audioPlayStateChanged, MusicPreferance.playingSongDetail.getId());
+           // NotificationManager.getInstance().postNotificationName(NotificationManager.audioPlayStateChanged, MusicPreference.playingSongDetail.getId());
         } catch (Exception e) {
             Log.e("tmessages", e.toString());
             isPaused = true;
@@ -626,9 +626,9 @@ public class MediaController implements NotificationManager.NotificationCenterDe
 //            audioPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
 //                @Override
 //                public void onCompletion(MediaPlayer mediaPlayer) {
-//                    MusicPreferance.playingSongDetail.audioProgress = 0.0f;
-//                    MusicPreferance.playingSongDetail.audioProgressSec = 0;
-//                    //if (!MusicPreferance.playlist.isEmpty() && MusicPreferance.playlist.size() > 1) {
+//                    MusicPreference.playingSongDetail.audioProgress = 0.0f;
+//                    MusicPreference.playingSongDetail.audioProgressSec = 0;
+//                    //if (!MusicPreference.playlist.isEmpty() && MusicPreference.playlist.size() > 1) {
 //                   //     playNextSong(true);
 //                   //} else {
 //                    //    cleanupPlayer(true, true);
@@ -643,33 +643,33 @@ public class MediaController implements NotificationManager.NotificationCenterDe
                 audioPlayer.release();
                 audioPlayer = null;
                 isPaused = false;
-                MusicPreferance.playingSongDetail = null;
+                MusicPreference.playingSongDetail = null;
             }
             return false;
         }
         isPaused = false;
         lastProgress = 0;
-//        MusicPreferance.playingSongDetail = mSongDetail;
+//        MusicPreference.playingSongDetail = mSongDetail;
 //        NotificationManager.getInstance().postNotificationName(NotificationManager.audioDidStarted, mSongDetail);
 
 //        if (audioPlayer != null) {
 //            try {
-//                if (MusicPreferance.playingSongDetail.audioProgress != 0) {
-//                    int seekTo = (int) (audioPlayer.getDuration() * MusicPreferance.playingSongDetail.audioProgress);
+//                if (MusicPreference.playingSongDetail.audioProgress != 0) {
+//                    int seekTo = (int) (audioPlayer.getDuration() * MusicPreference.playingSongDetail.audioProgress);
 //                    audioPlayer.seekTo(seekTo);
 //                }
 //            } catch (Exception e2) {
-//                MusicPreferance.playingSongDetail.audioProgress = 0;
-//                MusicPreferance.playingSongDetail.audioProgressSec = 0;
+//                MusicPreference.playingSongDetail.audioProgress = 0;
+//                MusicPreference.playingSongDetail.audioProgressSec = 0;
 //            }
 //        } else if (audioTrackPlayer != null) {
-//            if (MusicPreferance.playingSongDetail.audioProgress == 1) {
-//                MusicPreferance.playingSongDetail.audioProgress = 0;
+//            if (MusicPreference.playingSongDetail.audioProgress == 1) {
+//                MusicPreference.playingSongDetail.audioProgress = 0;
 //            }
 //
 //        }
 
-//        if (MusicPreferance.playingSongDetail != null) {
+//        if (MusicPreference.playingSongDetail != null) {
 //            Intent intent = new Intent(ApplicationDMPlayer.applicationContext, MusicPlayerService.class);
 //            ApplicationDMPlayer.applicationContext.startService(intent);
 //        } else {

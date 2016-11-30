@@ -65,7 +65,7 @@ public final class DMPlayerUtility {
     public static String makeAlbumsLabel(Context context, int numalbums, int numsongs, boolean isUnknown) {
         // There are two formats for the albums/songs information:
         // "N Song(s)" - used for unknown artist/album
-        // "N Album(s)" - used for known albums
+        // "N ALBUM(s)" - used for known albums
 
         StringBuilder songs_albums = new StringBuilder();
 

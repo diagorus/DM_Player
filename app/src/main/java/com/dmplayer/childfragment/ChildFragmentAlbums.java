@@ -260,7 +260,7 @@ public class ChildFragmentAlbums extends Fragment {
                     Intent mIntent = new Intent(context, PlaylistActivity.class);
                     Bundle mBundle = new Bundle();
                     mBundle.putLong("id", albumID);
-                    mBundle.putLong("tagfor", PhoneMediaControl.SongsLoadFor.Album.ordinal());
+                    mBundle.putLong("tagfor", PhoneMediaControl.SongsLoadFor.ALBUM.ordinal());
                     mBundle.putString("albumname", ((TextView) view.findViewById(R.id.title)).getText().toString().trim());
                     mBundle.putString("title_one", ((TextView) view.findViewById(R.id.details)).getText().toString().trim());
                     mBundle.putString("title_sec", "");

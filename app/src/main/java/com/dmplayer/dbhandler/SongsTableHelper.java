@@ -64,27 +64,27 @@ public class SongsTableHelper {
                         insert.execute();
                     }
                 } catch (Exception e) {
-                    Log.e(TAG, "Inserting error:", e);
+                    Log.e(TAG, Log.getStackTraceString(e));
                 }
             }
 
             db.setTransactionSuccessful();
 
         } catch (Exception e) {
-            Log.e("XML:", e.toString());
+            Log.e(TAG, Log.getStackTraceString(e));
         } finally {
             db.endTransaction();
         }
     }
 
-    public Cursor getSongsList() {
+    public Cursor getSongsList(long id) {
         Cursor cursor = null;
         try {
             String sqlQuery = "SELECT * FROM " + TABLE_NAME;
             db = dbHelper.getDB();
             cursor = db.rawQuery(sqlQuery, null);
         } catch (Exception e) {
-            closeCursor(cursor);
+            Log.e(TAG, Log.getStackTraceString(e));
         }
         return cursor;
     }

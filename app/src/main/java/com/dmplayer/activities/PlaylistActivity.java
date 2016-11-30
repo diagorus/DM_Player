@@ -283,41 +283,41 @@ public class PlaylistActivity extends AppCompatActivity implements View.OnClickL
 
     private void getBundleValues() {
         Bundle bundle = getIntent().getExtras();
-        if (bundle != null) {
-            tagFor = bundle.getLong("tagfor");
-
-            if (tagFor == PhoneMediaControl.SongsLoadFor.VkPlaylist.ordinal()) {
-                vkType = bundle.getInt("playlisttype");
-                vkPlaylistName = bundle.getString("playlistname");
-                vkAlbumId = bundle.getString("playlistid");
-
-                title_one = bundle.getString("title_one");
-            } else if (tagFor == PhoneMediaControl.SongsLoadFor.Playlist.ordinal()) {
-
-            } else {
-                id = bundle.getLong("id");
-                tagFor = bundle.getLong("tagfor");
-                albumname = bundle.getString("albumname");
-                title_one = bundle.getString("title_one");
-                title_sec = bundle.getString("title_sec");
-            }
-        }
-
-        if (tagFor == PhoneMediaControl.SongsLoadFor.Genre.ordinal()) {
-            loadSongsGenres(id);
-        } else if (tagFor == PhoneMediaControl.SongsLoadFor.Album.ordinal()) {
-            loadSongsAlbum(id);
-        } else if (tagFor == PhoneMediaControl.SongsLoadFor.Artist.ordinal()) {
-            loadSongsArtist(id);
-        } else if (tagFor == PhoneMediaControl.SongsLoadFor.Playlist.ordinal()) {
-
-        } else if (tagFor == PhoneMediaControl.SongsLoadFor.VkPlaylist.ordinal()) {
-            loadVkPlaylist(vkType, vkAlbumId, vkPlaylistName);
-        }
-
-        displayMainString.setText(albumname);
-        displayFirstSubString.setText(title_one);
-        displaySecondSubString.setText(title_sec);
+//        if (bundle != null) {
+//            tagFor = bundle.getLong("tagfor");
+//
+//            if (tagFor == PhoneMediaControl.SongsLoadFor.VK_PLAYLIST.ordinal()) {
+//                vkType = bundle.getInt("playlisttype");
+//                vkPlaylistName = bundle.getString("playlistname");
+//                vkAlbumId = bundle.getString("playlistid");
+//
+//                title_one = bundle.getString("title_one");
+//            } else if (tagFor == PhoneMediaControl.SongsLoadFor.LOCAL_PLAYLIST.ordinal()) {
+//
+//            } else {
+//                id = bundle.getLong("id");
+//                tagFor = bundle.getLong("tagfor");
+//                albumname = bundle.getString("albumname");
+//                title_one = bundle.getString("title_one");
+//                title_sec = bundle.getString("title_sec");
+//            }
+//        }
+//
+//        if (tagFor == PhoneMediaControl.SongsLoadFor.GENRE.ordinal()) {
+//            loadSongsGenres(id);
+//        } else if (tagFor == PhoneMediaControl.SongsLoadFor.ALBUM.ordinal()) {
+//            loadSongsAlbum(id);
+//        } else if (tagFor == PhoneMediaControl.SongsLoadFor.ARTIST.ordinal()) {
+//            loadSongsArtist(id);
+//        } else if (tagFor == PhoneMediaControl.SongsLoadFor.LOCAL_PLAYLIST.ordinal()) {
+//
+//        } else if (tagFor == PhoneMediaControl.SongsLoadFor.VK_PLAYLIST.ordinal()) {
+//            loadVkPlaylist(vkType, vkAlbumId, vkPlaylistName);
+//        }
+//
+//        displayMainString.setText(albumname);
+//        displayFirstSubString.setText(title_one);
+//        displaySecondSubString.setText(title_sec);
     }
 
     private void loadSongsAlbum(long id) {
@@ -332,7 +332,7 @@ public class PlaylistActivity extends AppCompatActivity implements View.OnClickL
                 }
             }
         });
-        mPhoneMediaControl.loadMusicListAsync(context, id, PhoneMediaControl.SongsLoadFor.Album, "");
+        mPhoneMediaControl.loadMusicListAsync(context, id, PhoneMediaControl.SongsLoadFor.ALBUM, "");
 
         String contentURI = "content://media/external/audio/albumart/" + id;
         imageLoader.displayImage(contentURI, banner, options);
@@ -352,7 +352,7 @@ public class PlaylistActivity extends AppCompatActivity implements View.OnClickL
                 }
             }
         });
-        mPhoneMediaControl.loadMusicListAsync(context, id, PhoneMediaControl.SongsLoadFor.Artist, "");
+        mPhoneMediaControl.loadMusicListAsync(context, id, PhoneMediaControl.SongsLoadFor.ARTIST, "");
     }
 
     private void loadSongsGenres(long id) {
@@ -370,7 +370,7 @@ public class PlaylistActivity extends AppCompatActivity implements View.OnClickL
                 }
             }
         });
-        mPhoneMediaControl.loadMusicListAsync(context, id, PhoneMediaControl.SongsLoadFor.Genre, "");
+        mPhoneMediaControl.loadMusicListAsync(context, id, PhoneMediaControl.SongsLoadFor.GENRE, "");
     }
 
     private void loadSongsLocalPlaylist(long id) { }
@@ -531,7 +531,7 @@ public class PlaylistActivity extends AppCompatActivity implements View.OnClickL
         }
     }
 
-    /*-----------------All Work Related to Slide Panel-----------------*/
+    /*-----------------ALL Work Related to Slide Panel-----------------*/
 
     private static final String TAG = "ActivityPlaylist";
     private SlidingUpPanelLayout mLayout;

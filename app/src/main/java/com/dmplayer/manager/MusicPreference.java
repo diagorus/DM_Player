@@ -11,7 +11,7 @@ import com.google.gson.Gson;
 import java.util.ArrayList;
 import java.util.List;
 
-public class MusicPreferance {
+public class MusicPreference {
 
     public static List<SongDetail> playlist = new ArrayList<>();
     public static List<SongDetail> shuffledPlaylist = new ArrayList<>();
@@ -99,12 +99,12 @@ public class MusicPreferance {
     }
 
     public static List<SongDetail> getPlaylist(Context context, String path) {
-        MediaController.getInstance().type = PhoneMediaControl.SongsLoadFor.MusicIntent.ordinal();
+        MediaController.getInstance().type = PhoneMediaControl.SongsLoadFor.MUSIC_INTENT.ordinal();
         MediaController.getInstance().id = -1;
         MediaController.getInstance().currentPlaylistNum = 0;
         MediaController.getInstance().path = path;
 
-        playlist = PhoneMediaControl.getInstance().getList(context, -1, PhoneMediaControl.SongsLoadFor.MusicIntent, path);
+        playlist = PhoneMediaControl.getInstance().getList(context, -1, PhoneMediaControl.SongsLoadFor.MUSIC_INTENT, path);
         if (playlist != null && !playlist.isEmpty()) {
             playingSongDetail = playlist.get(0);
         }

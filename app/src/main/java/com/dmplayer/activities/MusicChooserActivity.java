@@ -97,7 +97,7 @@ public class MusicChooserActivity extends AppCompatActivity {
                 mAllSongsListAdapter.notifyDataSetChanged();
             }
         });
-        mPhoneMediaControl.loadMusicListAsync(context, -1, PhoneMediaControl.SongsLoadFor.All,"");
+        mPhoneMediaControl.loadMusicListAsync(context, -1, PhoneMediaControl.SongsLoadFor.ALL,"");
     }
 
     public class AllSongsListAdapter extends BaseAdapter {

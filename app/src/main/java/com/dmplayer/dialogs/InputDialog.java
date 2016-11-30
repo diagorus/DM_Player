@@ -61,6 +61,7 @@ public class InputDialog extends BaseDialogFragment {
         invitationText.setText(invitation);
 
         input.setSelectAllOnFocus(true);
+        input.requestFocus();
         InputMethodManager imm = (InputMethodManager)
                 getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
         imm.showSoftInput(input, InputMethodManager.SHOW_IMPLICIT);
