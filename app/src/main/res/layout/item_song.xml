@@ -8,6 +8,7 @@
     android:background="@drawable/selector_item_activated"
     android:orientation="horizontal"
     android:padding="8dp">
+
     <com.dmplayer.uicomponent.CircleImageView
         android:id="@+id/song_icon_art"
         android:layout_width="48dp"
