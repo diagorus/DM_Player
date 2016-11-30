@@ -2,10 +2,13 @@ package com.dmplayer.utility;
 
 import android.content.Context;
 import android.database.Cursor;
+import android.provider.MediaStore;
+import android.util.Log;
 
 import com.dmplayer.R;
 import com.dmplayer.dbhandler.PlaylistTableHelper;
 import com.dmplayer.models.PlaylistItem;
+import com.dmplayer.models.SongDetail;
 import com.dmplayer.models.playlisitems.DefaultPlaylistCategorySeveral;
 import com.dmplayer.models.playlisitems.DefaultPlaylistCategorySingle;
 import com.dmplayer.models.playlisitems.DefaultPlaylistItemSeveral;
@@ -19,6 +22,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 public final class PlaylistProvider {
+    private static final String TAG = PlaylistProvider.class.getSimpleName();
+
     private PlaylistProvider() {
         throw new AssertionError();
     }
@@ -28,6 +33,33 @@ public final class PlaylistProvider {
 
         Cursor playlistCursor = PlaylistTableHelper.getInstance(context).getPlaylists();
 
+        try {
+            if (playlistCursor != null) {
+                int _id = playlistCursor.getColumnIndex(MediaStore.Audio.Media._ID);
+                int artist = playlistCursor.getColumnIndex(MediaStore.Audio.Media.ARTIST);
+                int album_id = playlistCursor.getColumnIndex(MediaStore.Audio.Media.ALBUM_ID);
+                int title = playlistCursor.getColumnIndex(MediaStore.Audio.Media.TITLE);
+                int data = playlistCursor.getColumnIndex(MediaStore.Audio.Media.DATA);
+                int display_name = playlistCursor.getColumnIndex(MediaStore.Audio.Media.DISPLAY_NAME);
+                int duration = playlistCursor.getColumnIndex(MediaStore.Audio.Media.DURATION);
+
+                while (playlistCursor.moveToNext()) {
+                    final int ID = playlistCursor.getInt(_id);
+                    final String ARTIST = playlistCursor.getString(artist);
+                    final String TITLE = playlistCursor.getString(title);
+                    final String DISPLAY_NAME = playlistCursor.getString(display_name);
+                    final String DURATION = playlistCursor.getString(duration);
+                    final String PATH = playlistCursor.getString(data);
+
+                    SongDetail song = new SongDetail(ID, album_id, ARTIST, TITLE, PATH, DISPLAY_NAME, DURATION);
+//                    temp.add(song);
+                }
+            }
+        } catch (Exception e) {
+            Log.e(TAG, Log.getStackTraceString(e));
+        } finally {
+//            closeCursor(playlistCursor);
+        }
 
         return temp;
     }
@@ -70,4 +102,15 @@ public final class PlaylistProvider {
 
         return temp;
     }
+
+    private void closeCursor(Cursor cursor) {
+        if (cursor != null) {
+            try {
+                cursor.close();
+            } catch (Exception e) {
+                Log.e(TAG, Log.getStackTraceString(e));
+            }
+        }
+    }
+
 }

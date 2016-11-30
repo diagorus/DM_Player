@@ -186,15 +186,15 @@ public class PhoneMediaControl {
                 int duration = cursor.getColumnIndex(MediaStore.Audio.Media.DURATION);
 
                 while (cursor.moveToNext()) {
-                    int ID = cursor.getInt(_id);
+                    final int ID = cursor.getInt(_id);
                     final String ARTIST = cursor.getString(artist);
                     final String TITLE = cursor.getString(title);
                     final String DISPLAY_NAME = cursor.getString(display_name);
                     final String DURATION = cursor.getString(duration);
                     final String PATH = cursor.getString(data);
 
-                    SongDetail mSongDetail = new SongDetail(ID, album_id, ARTIST, TITLE, PATH, DISPLAY_NAME, DURATION);
-                    songs.add(mSongDetail);
+                    SongDetail song = new SongDetail(ID, album_id, ARTIST, TITLE, PATH, DISPLAY_NAME, DURATION);
+                    songs.add(song);
                 }
             }
         } catch (Exception e) {
@@ -236,7 +236,7 @@ public class PhoneMediaControl {
             try {
                 cursor.close();
             } catch (Exception e) {
-                Log.e("tmessages", e.toString());
+                Log.e(TAG, Log.getStackTraceString(e));
             }
         }
     }
