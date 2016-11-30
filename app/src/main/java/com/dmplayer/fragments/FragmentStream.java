@@ -23,6 +23,7 @@ import android.widget.ProgressBar;
 import android.widget.Switch;
 
 import com.dmplayer.R;
+import com.dmplayer.butterknifeabstraction.BaseFragment;
 import com.dmplayer.manager.MediaController;
 import com.dmplayer.streamaudio.ClientStreamService;
 import com.dmplayer.streamaudio.Observer.SingleObserverContainer;
@@ -37,17 +38,25 @@ import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.HashMap;
 
-public class FragmentStream extends Fragment {
+import butterknife.BindView;
+import butterknife.ButterKnife;
+import butterknife.OnClick;
+
+public class FragmentStream extends BaseFragment {
 
 	Button stopStreamButton;
+	@BindView(R.id.switchServer)
 	Switch switcher;
+	@BindView(R.id.connect_to_UDPServer)
 	Button connectToServerButton;
-
 
 	public ReciveAudioSocket reciveAudioSocket;
 
 	SendAudioSocket sendAudioSocket;
-	ProgressBar pbServer,pbClient;
+	@BindView(R.id.server_progress_bar)
+	ProgressBar pbServer;
+	@BindView(R.id.client_progress_bar)
+	ProgressBar pbClient;
 	Handler handler;
 	BroadcastReceiver brClient;
 	BroadcastReceiver brServer;
@@ -77,12 +86,18 @@ public class FragmentStream extends Fragment {
 	final String ATTRIBUTE_IP = "value";
 	final String ATTRIBUTE_IMAGE = "image";
 
+
 	@Override
-	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-		View rootview = inflater.inflate(R.layout.fragment_stream, null);
-		setupInitialViews(rootview);
-		return rootview;
+	protected int getLayoutId() {
+		return R.layout.fragment_stream;
 	}
+
+	@Override
+	public void onViewCreated(View view, Bundle savedInstanceState) {
+		super.onViewCreated(view, savedInstanceState);
+		setupInitialViews(view);
+	}
+
 	@Override
 	public void onDestroy() {
 		getActivity().unregisterReceiver(brClient);
@@ -93,16 +108,12 @@ public class FragmentStream extends Fragment {
 
 	private void setupInitialViews(View view) {
 
+
 		view1=view;
-		pbClient=(ProgressBar)view.findViewById(R.id.client_progress_bar);
-		pbServer=(ProgressBar)view.findViewById(R.id.server_progress_bar);
 
-		connectToServerButton=(Button)view.findViewById(R.id.connect_to_UDPServer);
-		connectToServerButton.setOnClickListener(connectToServerListener);
-		switcher=(Switch)view.findViewById(R.id.switchServer);
 		switcher.setOnCheckedChangeListener(serverListener);
-
-		final ListView listView=(ListView)view1.findViewById(R.id.streamListView);
+		connectToServerButton.setOnClickListener(connectToServerListener);
+		final ListView listView= ButterKnife.findById(view1, R.id.streamListView);
 
 		//listView.setOnItemClickListener(itemListener);
 		listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {

@@ -17,6 +17,8 @@ import android.widget.TextView;
 
 import com.dmplayer.R;
 
+import butterknife.ButterKnife;
+
 public class ExpandableLayout extends LinearLayout {
     private static final String ANDROID_SCHEME = "http://schemas.android.com/apk/res/android";
 
@@ -132,7 +134,7 @@ public class ExpandableLayout extends LinearLayout {
         addView(v, 0);
 
 
-        header = (RelativeLayout) findViewById(R.id.header);
+        header = ButterKnife.findById(this, R.id.header);
         header.setBackgroundColor(headerColor);
 
         TextView title = (TextView) findViewById(R.id.title);
@@ -146,7 +148,7 @@ public class ExpandableLayout extends LinearLayout {
         ImageView image = (ImageView) findViewById(R.id.image);
         image.setImageResource(imageResource);
 
-        icon = (ImageView) findViewById(R.id.expand_icon);
+        icon = ButterKnife.findById(this ,R.id.expand_icon);
     }
 
     int position = 0;

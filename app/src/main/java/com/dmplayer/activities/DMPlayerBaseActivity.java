@@ -16,6 +16,7 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.PersistableBundle;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
@@ -38,17 +39,18 @@ import android.widget.Toast;
 
 import com.dmplayer.R;
 import com.dmplayer.adapter.DrawerAdapter;
+import com.dmplayer.butterknifeabstraction.BaseAppCompatActivity;
 import com.dmplayer.fragments.FragmentChat;
 import com.dmplayer.fragments.FragmentEqualizer;
 import com.dmplayer.fragments.FragmentFavorite;
 import com.dmplayer.fragments.FragmentLibrary;
+import com.dmplayer.fragments.FragmentMap;
 import com.dmplayer.fragments.FragmentSettings;
 import com.dmplayer.fragments.FragmentStream;
-import com.dmplayer.fragments.TestFragmentLibrary;
 import com.dmplayer.internetservices.URLConnectionRequest;
-import com.dmplayer.jsonobjects.GeocodeObject.JSONGeocode;
-import com.dmplayer.jsonobjects.MusicBrainsObject.Artist;
-import com.dmplayer.jsonobjects.MusicBrainsObject.JSONMusicbrains;
+import com.dmplayer.models.GeocodeObject.JSONGeocode;
+import com.dmplayer.models.MusicBrainsObject.Artist;
+import com.dmplayer.models.MusicBrainsObject.JSONMusicbrains;
 import com.dmplayer.manager.MediaController;
 import com.dmplayer.manager.MusicPreference;
 import com.dmplayer.manager.NotificationManager;
@@ -77,8 +79,11 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
+import butterknife.OnClick;
 
-public class DMPlayerBaseActivity extends AppCompatActivity implements View.OnClickListener,
+public class DMPlayerBaseActivity extends BaseAppCompatActivity implements View.OnClickListener,
         Slider.OnValueChangedListener,
         NotificationManager.NotificationCenterDelegate,
         SensorEventListener {
@@ -88,39 +93,67 @@ public class DMPlayerBaseActivity extends AppCompatActivity implements View.OnCl
     private SharedPreferences sharedPreferences;
     private ActionBarDrawerToggle mDrawerToggle;
 
-    private Toolbar toolbar;
-    private DrawerLayout mDrawerLayout;
+    @BindView(R.id.toolbar_actionbar)
+    Toolbar toolbar;
+    @BindView(R.id.drawerLayout)
+    DrawerLayout mDrawerLayout;
 
-    private RecyclerView recyclerViewDrawer;
-    private RecyclerView.Adapter adapterDrawer;
+    @BindView(R.id.recyclerViewDrawer)
+    RecyclerView recyclerViewDrawer;
 
-    private SlidingUpPanelLayout mLayout;
-    private RelativeLayout slidepanelchildtwo_topviewone;
-    private RelativeLayout slidepanelchildtwo_topviewtwo;
+    RecyclerView.Adapter adapterDrawer;
+
+    @BindView(R.id.sliding_layout)
+    SlidingUpPanelLayout mLayout;
+
+    @BindView(R.id.slidepanelchildtwo_topviewone)
+    RelativeLayout slidepanelchildtwo_topviewone;
+    @BindView(R.id.slidepanelchildtwo_topviewtwo)
+    RelativeLayout slidepanelchildtwo_topviewtwo;
     private boolean isExpand = false;
 
-    private DisplayImageOptions options;
-    private ImageLoader imageLoader = ImageLoader.getInstance();
-    private ImageLoadingListener animateFirstListener = new AnimateFirstDisplayListener();
+    DisplayImageOptions options;
+    ImageLoader imageLoader = ImageLoader.getInstance();
+    ImageLoadingListener animateFirstListener = new AnimateFirstDisplayListener();
 
-    private ImageView songBackground;
-    private ImageView img_bottom_slideone;
-    private ImageView img_bottom_slidetwo;
-    private TextView txt_playesongname;
-    private TextView txt_songartistname;
-    private TextView txt_playesongname_slidetoptwo;
-    private TextView txt_songartistname_slidetoptwo;
-    private TextView txt_timeprogress;
-    private TextView txt_timetotal;
-    private ImageView imgbtn_backward;
-    private ImageView imgbtn_forward;
-    private ImageView imgbtn_toggle;
-    private ImageView imgbtn_suffel;
-    private ImageView img_Favorite;
-    private ImageView img_map;
-    private PlayPauseView btn_playpause;
-    private PlayPauseView btn_playpausePanel;
-    private Slider audio_progress;
+    @BindView(R.id.image_songsAlbum)
+    ImageView songBackground;
+    @BindView(R.id.img_bottom_slideone)
+    ImageView img_bottom_slideone;
+    @BindView(R.id.img_bottom_slidetwo)
+    ImageView img_bottom_slidetwo;
+    @BindView(R.id.txt_playesongname)
+    TextView txt_playesongname;
+    @BindView(R.id.txt_songartistname)
+    TextView txt_songartistname;
+    @BindView(R.id.txt_playesongname_slidetoptwo)
+    TextView txt_playesongname_slidetoptwo;
+    @BindView(R.id.txt_songartistname_slidetoptwo)
+    TextView txt_songartistname_slidetoptwo;
+    @BindView(R.id.slidepanel_time_progress)
+    TextView txt_timeprogress;
+    @BindView(R.id.slidepanel_time_total)
+    TextView txt_timetotal;
+    @BindView(R.id.btn_backward)
+    ImageView imgbtn_backward;
+    @BindView(R.id.btn_forward)
+    ImageView imgbtn_forward;
+    @BindView(R.id.btn_toggle)
+    ImageView imgbtn_toggle;
+    @BindView(R.id.btn_suffel)
+    ImageView imgbtn_suffel;
+
+    @BindView(R.id.bottombar_img_Favorite)
+    ImageView img_Favorite;
+    @BindView(R.id.bottombar_map_icon)
+    ImageView img_map;
+    @BindView(R.id.btn_play)
+    PlayPauseView btn_playpause;
+    @BindView(R.id.bottombar_play)
+    PlayPauseView btn_playpausePanel;
+    @BindView(R.id.audio_progress_control)
+    Slider audio_progress;
+
 
     private boolean isDraggingStart = false;
     private int TAG_Observer;
@@ -140,15 +173,12 @@ public class DMPlayerBaseActivity extends AppCompatActivity implements View.OnCl
         requestWindowFeature(Window.FEATURE_ACTION_BAR);
         context = DMPlayerBaseActivity.this;
         sharedPreferences = getSharedPreferences("VALUES", Context.MODE_PRIVATE);
-
         theme();
-
 
         new AssetsCopier(this).execute();
 
         //Set your Layout view
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_dmplayerbase);
 
         senSensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
         senAccelerometer = senSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
@@ -156,15 +186,16 @@ public class DMPlayerBaseActivity extends AppCompatActivity implements View.OnCl
 
         toolbarStatusBar();
         navigationDrawer();
-
-
-
         initSlidingUpPanel();
         header();
 
         setFragment(0);
-
         getIntentData();
+    }
+
+    @Override
+    protected int getLayoutId() {
+        return R.layout.activity_dmplayerbase;
     }
 
     @Override
@@ -210,7 +241,10 @@ public class DMPlayerBaseActivity extends AppCompatActivity implements View.OnCl
         }
     }
 
+
     @Override
+    @OnClick({R.id.btn_backward,R.id.btn_forward,R.id.btn_suffel,R.id.btn_toggle,R.id.bottombar_img_Favorite,
+            R.id.bottombar_map_icon,R.id.bottombar_play,R.id.btn_play})
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.bottombar_play:
@@ -240,8 +274,8 @@ public class DMPlayerBaseActivity extends AppCompatActivity implements View.OnCl
                     MediaController.getInstance().storeFavoritePlay(context, MediaController.getInstance().getPlayingSongDetail(), v.isSelected() ? 0 : 1);
                     v.setSelected(!v.isSelected());
                     DMPlayerUtility.animateHeartButton(v);
-                    findViewById(R.id.like).setSelected(!v.isSelected());
-                    DMPlayerUtility.animatePhotoLike(findViewById(R.id.big_like), findViewById(R.id.like));
+                    ButterKnife.findById(this,R.id.like).setSelected(!v.isSelected());
+                    DMPlayerUtility.animatePhotoLike(ButterKnife.findById(this,R.id.big_like), ButterKnife.findById(this,R.id.like));
                 }
                 break;
             case R.id.bottombar_map_icon:
@@ -275,7 +309,6 @@ public class DMPlayerBaseActivity extends AppCompatActivity implements View.OnCl
                     LogWriter.info(TAG, data.getPath());
                 if (data.getScheme().equalsIgnoreCase("content"))
                     LogWriter.info(TAG, data.getPath());
-
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -283,15 +316,14 @@ public class DMPlayerBaseActivity extends AppCompatActivity implements View.OnCl
     }
 
     public void toolbarStatusBar() {
-        toolbar = (Toolbar) findViewById(R.id.toolbar_actionbar);
+        toolbar = ButterKnife.findById(this, R.id.toolbar_actionbar);
         setSupportActionBar(toolbar);
     }
 
     void setDrawersRightMargin() {
         // Cast drawer
-        mDrawerLayout = (DrawerLayout) findViewById(R.id.drawerLayout);
 
-        View drawer = findViewById(R.id.scrimInsetsFrameLayout);
+        View drawer = ButterKnife.findById(this, R.id.scrimInsetsFrameLayout);
         ViewGroup.LayoutParams layoutParams = drawer.getLayoutParams();
         DisplayMetrics displayMetrics = getResources().getDisplayMetrics();
 
@@ -331,7 +363,6 @@ public class DMPlayerBaseActivity extends AppCompatActivity implements View.OnCl
         getTheme().resolveAttribute(R.attr.colorPrimary, typedValue, true);
         final int color = typedValue.data;
 
-        recyclerViewDrawer = (RecyclerView) findViewById(R.id.recyclerViewDrawer);
         recyclerViewDrawer.setHasFixedSize(true);
         recyclerViewDrawer.setLayoutManager(new LinearLayoutManager(DMPlayerBaseActivity.this));
 
@@ -344,7 +375,6 @@ public class DMPlayerBaseActivity extends AppCompatActivity implements View.OnCl
         drawerIcons.recycle();
         adapterDrawer = new DrawerAdapter(drawerItems);
         recyclerViewDrawer.setAdapter(adapterDrawer);
-
         recyclerViewDrawer.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
             @TargetApi(Build.VERSION_CODES.JELLY_BEAN)
             @Override
@@ -352,25 +382,25 @@ public class DMPlayerBaseActivity extends AppCompatActivity implements View.OnCl
 
                 for (int i = 0; i < drawerTitles.length; i++) {
                     if (i == sharedPreferences.getInt("FRAGMENT", 0)) {
-                        ImageView imageViewDrawerIcon = (ImageView) recyclerViewDrawer.getChildAt(i).findViewById(R.id.imageViewDrawerIcon);
-                        TextView textViewDrawerTitle = (TextView) recyclerViewDrawer.getChildAt(i).findViewById(R.id.textViewDrawerItemTitle);
+                        ImageView imageViewDrawerIcon = ButterKnife.findById(recyclerViewDrawer, R.id.imageViewDrawerIcon);
+                        TextView textViewDrawerTitle = ButterKnife.findById(recyclerViewDrawer,R.id.textViewDrawerItemTitle);
                         imageViewDrawerIcon.setColorFilter(color);
                         imageViewDrawerIcon.setImageAlpha(255);
                         textViewDrawerTitle.setTextColor(color);
-                        RelativeLayout relativeLayoutDrawerItem = (RelativeLayout) recyclerViewDrawer.getChildAt(i).findViewById(R.id.relativeLayoutDrawerItem);
+                        RelativeLayout relativeLayoutDrawerItem = ButterKnife.findById(recyclerViewDrawer, R.id.relativeLayoutDrawerItem);
                         TypedValue typedValueDrawerSelected = new TypedValue();
                         getTheme().resolveAttribute(R.attr.colorPrimary, typedValueDrawerSelected, true);
                         int colorDrawerItemSelected = typedValueDrawerSelected.data;
                         colorDrawerItemSelected = (colorDrawerItemSelected & 0x00FFFFFF) | 0x30000000;
                         relativeLayoutDrawerItem.setBackgroundColor(colorDrawerItemSelected);
                     } else {
-                        ImageView imageViewDrawerIcon = (ImageView) recyclerViewDrawer.getChildAt(i).findViewById(R.id.imageViewDrawerIcon);
-                        TextView textViewDrawerTitle = (TextView) recyclerViewDrawer.getChildAt(i).findViewById(R.id.textViewDrawerItemTitle);
+                        ImageView imageViewDrawerIcon = ButterKnife.findById(recyclerViewDrawer,R.id.imageViewDrawerIcon);
+                        TextView textViewDrawerTitle = ButterKnife.findById(recyclerViewDrawer,R.id.textViewDrawerItemTitle);
                         imageViewDrawerIcon.setColorFilter(getResources().getColor(R.color.md_text));
                         imageViewDrawerIcon.setImageAlpha(138);
 
                         textViewDrawerTitle.setTextColor(getResources().getColor(R.color.md_text));
-                        RelativeLayout relativeLayoutDrawerItem = (RelativeLayout) recyclerViewDrawer.getChildAt(i).findViewById(R.id.relativeLayoutDrawerItem);
+                        RelativeLayout relativeLayoutDrawerItem = ButterKnife.findById(recyclerViewDrawer, R.id.relativeLayoutDrawerItem);
                         relativeLayoutDrawerItem.setBackgroundColor(getResources().getColor(R.color.md_white_1000));
                     }
                 }
@@ -388,12 +418,12 @@ public class DMPlayerBaseActivity extends AppCompatActivity implements View.OnCl
 
                 for (int i = 0; i < drawerTitles.length; i++) {
                     if (i == position) {
-                        ImageView imageViewDrawerIcon = (ImageView) recyclerViewDrawer.getChildAt(i).findViewById(R.id.imageViewDrawerIcon);
-                        TextView textViewDrawerTitle = (TextView) recyclerViewDrawer.getChildAt(i).findViewById(R.id.textViewDrawerItemTitle);
+                        ImageView imageViewDrawerIcon = ButterKnife.findById(recyclerViewDrawer,R.id.imageViewDrawerIcon);
+                        TextView textViewDrawerTitle = ButterKnife.findById(recyclerViewDrawer,R.id.textViewDrawerItemTitle);
                         imageViewDrawerIcon.setColorFilter(color);
                         imageViewDrawerIcon.setImageAlpha(255);
                         textViewDrawerTitle.setTextColor(color);
-                        RelativeLayout relativeLayoutDrawerItem = (RelativeLayout) recyclerViewDrawer.getChildAt(i).findViewById(R.id.relativeLayoutDrawerItem);
+                        RelativeLayout relativeLayoutDrawerItem = ButterKnife.findById(recyclerViewDrawer,R.id.relativeLayoutDrawerItem);
                         TypedValue typedValueDrawerSelected = new TypedValue();
                         getTheme().resolveAttribute(R.attr.colorPrimary, typedValueDrawerSelected, true);
                         int colorDrawerItemSelected = typedValueDrawerSelected.data;
@@ -401,12 +431,12 @@ public class DMPlayerBaseActivity extends AppCompatActivity implements View.OnCl
                         relativeLayoutDrawerItem.setBackgroundColor(colorDrawerItemSelected);
 
                     } else {
-                        ImageView imageViewDrawerIcon = (ImageView) recyclerViewDrawer.getChildAt(i).findViewById(R.id.imageViewDrawerIcon);
-                        TextView textViewDrawerTitle = (TextView) recyclerViewDrawer.getChildAt(i).findViewById(R.id.textViewDrawerItemTitle);
+                        ImageView imageViewDrawerIcon = ButterKnife.findById(recyclerViewDrawer,R.id.imageViewDrawerIcon);
+                        TextView textViewDrawerTitle = ButterKnife.findById(recyclerViewDrawer,R.id.textViewDrawerItemTitle);
                         imageViewDrawerIcon.setColorFilter(getResources().getColor(R.color.md_text));
                         imageViewDrawerIcon.setImageAlpha(138);
                         textViewDrawerTitle.setTextColor(getResources().getColor(R.color.md_text));
-                        RelativeLayout relativeLayoutDrawerItem = (RelativeLayout) recyclerViewDrawer.getChildAt(i).findViewById(R.id.relativeLayoutDrawerItem);
+                        RelativeLayout relativeLayoutDrawerItem = ButterKnife.findById(recyclerViewDrawer,R.id.relativeLayoutDrawerItem);
                         relativeLayoutDrawerItem.setBackgroundColor(getResources().getColor(R.color.md_white_1000));
                     }
                 }
@@ -428,23 +458,6 @@ public class DMPlayerBaseActivity extends AppCompatActivity implements View.OnCl
     }
 
     private void initSlidingUpPanel() {
-        mLayout = (SlidingUpPanelLayout) findViewById(R.id.sliding_layout);
-        songBackground = (ImageView) findViewById(R.id.image_songsAlbum);
-        img_bottom_slideone = (ImageView) findViewById(R.id.img_bottom_slideone);
-        img_bottom_slidetwo = (ImageView) findViewById(R.id.img_bottom_slidetwo);
-
-        txt_timeprogress = (TextView) findViewById(R.id.slidepanel_time_progress);
-        txt_timetotal = (TextView) findViewById(R.id.slidepanel_time_total);
-        imgbtn_backward = (ImageView) findViewById(R.id.btn_backward);
-        imgbtn_forward = (ImageView) findViewById(R.id.btn_forward);
-        imgbtn_toggle = (ImageView) findViewById(R.id.btn_toggle);
-        imgbtn_suffel = (ImageView) findViewById(R.id.btn_suffel);
-        btn_playpause = (PlayPauseView) findViewById(R.id.btn_play);
-        audio_progress = (Slider) findViewById(R.id.audio_progress_control);
-        btn_playpausePanel = (PlayPauseView) findViewById(R.id.bottombar_play);
-        img_Favorite = (ImageView) findViewById(R.id.bottombar_img_Favorite);
-        img_map = (ImageView) findViewById(R.id.bottombar_map_icon);
-
         //TODO: Attention! Resolving attributes
         TypedValue typedvaluecoloraccent = new TypedValue();
         getTheme().resolveAttribute(R.attr.colorAccent, typedvaluecoloraccent, true);
@@ -452,25 +465,10 @@ public class DMPlayerBaseActivity extends AppCompatActivity implements View.OnCl
 
         audio_progress.setBackgroundColor(coloraccent);
         audio_progress.setValue(0);
-
         audio_progress.setOnValueChangedListener(this);
-        imgbtn_backward.setOnClickListener(this);
-        imgbtn_forward.setOnClickListener(this);
-        imgbtn_toggle.setOnClickListener(this);
-        imgbtn_suffel.setOnClickListener(this);
-        img_Favorite.setOnClickListener(this);
-        img_map.setOnClickListener(this);
 
         btn_playpausePanel.Pause();
         btn_playpause.Pause();
-
-        txt_playesongname = (TextView) findViewById(R.id.txt_playesongname);
-        txt_songartistname = (TextView) findViewById(R.id.txt_songartistname);
-        txt_playesongname_slidetoptwo = (TextView) findViewById(R.id.txt_playesongname_slidetoptwo);
-        txt_songartistname_slidetoptwo = (TextView) findViewById(R.id.txt_songartistname_slidetoptwo);
-
-        slidepanelchildtwo_topviewone = (RelativeLayout) findViewById(R.id.slidepanelchildtwo_topviewone);
-        slidepanelchildtwo_topviewtwo = (RelativeLayout) findViewById(R.id.slidepanelchildtwo_topviewtwo);
 
         slidepanelchildtwo_topviewone.setVisibility(View.VISIBLE);
         slidepanelchildtwo_topviewtwo.setVisibility(View.INVISIBLE);
@@ -480,7 +478,6 @@ public class DMPlayerBaseActivity extends AppCompatActivity implements View.OnCl
             @Override
             public void onClick(View v) {
                 mLayout.setPanelState(SlidingUpPanelLayout.PanelState.EXPANDED);
-
             }
         });
 
@@ -489,12 +486,8 @@ public class DMPlayerBaseActivity extends AppCompatActivity implements View.OnCl
             @Override
             public void onClick(View v) {
                 mLayout.setPanelState(SlidingUpPanelLayout.PanelState.COLLAPSED);
-
             }
         });
-
-        ((PlayPauseView) findViewById(R.id.bottombar_play)).setOnClickListener(this);
-        ((PlayPauseView) findViewById(R.id.btn_play)).setOnClickListener(this);
 
         mLayout.setPanelSlideListener(new SlidingUpPanelLayout.PanelSlideListener() {
             @Override
@@ -660,11 +653,13 @@ public class DMPlayerBaseActivity extends AppCompatActivity implements View.OnCl
         }
         return artist;
     }
+
     public  String getBaseCity(Artist artist){
         String str="";
         str=artist.getBeginArea().getName();
         return str;
     }
+
     public  String getCreationDate(Artist artist){
         String str="";
         str=artist.getLifeSpan().getBegin();
@@ -703,7 +698,7 @@ public class DMPlayerBaseActivity extends AppCompatActivity implements View.OnCl
     }
 
     private void setBackgroundImage() {
-        ImageView headerBackgroundImage = (ImageView) findViewById(R.id.imageViewCover);
+        ImageView headerBackgroundImage = ButterKnife.findById(this,R.id.imageViewCover);
 
         String headerBackground = sharedPreferences.getString(FragmentSettings.HEADER_BACKGROUND, "");
         Uri headerBackgroundUri = Uri.parse(headerBackground);
@@ -716,7 +711,7 @@ public class DMPlayerBaseActivity extends AppCompatActivity implements View.OnCl
     }
 
     private void setAvatarImage() {
-        CircleImageView avatarImage = (CircleImageView) findViewById(R.id.profileAvatar);
+        CircleImageView avatarImage = ButterKnife.findById(this, R.id.profileAvatar);
 
         String avatar = sharedPreferences.getString(FragmentSettings.AVATAR, "");
         Uri avatarUri = Uri.parse(avatar);
@@ -729,7 +724,7 @@ public class DMPlayerBaseActivity extends AppCompatActivity implements View.OnCl
     }
 
     private void setUserName() {
-        TextView nameText = (TextView) findViewById(R.id.profileName);
+        TextView nameText = ButterKnife.findById(this, R.id.profileName);
 
         String name = sharedPreferences.getString(FragmentSettings.NAME,
                 getResources().getString(R.string.profile_defult_name));

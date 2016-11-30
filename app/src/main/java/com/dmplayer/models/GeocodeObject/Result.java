@@ -1,5 +1,5 @@
 
-package com.dmplayer.jsonobjects.GeocodeObject;
+package com.dmplayer.models.GeocodeObject;
 
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;

@@ -1,11 +1,12 @@
 
-package com.dmplayer.jsonobjects.GeocodeObject;
+package com.dmplayer.models.GeocodeObject;
 
 
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
-public class Southwest {
+
+public class Location {
 
     @SerializedName("lat")
     @Expose

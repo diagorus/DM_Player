@@ -22,6 +22,7 @@ import android.widget.TextView;
 import com.dmplayer.R;
 import com.dmplayer.activities.DMPlayerBaseActivity;
 import com.dmplayer.activities.MusicChooserActivity;
+import com.dmplayer.butterknifeabstraction.BaseFragment;
 import com.dmplayer.dialogs.OnWorkDone;
 import com.dmplayer.dialogs.ProfileDialog;
 import com.dmplayer.dialogs.ThemeDialog;
@@ -36,9 +37,12 @@ import java.io.IOException;
 import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 
+import butterknife.ButterKnife;
+import butterknife.OnClick;
+
 import static android.content.Context.MODE_PRIVATE;
 
-public class FragmentSettings extends Fragment implements View.OnClickListener {
+public class FragmentSettings extends BaseFragment implements View.OnClickListener {
     public final static int GALLERY_REQUEST = 1;
     public final static int CAMERA_REQUEST = 2;
     public final static int PICKER_REQUEST = 3;
@@ -57,10 +61,14 @@ public class FragmentSettings extends Fragment implements View.OnClickListener {
     private TextView textViewMixingMode;
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_settings, null);
+    public void onViewCreated(View view, Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
         setupInitialViews(view);
-        return view;
+    }
+
+    @Override
+    protected int getLayoutId() {
+        return R.layout.fragment_settings;
     }
 
     @Override
@@ -72,17 +80,14 @@ public class FragmentSettings extends Fragment implements View.OnClickListener {
     private void setupInitialViews(View view) {
         sharedPreferences = getActivity().getSharedPreferences("VALUES", MODE_PRIVATE);
 
-        view.findViewById(R.id.relativeLayout_choose_theme).setOnClickListener(this);
-        view.findViewById(R.id.relativeLayout_customize_profile).setOnClickListener(this);
-        view.findViewById(R.id.relativeLayout_change_header_back).setOnClickListener(this);
-        view.findViewById(R.id.relativeLayoutCreatePlaylist).setOnClickListener(this);
-        view.findViewById(R.id.relativeLayoutMusicChooser).setOnClickListener(this);
-        view.findViewById(R.id.relativeLayoutMusicMixEnabled).setOnClickListener(this);
-        textViewMixingMode = (TextView) view.findViewById(R.id.textViewMusicMixEnabledDescription);
+        textViewMixingMode = ButterKnife.findById(view,R.id.textViewMusicMixEnabledDescription);
         setMixingModeInTextView();
     }
 
     @Override
+    @OnClick({R.id.relativeLayout_choose_theme,R.id.relativeLayout_customize_profile,
+            R.id.relativeLayout_change_header_back,R.id.relativeLayoutCreatePlaylist,
+            R.id.relativeLayoutMusicChooser,R.id.relativeLayoutMusicMixEnabled})
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.relativeLayout_choose_theme:
@@ -126,7 +131,7 @@ public class FragmentSettings extends Fragment implements View.OnClickListener {
                              songList) {
                             a.addSong(song);
                         }
-                        a.setName("2cyka blyat idi nahuy pidoras");
+
                         try {
                             File b = new File(Environment
                                     .getExternalStorageDirectory() + "/DMPlayer/DMPlayer_playlists");

@@ -12,7 +12,7 @@ public abstract class BaseDialogFragment extends DialogFragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        return inflater.inflate(getFragmentLayout(), container, false);
+        return inflater.inflate(getLayoutId(), container, false);
     }
 
     @Override
@@ -25,5 +25,5 @@ public abstract class BaseDialogFragment extends DialogFragment {
         ButterKnife.bind(this, view);
     }
 
-    protected abstract int getFragmentLayout();
+    protected abstract int getLayoutId();
 }

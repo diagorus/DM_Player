@@ -17,6 +17,8 @@ import android.widget.TextView;
 
 import com.dmplayer.R;
 
+import butterknife.ButterKnife;
+
 
 /**
  * To be used with ViewPager to provide a tab indicator component which give constant feedback as to
@@ -181,7 +183,7 @@ public class SlidingTabLayout extends HorizontalScrollView {
                 // If there is a custom tab view layout id set, try and inflate it
                 tabView = LayoutInflater.from(getContext()).inflate(mTabViewLayoutId, mTabStrip,
                         false);
-                tabTitleView = (TextView) tabView.findViewById(mTabViewTextViewId);
+                tabTitleView = ButterKnife.findById(tabView, mTabViewTextViewId);
             }
 
             if (tabView == null) {

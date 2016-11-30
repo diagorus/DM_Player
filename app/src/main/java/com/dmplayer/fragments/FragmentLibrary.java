@@ -58,7 +58,7 @@ public class FragmentLibrary extends BaseFragment {
     }
 
     @Override
-    protected int getFragmentLayout() {
+    protected int getLayoutId() {
         return R.layout.fragment_library;
     }
 
@@ -71,7 +71,6 @@ public class FragmentLibrary extends BaseFragment {
                 setupLocalPlaylists();
             }
         });
-
 
         expandableDefault.setOnExpandListener(new ExpandableLayout.OnExpandListener() {
             @Override
@@ -161,7 +160,6 @@ public class FragmentLibrary extends BaseFragment {
                         }
                     });
                 }
-
                 expandableDefault.addContent(itemView);
             }
         }

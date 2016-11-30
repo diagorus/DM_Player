@@ -6,30 +6,20 @@
 package com.dmplayer.fragments;
 
 import com.dmplayer.R;
+import com.dmplayer.butterknifeabstraction.BaseFragment;
 import com.dmplayer.manager.MediaController;
 import com.dmplayer.uicomponent.VisualizerView;
 
-import android.annotation.TargetApi;
-import android.app.AlertDialog;
-import android.content.DialogInterface;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
-import android.media.audiofx.BassBoost;
 import android.media.audiofx.Equalizer;
 import android.media.audiofx.Visualizer;
-import android.os.Build;
 import android.os.Bundle;
-import android.app.Fragment;
 import android.view.Gravity;
-import android.view.LayoutInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.Button;
-import android.widget.CheckBox;
-import android.widget.CompoundButton;
 import android.widget.LinearLayout;
 import android.widget.SeekBar;
 import android.widget.Spinner;
@@ -37,7 +27,9 @@ import android.widget.TextView;
 
 import java.util.ArrayList;
 
-public class FragmentEqualizer extends Fragment  {
+import butterknife.ButterKnife;
+
+public class FragmentEqualizer extends BaseFragment {
 
 	private MediaPlayer mMediaPlayer;
 	private Visualizer mVisualizer;
@@ -49,15 +41,17 @@ public class FragmentEqualizer extends Fragment  {
 
 	private static final float VISUALIZER_HEIGHT_DIP = 200f;
 
+
 	@Override
-	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+	public void onViewCreated(View view, Bundle savedInstanceState) {
+		super.onViewCreated(view, savedInstanceState);
+		vieww=view;
+		init();
+	}
 
-		super.onCreate(savedInstanceState);
-		View rootview = inflater.inflate(R.layout.fragment_equalizer, null);
-		vieww=rootview;
-		setupInitialViews(rootview);
-
-		return rootview;
+	@Override
+	protected int getLayoutId() {
+		return R.layout.fragment_equalizer;
 	}
 
 	@Override
@@ -72,7 +66,7 @@ public class FragmentEqualizer extends Fragment  {
 		super.onDestroy();
 	}
 
-	private void setupInitialViews(View view1) {
+	private void init() {
 
 		getActivity().setVolumeControlStream(AudioManager.STREAM_MUSIC);
 
@@ -82,7 +76,7 @@ public class FragmentEqualizer extends Fragment  {
 		//mMediaPlayer.start();
 
 		if(mMediaPlayer==null){
-			mMediaPlayer = MediaPlayer.create(view1.getContext(),R.raw.oxxxy);
+			mMediaPlayer = MediaPlayer.create(getActivity(),R.raw.oxxxy);
 		}
 		if(MediaController.getInstance().getAudioPlayer()!=null){
 			mMediaPlayer= MediaController.getInstance().getAudioPlayer();
@@ -115,7 +109,7 @@ to those of the selected preset*/
 		ArrayAdapter<String> equalizerPresetSpinnerAdapter
 				= new ArrayAdapter<String>(vieww.getContext(),android.R.layout.simple_spinner_item, equalizerPresetNames);
 		equalizerPresetSpinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-		Spinner equalizerPresetSpinner = (Spinner) vieww.findViewById(R.id.spinner);
+		Spinner equalizerPresetSpinner = ButterKnife.findById(vieww, R.id.spinner);
 
 //        get list of the device's equalizer presets
 		for (short i = 0; i < mEqualizer.getNumberOfPresets(); i++) {
@@ -140,7 +134,7 @@ to those of the selected preset*/
 //                set seekBar indicators according to selected preset
 				for (short i = 0; i < numberFrequencyBands; i++) {
 					short equalizerBandIndex = i;
-					SeekBar seekBar = (SeekBar) vieww.findViewById(equalizerBandIndex);
+					SeekBar seekBar = ButterKnife.findById(vieww,equalizerBandIndex);
 
 //                    get current gain setting for this equalizer band
 //                    set the progress indicator of this seekBar to indicate the current gain value
@@ -161,7 +155,7 @@ to those of the selected preset*/
 	private void setupEqualizerFxAndUI() {
 
 //        get reference to linear layout for the seekBars
-		mLinearLayout = (LinearLayout) vieww.findViewById(R.id.linearLayoutEqual);
+		mLinearLayout = ButterKnife.findById(vieww, R.id.linearLayoutEqual);
 
 //        equalizer heading
 //		TextView equalizerHeading = new TextView(vieww.getContext());
@@ -260,7 +254,7 @@ to those of the selected preset*/
 	/*displays the audio waveform*/
 	private void setupVisualizerFxAndUI() {
 
-		mLinearLayout = (LinearLayout) vieww.findViewById(R.id.linearLayoutVisual);
+		mLinearLayout =  ButterKnife.findById(vieww, R.id.linearLayoutVisual);
 		// Create a VisualizerView to display the audio waveform for the current settings
 		mVisualizerView = new VisualizerView(vieww.getContext());
 		mVisualizerView.setLayoutParams(new ViewGroup.LayoutParams(

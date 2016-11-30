@@ -1,5 +1,5 @@
 
-package com.dmplayer.jsonobjects.MusicBrainsObject;
+package com.dmplayer.models.MusicBrainsObject;
 
 
 import com.google.gson.annotations.Expose;

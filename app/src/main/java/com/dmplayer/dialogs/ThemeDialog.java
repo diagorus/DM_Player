@@ -60,7 +60,7 @@ public class ThemeDialog extends BaseDialogFragment {
     }
 
     @Override
-    protected int getFragmentLayout() {
+    protected int getLayoutId() {
         return R.layout.dialog_theme;
     }
 

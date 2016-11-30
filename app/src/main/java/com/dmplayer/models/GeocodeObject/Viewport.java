@@ -1,5 +1,5 @@
 
-package com.dmplayer.jsonobjects.GeocodeObject;
+package com.dmplayer.models.GeocodeObject;
 
 
 

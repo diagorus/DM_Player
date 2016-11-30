@@ -1,4 +1,4 @@
-package com.dmplayer.utils;
+package com.dmplayer.utility;
 
 import java.net.InetAddress;
 import java.net.NetworkInterface;
@@ -25,13 +25,13 @@ public class Utils {
                         } else {
                             if (!isIPv4) {
                                 int delim = sAddr.indexOf('%'); // drop ip6 zone suffix
-                                return delim<0 ? sAddr.toUpperCase() : sAddr.substring(0, delim).toUpperCase();
+                                return delim < 0 ? sAddr.toUpperCase() : sAddr.substring(0, delim).toUpperCase();
                             }
                         }
                     }
                 }
             }
-        } catch (Exception ex) { } // for now eat exceptions
+        } catch (Exception ex) {} // for now eat exceptions
         return "";
     }
 

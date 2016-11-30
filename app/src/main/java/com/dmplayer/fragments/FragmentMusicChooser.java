@@ -59,7 +59,7 @@ public class FragmentMusicChooser extends BaseFragment {
     }
 
     @Override
-    protected int getFragmentLayout() {
+    protected int getLayoutId() {
         return R.layout.fragment_music_chooser;
     }
 

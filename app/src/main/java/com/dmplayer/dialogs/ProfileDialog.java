@@ -84,7 +84,7 @@ public class ProfileDialog extends BaseDialogFragment {
     }
 
     @Override
-    protected int getFragmentLayout() {
+    protected int getLayoutId() {
         return R.layout.dialog_profile;
     }
 

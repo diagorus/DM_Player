@@ -7,7 +7,7 @@ import android.util.Log;
 import com.dmplayer.fragments.FragmentSettings;
 import com.dmplayer.manager.MediaController;
 import com.dmplayer.streamaudio.WifiProfile.WifiProfileObject;
-import com.dmplayer.utils.Utils;
+import com.dmplayer.utility.Utils;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;

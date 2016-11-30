@@ -9,6 +9,7 @@ import com.dmplayer.externalprofile.ExternalProfileModel;
 import com.dmplayer.uicomponent.CircleImageView;
 
 public class ProfileViewChild extends ChildForSwapping {
+
     private CircleImageView avatar;
     private TextView nickname;
     private TextView songsCount;

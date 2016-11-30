@@ -11,6 +11,8 @@ import com.dmplayer.R;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.model.Marker;
 
+import butterknife.ButterKnife;
+
 /**
  * Created by Alexvojander on 28.11.2016.
  */
@@ -27,6 +29,7 @@ public class GoogleMapWindowAdapter implements GoogleMap.InfoWindowAdapter {
     }
     @Override
     public View getInfoWindow(Marker marker) {
+
         return (null);
 
     }
@@ -35,19 +38,19 @@ public class GoogleMapWindowAdapter implements GoogleMap.InfoWindowAdapter {
     public View getInfoContents(Marker marker) {
 
         View popup=inflater.inflate(R.layout.google_map_window_adapter, null);
-        ImageView im=(ImageView)popup.findViewById(R.id.icon) ;
+        ImageView im=ButterKnife.findById(popup, R.id.icon) ;
 
 
         if(img_bmp==null){
-            im.setImageResource(R.drawable.default_avatar);
+            im.setImageResource(R.drawable.avatar_default);
         }else{
             im.setImageBitmap(img_bmp);
         }
 
-        TextView tv=(TextView)popup.findViewById(R.id.title);
+        TextView tv=ButterKnife.findById(popup, R.id.title);
 
         tv.setText(marker.getTitle());
-        tv=(TextView)popup.findViewById(R.id.snippet);
+        tv=ButterKnife.findById(popup, R.id.snippet);
         tv.setText(marker.getSnippet());
 
         return(popup);
