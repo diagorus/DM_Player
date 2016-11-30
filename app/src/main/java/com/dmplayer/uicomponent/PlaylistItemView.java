@@ -8,6 +8,8 @@ import android.widget.TextView;
 import com.dmplayer.R;
 import com.dmplayer.models.PlaylistItem;
 
+import butterknife.ButterKnife;
+
 public class PlaylistItemView extends RelativeLayout {
     public PlaylistItemView(Context context, PlaylistItem playlistItem) {
         super(context);
@@ -17,8 +19,8 @@ public class PlaylistItemView extends RelativeLayout {
     private void init(PlaylistItem playlistItem) {
         inflate(getContext(), R.layout.item_playlist, this);
 
-        ((TextView) findViewById(R.id.name)).setText(playlistItem.getName());
-        ((TextView) findViewById(R.id.details)).setText(playlistItem.getDetails());
-        ((ImageView) findViewById(R.id.icon)).setImageResource(playlistItem.getImageResourceId());
+        ((TextView) ButterKnife.findById(this, R.id.name)).setText(playlistItem.getName());
+        ((TextView) ButterKnife.findById(this, R.id.details)).setText(playlistItem.getDetails());
+        ((ImageView) ButterKnife.findById(this, R.id.icon)).setImageResource(playlistItem.getImageResourceId());
     }
 }

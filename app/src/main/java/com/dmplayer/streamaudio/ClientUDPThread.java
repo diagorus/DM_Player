@@ -8,7 +8,7 @@ import com.dmplayer.R;
 import com.dmplayer.streamaudio.Observer.SingleObserverContainer;
 import com.dmplayer.streamaudio.WifiProfile.WifiProfileObject;
 import com.dmplayer.uicomponent.ServerItemAdapter;
-import com.dmplayer.utils.Utils;
+import com.dmplayer.utility.Utils;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;

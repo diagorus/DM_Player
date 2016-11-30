@@ -5,8 +5,12 @@ import android.widget.Button;
 
 import com.dmplayer.R;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
+
 public class LogInViewChild extends ChildForSwapping {
-    private Button logIn;
+    @BindView(R.id.external_login)
+     Button logIn;
 
     public LogInViewChild(Context context, int layoutId) {
         super(context, layoutId);
@@ -14,7 +18,7 @@ public class LogInViewChild extends ChildForSwapping {
     }
 
     void init() {
-        logIn = (Button) findViewById(R.id.external_login);
+        ButterKnife.bind(this);
     }
 
     public void setOnLogInListener(OnClickListener l) {
