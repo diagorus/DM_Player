@@ -3,7 +3,6 @@ package com.dmplayer.fragments;
 import android.app.FragmentManager;
 import android.content.Context;
 import android.graphics.Bitmap;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.util.SparseBooleanArray;
@@ -21,18 +20,21 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.dmplayer.R;
-import com.dmplayer.asynctask.TaskStateListener;
+import com.dmplayer.asynctaskabstraction.AbstractAsyncTask;
+import com.dmplayer.asynctaskabstraction.TaskStateListener;
 import com.dmplayer.butterknifeabstraction.BaseFragment;
-import com.dmplayer.dbhandler.PlaylistSongsTableHelper;
-import com.dmplayer.dbhandler.PlaylistTableHelper;
-import com.dmplayer.dbhandler.SongsTableHelper;
+import com.dmplayer.dbhandler.LocalPlaylistTablesHelper;
 import com.dmplayer.dialogs.InputDialog;
 import com.dmplayer.dialogs.OnWorkDoneWithResult;
+import com.dmplayer.models.AsyncTaskResult;
 import com.dmplayer.models.Playlist;
+import com.dmplayer.models.PlaylistItem;
 import com.dmplayer.models.SongDetail;
 import com.dmplayer.models.playlisitems.DefaultPlaylistCategorySingle;
+import com.dmplayer.models.playlisitems.DefaultPlaylistItemSingle;
 import com.dmplayer.utility.DMPlayerUtility;
 import com.dmplayer.utility.DefaultPlaylistTaskFactory;
+import com.dmplayer.utility.FragmentPlaylistFactory;
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.ImageLoader;
 
@@ -94,24 +96,26 @@ public class FragmentMusicChooser extends BaseFragment {
         factory.getTask(DefaultPlaylistCategorySingle.ALL_SONGS, -1, "ALL songs").execute();
     }
 
-    public void storeLocalPlaylist(final Context context, final Playlist playlist) {
-        new AsyncTask<Void, Void, Void>() {
+    public void storeLocalPlaylist(final Context context, final Playlist playlist,
+                                   TaskStateListener<Long> listener) {
+        new AbstractAsyncTask<Long>(listener) {
 
             @Override
-            protected Void doInBackground(Void... params) {
+            protected AsyncTaskResult<Long> doInBackground(Void... params) {
                 try {
-                    SongsTableHelper.getInstance(context).insertSongs(playlist);
-                    PlaylistTableHelper.getInstance(context).insertPlaylist(playlist);
-                    PlaylistSongsTableHelper.getInstance(context).insertPlaylistSongs(playlist);
+                    return new AsyncTaskResult<>(
+                            LocalPlaylistTablesHelper.getInstance(context).insertPlaylist(playlist));
                 } catch (Exception e) {
-                    Log.e(TAG, "Error inserting playlist:", e);
+                    Log.e(TAG, Log.getStackTraceString(e));
+                    return new AsyncTaskResult<>(e);
                 }
-                return null;
             }
-        }.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+        }.execute();
     }
 
-    class MusicChooserAdapter extends BaseAdapter {
+
+
+    private class MusicChooserAdapter extends BaseAdapter {
         private Context context;
         private List<SongDetail> songList;
 
@@ -188,7 +192,7 @@ public class FragmentMusicChooser extends BaseFragment {
         }
     }
 
-    public class MultiSongsChooser implements AbsListView.MultiChoiceModeListener{
+    private class MultiSongsChooser implements AbsListView.MultiChoiceModeListener{
         private AbsListView listView;
 
         public MultiSongsChooser(AbsListView listView) {
@@ -197,7 +201,7 @@ public class FragmentMusicChooser extends BaseFragment {
 
         @Override
         public void onItemCheckedStateChanged(ActionMode actionMode, int i, long l, boolean b) {
-            actionMode.setTitle(String.valueOf(listView.getCheckedItemCount()) + " selected");
+            actionMode.setTitle(String.valueOf(listView.getCheckedItemCount()));
         }
 
         @Override
@@ -213,44 +217,85 @@ public class FragmentMusicChooser extends BaseFragment {
 
         @Override
         public boolean onActionItemClicked(ActionMode actionMode, MenuItem menuItem) {
-            if (menuItem.getItemId() == R.id.cab_add) {
-                FragmentManager fm = getFragmentManager();
-                OnWorkDoneWithResult l = new OnWorkDoneWithResult() {
-                    @Override
-                    public void onAgree(Bundle result) {
-                        String newPlaylistName = getString(R.string.new_playlist_name);
-                        if (result != null) {
-                            newPlaylistName = result.getString(InputDialog.RESULT_INPUT,
-                                    getString(R.string.new_playlist_name));
-                        }
-
-                        List<SongDetail> selectedSongList = new ArrayList<>();
-                        SparseBooleanArray selectedSongs = listView.getCheckedItemPositions();
-                        for(int i = 0; i < selectedSongs.size(); i++) {
-                            if(selectedSongs.valueAt(i)) {
-                                selectedSongList.add((SongDetail) listView.getItemAtPosition(i));
-                            }
-                        }
-
-                        Playlist newPlaylist = new Playlist(newPlaylistName, selectedSongList);
-                        storeLocalPlaylist(getActivity(), newPlaylist);
-                    }
-
-                    @Override
-                    public void onRefuse() {}
-                };
-
-                showInputDialog(fm, l);
+            switch(menuItem.getItemId()) {
+                case(R.id.cab_add) :
+                    makeLocalPlaylist(getSelectedSongs());
+                    break;
+                default:
+                    throw new IllegalArgumentException("Default statement reached!");
             }
+
+            actionMode.finish();
             return false;
         }
 
         @Override
         public void onDestroyActionMode(ActionMode actionMode) {}
 
+        private void makeLocalPlaylist(final List<SongDetail> playlistSongs) {
+            final FragmentManager fm = getFragmentManager();
+
+            OnWorkDoneWithResult l = new OnWorkDoneWithResult() {
+                @Override
+                public void onAgree(Bundle result) {
+                    String playlistName = getString(R.string.new_playlist_name);
+                    if (result != null) {
+                        playlistName = result.getString(InputDialog.RESULT_INPUT, getString(R.string.new_playlist_name));
+                    }
+
+                    final Playlist newPlaylist = new Playlist.Builder()
+                            .setName(playlistName)
+                            .setSongs(playlistSongs)
+                            .build();
+
+                    TaskStateListener<Long> storeLocalListener = new TaskStateListener<Long>() {
+                        @Override
+                        public void onLoadingStarted() {}
+
+                        @Override
+                        public void onLoadingSuccessful(Long result) {
+                            FragmentPlaylist f =
+                                    new FragmentPlaylistFactory().getFragmentPlaylist(
+                                            new DefaultPlaylistItemSingle(
+                                                    new PlaylistItem.Builder()
+                                                            .setId(result)
+                                                            .setName(newPlaylist.getName())
+                                                            .build(),
+                                                    DefaultPlaylistCategorySingle.LOCAL));
+
+                            fm.popBackStack();
+                            fm.beginTransaction()
+                                    .replace(R.id.fragment, f)
+                                    .addToBackStack(null)
+                                    .commit();
+                        }
+
+                        @Override
+                        public void onError(Exception e) {}
+                    };
+                    storeLocalPlaylist(getActivity(), newPlaylist, storeLocalListener);
+                }
+
+                @Override
+                public void onRefuse() {}
+            };
+
+            showInputDialog(fm, l);
+        }
+
+        private List<SongDetail> getSelectedSongs() {
+            List<SongDetail> temp = new ArrayList<>();
+            SparseBooleanArray checkedSongs = listView.getCheckedItemPositions();
+            for(int i = 0; i < listView.getAdapter().getCount(); i++) {
+                if(checkedSongs.get(i)) {
+                    temp.add((SongDetail) listView.getItemAtPosition(i));
+                }
+            }
+            return temp;
+        }
+
         private void showInputDialog(FragmentManager fm, OnWorkDoneWithResult l) {
-            InputDialog d = InputDialog.newInstance(getString(R.string.new_playlist_title),
-                    getString(R.string.new_playlist_invitation));
+            InputDialog d = InputDialog.newInstance(getString(R.string.new_playlist_title), getString(R.string.new_playlist_invitation));
 
             d.setOnWorkDoneWithResult(l);
             d.show(fm, "dialog_playlist_name");

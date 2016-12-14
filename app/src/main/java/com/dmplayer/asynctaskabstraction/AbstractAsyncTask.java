@@ -1,15 +1,13 @@
-package com.dmplayer.asynctask;
+package com.dmplayer.asynctaskabstraction;
 
 import android.os.AsyncTask;
 
 import com.dmplayer.models.AsyncTaskResult;
-import com.dmplayer.models.Playlist;
 
-public abstract class AbstractSinglePlaylistTask extends AsyncTask<Void, Void,
-        AsyncTaskResult<Playlist>> {
-    private TaskStateListener<Playlist> listener;
+public abstract class AbstractAsyncTask<T> extends AsyncTask<Void, Void, AsyncTaskResult<T>> {
+    private TaskStateListener<T> listener;
 
-    public AbstractSinglePlaylistTask(TaskStateListener<Playlist> listener) {
+    public AbstractAsyncTask(TaskStateListener<T> listener) {
         this.listener = listener;
     }
 
@@ -21,14 +19,13 @@ public abstract class AbstractSinglePlaylistTask extends AsyncTask<Void, Void,
     }
 
     @Override
-    protected void onPostExecute(AsyncTaskResult<Playlist> result) {
+    protected void onPostExecute(AsyncTaskResult<T> result) {
         super.onPostExecute(result);
         if (result.getError() != null) {
             listener.onError(result.getError());
-        } else if (isCancelled()) {
-            //TODO: think about cancel
         } else  {
             listener.onLoadingSuccessful(result.getResult());
         }
     }
 }
+

@@ -11,9 +11,9 @@ import com.dmplayer.externalprofile.ExternalProfileHelper;
 import com.dmplayer.externalprofile.ExternalProfileModel;
 import com.dmplayer.internetservices.VkApiService;
 import com.dmplayer.models.VkObjects.VkAlbumsResponse.VkAlbumsWrapper;
+import com.dmplayer.models.VkObjects.VkProfileModel;
 import com.dmplayer.models.VkObjects.VkProfileUserDataResponse.VkUserData;
 import com.dmplayer.models.VkObjects.VkProfileUserDataResponse.VkUserDataCollection;
-import com.dmplayer.models.VkProfileModel;
 import com.dmplayer.utility.DMPlayerUtility;
 
 import java.io.IOException;

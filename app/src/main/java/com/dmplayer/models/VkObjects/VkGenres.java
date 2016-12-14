@@ -1,4 +1,4 @@
-package com.dmplayer.models;
+package com.dmplayer.models.VkObjects;
 
 public enum VkGenres {
     //TODO: hardcoded names, move to strings

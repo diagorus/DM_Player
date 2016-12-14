@@ -1,4 +1,4 @@
-package com.dmplayer.models;
+package com.dmplayer.models.VkObjects;
 
 import android.graphics.Bitmap;
 

@@ -9,6 +9,8 @@ import android.util.Log;
 import com.dmplayer.DMPlayerApplication;
 import com.dmplayer.models.SongDetail;
 
+import static com.dmplayer.utility.DMPlayerUtility.closeCursor;
+
 public class FavoritePlayTableHelper {
     public static final String TABLE_NAME = "song_favourite";
 
@@ -101,11 +103,5 @@ public class FavoritePlayTableHelper {
             closeCursor(cursor);
         }
         return false;
-    }
-
-    private void closeCursor(Cursor cursor) {
-        if (cursor != null) {
-            cursor.close();
-        }
     }
 }

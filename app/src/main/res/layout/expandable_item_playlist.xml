@@ -33,6 +33,18 @@
         android:maxLines="1"
         android:textSize="14sp"
         android:text="Details" />
+    <ImageView
+        android:id="@+id/expandable_item_playlist_button_close"
+        android:layout_width="32dp"
+        android:layout_height="32dp"
+        android:layout_alignParentRight="true"
+        android:layout_marginRight="16dp"
+        android:layout_centerVertical="true"
+        android:scaleType="fitCenter"
+        android:padding="8dp"
+        android:tint="@android:color/darker_gray"
+        android:src="@drawable/ic_cross"
+        android:visibility="gone"/>
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="1dp"

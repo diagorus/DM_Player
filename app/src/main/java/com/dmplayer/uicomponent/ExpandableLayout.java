@@ -151,10 +151,16 @@ public class ExpandableLayout extends LinearLayout {
         icon = ButterKnife.findById(this ,R.id.expand_icon);
     }
 
-    int position = 0;
+    int contentPosition = 0;
 
     public void addContent(View v) {
-        content.addView(v, position++);
+        content.addView(v, contentPosition++);
+    }
+
+    public void eraseContent() {
+        for(; contentPosition > 0;) {
+            content.removeViewAt(--contentPosition);
+        }
     }
 
     public int getContentAmount() {

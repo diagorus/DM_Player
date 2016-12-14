@@ -10,7 +10,7 @@ import butterknife.ButterKnife;
 
 public class LogInViewChild extends ChildForSwapping {
     @BindView(R.id.external_login)
-     Button logIn;
+    Button logIn;
 
     public LogInViewChild(Context context, int layoutId) {
         super(context, layoutId);

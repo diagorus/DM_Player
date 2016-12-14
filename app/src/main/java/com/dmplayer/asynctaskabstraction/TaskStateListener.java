@@ -1,4 +1,4 @@
-package com.dmplayer.asynctask;
+package com.dmplayer.asynctaskabstraction;
 
 public interface TaskStateListener<T> {
         void onLoadingStarted();

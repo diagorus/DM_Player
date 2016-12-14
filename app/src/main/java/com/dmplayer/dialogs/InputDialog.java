@@ -1,15 +1,16 @@
 package com.dmplayer.dialogs;
 
-import android.content.Context;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
-import android.view.inputmethod.InputMethodManager;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
 import com.dmplayer.R;
 import com.dmplayer.butterknifeabstraction.BaseDialogFragment;
+import com.dmplayer.utility.DMPlayerUtility;
 
 import butterknife.BindView;
 import butterknife.OnClick;
@@ -19,6 +20,8 @@ public class InputDialog extends BaseDialogFragment {
 
     private static final String ARG_TITLE = "title";
     private static final String ARG_INVITATION = "invitation";
+
+    private static final String TAG = InputDialog.class.getSimpleName();
 
     @BindView(R.id.text_invitation)
     TextView invitationText;
@@ -47,6 +50,17 @@ public class InputDialog extends BaseDialogFragment {
     }
 
     @Override
+    public void onActivityCreated(Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        try {
+            getDialog().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE);
+        } catch(NullPointerException e) {
+            Log.e(TAG, Log.getStackTraceString(e));
+        }
+
+    }
+
+    @Override
     protected int getLayoutId() {
         return R.layout.dialog_input;
     }
@@ -62,9 +76,7 @@ public class InputDialog extends BaseDialogFragment {
 
         input.setSelectAllOnFocus(true);
         input.requestFocus();
-        InputMethodManager imm = (InputMethodManager)
-                getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
-        imm.showSoftInput(input, InputMethodManager.SHOW_IMPLICIT);
+        DMPlayerUtility.showKeys(getActivity(), input);
     }
 
     @OnClick(R.id.button_ok)
@@ -83,7 +95,6 @@ public class InputDialog extends BaseDialogFragment {
         if (onWorkDoneWithResult != null) {
             onWorkDoneWithResult.onRefuse();
         }
-
         dismiss();
     }
 

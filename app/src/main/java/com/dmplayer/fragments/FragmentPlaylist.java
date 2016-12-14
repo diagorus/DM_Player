@@ -17,7 +17,7 @@ import android.widget.TextView;
 
 import com.dmplayer.R;
 import com.dmplayer.activities.DMPlayerBaseActivity;
-import com.dmplayer.asynctask.TaskStateListener;
+import com.dmplayer.asynctaskabstraction.TaskStateListener;
 import com.dmplayer.manager.MediaController;
 import com.dmplayer.models.Playlist;
 import com.dmplayer.models.SongDetail;
@@ -54,12 +54,12 @@ public class FragmentPlaylist extends Fragment {
 
     private static final String TAG = FragmentPlaylist.class.getSimpleName();
 
-    public static FragmentPlaylist newInstance(DefaultPlaylistCategorySingle category, int id,
+    public static FragmentPlaylist newInstance(DefaultPlaylistCategorySingle category, long id,
                                                String name) {
         Bundle args = new Bundle();
         args.putInt(ARG_TYPE, TYPE_DEFAULT);
         args.putInt(ARG_CATEGORY, category.ordinal());
-        args.putInt(ARG_ID, id);
+        args.putLong(ARG_ID, id);
         args.putString(ARG_NAME, name);
 
         FragmentPlaylist f = new FragmentPlaylist();
@@ -68,12 +68,12 @@ public class FragmentPlaylist extends Fragment {
         return f;
     }
 
-    public static FragmentPlaylist newInstance(VkPlaylistCategorySingle category, int id,
+    public static FragmentPlaylist newInstance(VkPlaylistCategorySingle category, long id,
                                                String name) {
         Bundle args = new Bundle();
         args.putInt(ARG_TYPE, TYPE_VK);
         args.putInt(ARG_CATEGORY, category.ordinal());
-        args.putInt(ARG_ID, id);
+        args.putLong(ARG_ID, id);
         args.putString(ARG_NAME, name);
 
         FragmentPlaylist f = new FragmentPlaylist();
@@ -141,7 +141,7 @@ public class FragmentPlaylist extends Fragment {
 
         int type = getArguments().getInt(ARG_TYPE);
         int category = getArguments().getInt(ARG_CATEGORY);
-        int id = getArguments().getInt(ARG_ID);
+        long id = getArguments().getLong(ARG_ID);
         String name = getArguments().getString(ARG_NAME);
 
         //TODO:think about strategy pattern
@@ -159,18 +159,18 @@ public class FragmentPlaylist extends Fragment {
         }
     }
 
-    private void loadDefaultPlaylist(int category, int id, String name, TaskStateListener<Playlist> l) {
-        DefaultPlaylistCategorySingle c = DefaultPlaylistCategorySingle.valueOf(category);
+    private void loadDefaultPlaylist(int category, long id, String name, TaskStateListener<Playlist> l) {
+        DefaultPlaylistCategorySingle c = DefaultPlaylistCategorySingle.values()[category];
 
         DefaultPlaylistTaskFactory factory = new DefaultPlaylistTaskFactory(getActivity(), l);
         factory.getTask(c, id, name).execute();
     }
 
-    private void loadVkPlaylist(int c, int id, String name, TaskStateListener<Playlist> l) {
-        VkPlaylistCategorySingle category = VkPlaylistCategorySingle.valueOf(c);
+    private void loadVkPlaylist(int category, long id, String name, TaskStateListener<Playlist> l) {
+        VkPlaylistCategorySingle c = VkPlaylistCategorySingle.values()[category];
 
         VkPlaylistTaskFactory factory = new VkPlaylistTaskFactory(getActivity(), l);
-        factory.getTask(category, id, name).execute();
+        factory.getTask(c, id, name).execute();
     }
 
     private class SongListAdapter extends RecyclerView.Adapter<SongListAdapter.ViewHolder> {

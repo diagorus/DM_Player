@@ -17,7 +17,7 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.dmplayer.R;
-import com.dmplayer.asynctask.TaskStateListener;
+import com.dmplayer.asynctaskabstraction.TaskStateListener;
 import com.dmplayer.butterknifeabstraction.BaseDialogFragment;
 import com.dmplayer.fragments.FragmentPlaylist;
 import com.dmplayer.models.PlaylistItem;
@@ -134,15 +134,15 @@ public class SeveralPlaylistDialog extends BaseDialogFragment {
     private void loadPlaylist() {
         final int type = getArguments().getInt(ARG_TYPE);
 
-        TaskStateListener<List<? extends PlaylistItem>> listener =
-                new TaskStateListener<List<? extends PlaylistItem>>() {
+        TaskStateListener<List<PlaylistItem>> listener =
+                new TaskStateListener<List<PlaylistItem>>() {
                     @Override
                     public void onLoadingStarted() {
                         progressBar.setVisibility(View.VISIBLE);
                     }
 
                     @Override
-                    public void onLoadingSuccessful(List<? extends PlaylistItem> result) {
+                    public void onLoadingSuccessful(List<PlaylistItem> result) {
                         playlistsAdapter = new SeveralPlaylistDialog.PlaylistListAdapter(getActivity(), type,
                                 result);
                         listOfPlaylists.setAdapter(playlistsAdapter);
@@ -177,15 +177,15 @@ public class SeveralPlaylistDialog extends BaseDialogFragment {
         }
     }
 
-    private void loadPlaylistsFromDefault(int category, TaskStateListener<List<? extends PlaylistItem>> l) {
-        DefaultPlaylistCategorySeveral c = DefaultPlaylistCategorySeveral.valueOf(category);
+    private void loadPlaylistsFromDefault(int category, TaskStateListener<List<PlaylistItem>> l) {
+        DefaultPlaylistCategorySeveral c = DefaultPlaylistCategorySeveral.values()[category];
 
         DefaultMultiPlaylistTaskFactory factory = new DefaultMultiPlaylistTaskFactory(getActivity(), l);
         factory.getTask(c).execute();
     }
 
-    private void loadPlaylistsFromVk(int category, TaskStateListener<List<? extends PlaylistItem>> l) {
-        VkPlaylistCategorySeveral c = VkPlaylistCategorySeveral.valueOf(category);
+    private void loadPlaylistsFromVk(int category, TaskStateListener<List<PlaylistItem>> l) {
+        VkPlaylistCategorySeveral c = VkPlaylistCategorySeveral.values()[category];
 
         VkMultiPlaylistTaskFactory factory = new VkMultiPlaylistTaskFactory(getActivity(), l);
         factory.getTask(c).execute();

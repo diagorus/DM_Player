@@ -15,12 +15,13 @@ import android.util.Log;
 
 import com.dmplayer.dbhandler.FavoritePlayTableHelper;
 import com.dmplayer.dbhandler.MostAndRecentPlayTableHelper;
-import com.dmplayer.dbhandler.SongsTableHelper;
 import com.dmplayer.manager.MediaController;
 import com.dmplayer.models.SongDetail;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import static com.dmplayer.utility.DMPlayerUtility.closeCursor;
 
 public class PhoneMediaControl {
     private Cursor cursor = null;
@@ -56,7 +57,7 @@ public class PhoneMediaControl {
                 try {
                     songsList = getList(context, id, songsloadfor, path);
                 } catch (Exception e) {
-                    closeCursor();
+                    closeCursor(cursor);
                     e.printStackTrace();
                 }
                 return null;
@@ -83,8 +84,10 @@ public class PhoneMediaControl {
         try {
             playlist = getList(context, id, songsloadfor, path);
         } catch (Exception e) {
-            closeCursor();
-            Log.e(TAG, "Error getting music list:", e);
+            Log.e(TAG, Log.getStackTraceString(e));
+        } finally {
+            //TODO: ??
+            closeCursor(cursor);
         }
 
         return playlist;
@@ -109,7 +112,7 @@ public class PhoneMediaControl {
         String selection;
         switch (songsLoadFor) {
             case ALL:
-                selection = MediaStore.Audio.Media.IS_MUSIC + " != 0";
+                selection = MediaStore.Audio.Media.IS_MUSIC + " !=0";
                 sortOrder = MediaStore.Audio.Media.DEFAULT_SORT_ORDER;
                 cursor = context.getContentResolver().query(MediaStore.Audio.Media.EXTERNAL_CONTENT_URI,
                         projectionSongs, selection, null, sortOrder);
@@ -162,12 +165,6 @@ public class PhoneMediaControl {
                 cursor = FavoritePlayTableHelper.getInstance(context).getFavoriteSongList();
                 songsList = getSongsFromSQLDBCursor(cursor);
                 break;
-
-            case LOCAL_PLAYLIST:
-                cursor = SongsTableHelper.getInstance(context).getSongsList(id);
-                songsList = getSongsFromSQLDBCursor(cursor);
-                break;
-
         }
 
         return songsList;
@@ -198,9 +195,9 @@ public class PhoneMediaControl {
                 }
             }
         } catch (Exception e) {
-            Log.e(TAG, "Can't get songs from cursor:", e);
+            Log.e(TAG, Log.getStackTraceString(e));
         } finally {
-            closeCursor();
+            closeCursor(cursor);
         }
         return songs;
     }
@@ -223,24 +220,13 @@ public class PhoneMediaControl {
                     songList.add(mSongDetail);
                 }
             }
-            closeCursor();
         } catch (Exception e) {
-            closeCursor();
-            Log.e(TAG, "Can't get songs from cursor:", e);
+            Log.e(TAG, Log.getStackTraceString(e));
+        } finally {
+            closeCursor(cursor);
         }
         return songList;
     }
-
-    private void closeCursor() {
-        if (cursor != null) {
-            try {
-                cursor.close();
-            } catch (Exception e) {
-                Log.e(TAG, Log.getStackTraceString(e));
-            }
-        }
-    }
-
 
     private static PhoneMediaControlInterface phonemediacontrolinterface;
     public static void setPhoneMediaControlInterface(PhoneMediaControlInterface phonemediacontrolinterface) {

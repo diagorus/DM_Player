@@ -8,8 +8,8 @@ import android.provider.MediaStore;
 import android.text.TextUtils;
 import android.util.Log;
 
-import com.dmplayer.asynctask.AbstractMultiPlaylistTask;
-import com.dmplayer.asynctask.TaskStateListener;
+import com.dmplayer.asynctaskabstraction.AbstractAsyncTask;
+import com.dmplayer.asynctaskabstraction.TaskStateListener;
 import com.dmplayer.models.AsyncTaskResult;
 import com.dmplayer.models.PlaylistItem;
 import com.dmplayer.models.SongDetail;
@@ -21,26 +21,28 @@ import com.dmplayer.phonemedia.PhoneMediaControl;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.dmplayer.utility.DMPlayerUtility.closeCursor;
+
 public final class DefaultMultiPlaylistTaskFactory {
 
-    private static final String TAG = "D_MultiPlaylistTaskFact";
+    private static final String TAG = DefaultMultiPlaylistTaskFactory.class.getSimpleName();
 
     private Context context;
-    private TaskStateListener<List<? extends PlaylistItem>> listener;
+    private TaskStateListener<List<PlaylistItem>> listener;
 
     public DefaultMultiPlaylistTaskFactory(Context context,
-                                           TaskStateListener<List<? extends PlaylistItem>> listener) {
+                                           TaskStateListener<List<PlaylistItem>> listener) {
         this.context = context;
         this.listener = listener;
     }
 
-    public AsyncTask<Void, Void, AsyncTaskResult<List<? extends PlaylistItem>>>
+    public AsyncTask<Void, Void, AsyncTaskResult<List<PlaylistItem>>>
         getTask(final DefaultPlaylistCategorySeveral category) {
         switch (category) {
             case ARTISTS:
-                return new AbstractMultiPlaylistTask(listener) {
+                return new AbstractAsyncTask<List<PlaylistItem>>(listener) {
                     @Override
-                    protected AsyncTaskResult<List<? extends PlaylistItem>> doInBackground(Void... params) {
+                    protected AsyncTaskResult<List<PlaylistItem>> doInBackground(Void... params) {
                         String[] cols = new String[] {
                                 MediaStore.Audio.Artists._ID,
                                 MediaStore.Audio.Artists.ARTIST};
@@ -55,14 +57,13 @@ public final class DefaultMultiPlaylistTaskFactory {
                         Cursor cursor = DMPlayerUtility.query(context, uri, cols, null, null,
                                 MediaStore.Audio.Artists.ARTIST_KEY);
 
-                        return new AsyncTaskResult<List<? extends PlaylistItem>>
-                                (getPlaylistItemsFromCursor(category, cursor));
+                        return new AsyncTaskResult<>(getPlaylistItemsFromCursor(category, cursor));
                     }
                 };
             case GENRES:
-                return new AbstractMultiPlaylistTask(listener) {
+                return new AbstractAsyncTask<List<PlaylistItem>>(listener) {
                     @Override
-                    protected AsyncTaskResult<List<? extends PlaylistItem>> doInBackground(Void... params) {
+                    protected AsyncTaskResult<List<PlaylistItem>> doInBackground(Void... params) {
                         String[] cols = new String[] {
                                 MediaStore.Audio.Genres._ID,
                                 MediaStore.Audio.Genres.NAME};
@@ -76,14 +77,13 @@ public final class DefaultMultiPlaylistTaskFactory {
                         Cursor cursor = DMPlayerUtility.query(context, uri, cols, null, null,
                                 MediaStore.Audio.Genres.DEFAULT_SORT_ORDER);
 
-                        return new AsyncTaskResult<List<? extends PlaylistItem>>
-                                (getPlaylistItemsFromCursor(category, cursor));
+                        return new AsyncTaskResult<>(getPlaylistItemsFromCursor(category, cursor));
                     }
                 };
             case ALBUMS:
-                return new AbstractMultiPlaylistTask(listener) {
+                return new AbstractAsyncTask<List<PlaylistItem>>(listener) {
                     @Override
-                    protected AsyncTaskResult<List<? extends PlaylistItem>> doInBackground(Void... params) {
+                    protected AsyncTaskResult<List<PlaylistItem>> doInBackground(Void... params) {
                         String[] cols = new String[] {
                                 MediaStore.Audio.Albums._ID,
                                 MediaStore.Audio.Albums.ALBUM};
@@ -98,8 +98,7 @@ public final class DefaultMultiPlaylistTaskFactory {
                         Cursor cursor = DMPlayerUtility.query(context, uri, cols, null, null,
                                 MediaStore.Audio.Albums.DEFAULT_SORT_ORDER);
 
-                        return new AsyncTaskResult<List<? extends PlaylistItem>>
-                                (getPlaylistItemsFromCursor(category, cursor));
+                        return new AsyncTaskResult<>(getPlaylistItemsFromCursor(category, cursor));
                     }
                 };
             default:
@@ -107,10 +106,9 @@ public final class DefaultMultiPlaylistTaskFactory {
         }
     }
 
-    //TODO: optimize handling here
-    private List<DefaultPlaylistItemSingle> getPlaylistItemsFromCursor(DefaultPlaylistCategorySeveral category,
+    private List<PlaylistItem> getPlaylistItemsFromCursor(DefaultPlaylistCategorySeveral category,
                                                                        Cursor cursor) {
-        List<DefaultPlaylistItemSingle> items = new ArrayList<>();
+        List<PlaylistItem> items = new ArrayList<>();
 
         switch (category) {
             case ARTISTS:
@@ -182,15 +180,5 @@ public final class DefaultMultiPlaylistTaskFactory {
         }
 
         return items;
-    }
-
-    private void closeCursor(Cursor cursor) {
-        if (cursor != null) {
-            try {
-                cursor.close();
-            } catch (Exception e) {
-                Log.e(TAG, Log.getStackTraceString(e));
-            }
-        }
     }
 }
