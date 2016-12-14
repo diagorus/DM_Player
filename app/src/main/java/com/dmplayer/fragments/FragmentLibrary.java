@@ -10,6 +10,7 @@ import android.widget.TextView;
 
 import com.dmplayer.R;
 import com.dmplayer.butterknifeabstraction.BaseFragment;
+import com.dmplayer.dbhandler.LocalPlaylistTablesHelper;
 import com.dmplayer.dialogs.OnWorkDone;
 import com.dmplayer.dialogs.ProfileDialog;
 import com.dmplayer.dialogs.SeveralPlaylistDialog;
@@ -130,8 +131,52 @@ public class FragmentLibrary extends BaseFragment {
     }
 
     private void setupLocalPlaylists() {
-        if(localPlaylists == null) {
+        localPlaylists = PlaylistProvider.getLocalPlaylists(getActivity());
 
+        if (expandableLocal.getContentAmount() <= 0) {
+            for (final PlaylistItem playlistItem : localPlaylists) {
+                PlaylistItemView itemView = new PlaylistItemView(getActivity(), playlistItem);
+                itemView.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        replaceFragmentToPlaylist(playlistItem);
+                    }
+                });
+                itemView.setCloseButtonVisible();
+                itemView.setCloseButtonOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        LocalPlaylistTablesHelper.getInstance(getActivity())
+                                .deletePlaylist(playlistItem.getId());
+                        prepareLocalPlaylists();
+                    }
+                });
+                expandableLocal.addContent(itemView);
+            }
+        }
+    }
+
+    private void prepareLocalPlaylists() {
+        expandableLocal.eraseContent();
+
+        localPlaylists = PlaylistProvider.getLocalPlaylists(getActivity());
+        for (final PlaylistItem playlistItem : localPlaylists) {
+            PlaylistItemView itemView = new PlaylistItemView(getActivity(), playlistItem);
+            itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    replaceFragmentToPlaylist(playlistItem);
+                }
+            });
+            itemView.setCloseButtonVisible();
+            itemView.setCloseButtonOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    LocalPlaylistTablesHelper.getInstance(getActivity())
+                            .deletePlaylist(playlistItem.getId());
+                }
+            });
+            expandableLocal.addContent(itemView);
         }
     }
 

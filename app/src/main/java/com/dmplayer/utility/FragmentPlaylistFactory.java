@@ -11,9 +11,9 @@ public class FragmentPlaylistFactory {
         if (item instanceof DefaultPlaylistItemSingle) {
             DefaultPlaylistItemSingle itemDefault = (DefaultPlaylistItemSingle) item;
 
-            f =  FragmentPlaylist.newInstance(itemDefault.getCategory(),
+            f = FragmentPlaylist.newInstance(itemDefault.getCategory(),
                     itemDefault.getId(), itemDefault.getName());
-        } else if(item instanceof VkPlaylistItemSingle) {
+        } else if (item instanceof VkPlaylistItemSingle) {
             VkPlaylistItemSingle itemVk = (VkPlaylistItemSingle) item;
 
             f = FragmentPlaylist.newInstance(itemVk.getCategory(),

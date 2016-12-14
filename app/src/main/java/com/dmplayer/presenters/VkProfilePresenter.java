@@ -8,7 +8,7 @@ import com.dmplayer.externalprofile.ExternalProfilePresenter;
 import com.dmplayer.externalprofile.ExternalProfileView;
 import com.dmplayer.externalprofile.ExternalProfileViewCallbacks;
 import com.dmplayer.helperservises.VkProfileHelper;
-import com.dmplayer.models.VkProfileModel;
+import com.dmplayer.models.VkObjects.VkProfileModel;
 import com.vk.sdk.VKScope;
 import com.vk.sdk.VKSdk;
 

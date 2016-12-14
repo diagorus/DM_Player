@@ -5,10 +5,8 @@
  */
 package com.dmplayer.childfragment;
 
-import android.app.Activity;
 import android.app.Fragment;
 import android.content.Context;
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.os.AsyncTask;
@@ -22,11 +20,9 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.dmplayer.R;
-import com.dmplayer.activities.PlaylistActivity;
 import com.dmplayer.helperservises.VkMusicHelper;
 import com.dmplayer.helperservises.VkProfileHelper;
 import com.dmplayer.models.Playlist;
-import com.dmplayer.utility.LogWriter;
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.ImageLoader;
 
@@ -140,19 +136,7 @@ public class ChildFragmentPlaylists extends Fragment {
             }
 
             @Override
-            public void onClick(View view) {
-                try {
-                    Intent toPlaylistView = new Intent(context, PlaylistActivity.class);
-                    Playlist current = playlists.get(getAdapterPosition());
-                    toPlaylistView.putExtras(current.getBundle());
-
-                    context.startActivity(toPlaylistView);
-                    ((Activity) context).overridePendingTransition(0, 0);
-                } catch (Exception e) {
-                    e.printStackTrace();
-                    LogWriter.info(TAG, e.toString());
-                }
-            }
+            public void onClick(View view) {}
         }
     }
 

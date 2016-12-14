@@ -147,7 +147,7 @@ public class MediaController implements NotificationManager.NotificationCenterDe
                     progressTimer.cancel();
                     progressTimer = null;
                 } catch (Exception e) {
-                    Log.e("tmessages", e.toString());
+                    Log.e(TAG, Log.getStackTraceString(e));
                 }
             }
         }
@@ -167,7 +167,7 @@ public class MediaController implements NotificationManager.NotificationCenterDe
                 proximityWakeLock.release();
             }
         } catch (Throwable e) {
-            Log.e("tmessages", e.toString());
+            Log.e(TAG, Log.getStackTraceString(e));
         }
     }
 
@@ -272,11 +272,13 @@ public class MediaController implements NotificationManager.NotificationCenterDe
                         try {
                             audioPlayer.stop();
                         } catch (Exception e) {
+                            Log.e(TAG, Log.getStackTraceString(e));
                         }
                         try {
                             audioPlayer.release();
                             audioPlayer = null;
                         } catch (Exception e) {
+                            Log.e(TAG, Log.getStackTraceString(e));
                         }
                     } else if (audioTrackPlayer != null) {
                         synchronized (playerSongDetailSync) {
@@ -284,11 +286,13 @@ public class MediaController implements NotificationManager.NotificationCenterDe
                                 audioTrackPlayer.pause();
                                 audioTrackPlayer.flush();
                             } catch (Exception e) {
+                                Log.e(TAG, Log.getStackTraceString(e));
                             }
                             try {
                                 audioTrackPlayer.release();
                                 audioTrackPlayer = null;
                             } catch (Exception e) {
+                                Log.e(TAG, Log.getStackTraceString(e));
                             }
                         }
                     }
@@ -327,7 +331,7 @@ public class MediaController implements NotificationManager.NotificationCenterDe
             isPaused = true;
             NotificationManager.getInstance().postNotificationName(NotificationManager.audioPlayStateChanged, MusicPreference.playingSongDetail.getId());
         } catch (Exception e) {
-            Log.e("tmessages", e.toString());
+            Log.e(TAG, Log.getStackTraceString(e));
             isPaused = true;
             return false;
         }
@@ -349,6 +353,7 @@ public class MediaController implements NotificationManager.NotificationCenterDe
             isPaused = false;
             NotificationManager.getInstance().postNotificationName(NotificationManager.audioPlayStateChanged, MusicPreference.playingSongDetail.getId());
         } catch (Exception e) {
+            Log.e(TAG, Log.getStackTraceString(e));
             return false;
         }
         return true;
@@ -392,7 +397,7 @@ public class MediaController implements NotificationManager.NotificationCenterDe
                     progressTimer.cancel();
                     progressTimer = null;
                 } catch (Exception e) {
-                    // FileLog.e("tmessages", e);
+                    Log.e(TAG, Log.getStackTraceString(e));
                 }
             }
             progressTimer = new Timer();
@@ -430,6 +435,7 @@ public class MediaController implements NotificationManager.NotificationCenterDe
                                         NotificationManager.getInstance().postNotificationName(NotificationManager.audioProgressDidChanged,
                                                 MusicPreference.playingSongDetail.getId(), value);
                                     } catch (Exception e) {
+                                        Log.e(TAG, Log.getStackTraceString(e));
                                     }
                                 }
                             }
@@ -476,6 +482,7 @@ public class MediaController implements NotificationManager.NotificationCenterDe
                 lastProgress = seekTo;
             }
         } catch (Exception e) {
+            Log.e(TAG, Log.getStackTraceString(e));
             return false;
         }
         return true;
@@ -497,15 +504,18 @@ public class MediaController implements NotificationManager.NotificationCenterDe
             try {
                 audioPlayer.reset();
             } catch (Exception e) {
+                Log.e(TAG, Log.getStackTraceString(e));
             }
             try {
                 audioPlayer.stop();
             } catch (Exception e) {
+                Log.e(TAG, Log.getStackTraceString(e));
             }
             try {
                 audioPlayer.release();
                 audioPlayer = null;
             } catch (Exception e) {
+                Log.e(TAG, Log.getStackTraceString(e));
             }
         } else if (audioTrackPlayer != null) {
             synchronized (playerSongDetailSync) {
@@ -513,11 +523,13 @@ public class MediaController implements NotificationManager.NotificationCenterDe
                     audioTrackPlayer.pause();
                     audioTrackPlayer.flush();
                 } catch (Exception e) {
+                    Log.e(TAG, Log.getStackTraceString(e));
                 }
                 try {
                     audioTrackPlayer.release();
                     audioTrackPlayer = null;
                 } catch (Exception e) {
+                    Log.e(TAG, Log.getStackTraceString(e));
                 }
             }
         }
@@ -539,7 +551,7 @@ public class MediaController implements NotificationManager.NotificationCenterDe
                 try {
                     MostAndRecentPlayTableHelper.getInstance(context).insertSong(mDetail);
                 } catch (Exception e) {
-                    e.printStackTrace();
+                    Log.e(TAG, Log.getStackTraceString(e));
                 }
                 return null;
             }
@@ -556,14 +568,13 @@ public class MediaController implements NotificationManager.NotificationCenterDe
                 try {
                     FavoritePlayTableHelper.getInstance(context).insertSong(mDetail, isFav);
                 } catch (Exception e) {
-                    Log.e(TAG, "Error adding song into favourites: ", e);
+                    Log.e(TAG, Log.getStackTraceString(e));
                 }
                 return null;
             }
         }.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
     }
 
-    //TODO: change exceptions output with Log.e(...)
     public synchronized void checkIsFavorite(final Context context, final SongDetail mDetail, final View v) {
         new AsyncTask<Void, Void, Void>() {
             boolean isFavorite = false;
@@ -573,7 +584,7 @@ public class MediaController implements NotificationManager.NotificationCenterDe
                 try {
                     isFavorite = FavoritePlayTableHelper.getInstance(context).isSongFavorite(mDetail);
                 } catch (Exception e) {
-                    e.printStackTrace();
+                    Log.e(TAG, Log.getStackTraceString(e));
                 }
                 return null;
             }

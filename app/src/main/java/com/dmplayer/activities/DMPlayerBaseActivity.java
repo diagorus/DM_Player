@@ -16,10 +16,8 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
-import android.os.PersistableBundle;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
@@ -48,13 +46,13 @@ import com.dmplayer.fragments.FragmentMap;
 import com.dmplayer.fragments.FragmentSettings;
 import com.dmplayer.fragments.FragmentStream;
 import com.dmplayer.internetservices.URLConnectionRequest;
-import com.dmplayer.models.GeocodeObject.JSONGeocode;
-import com.dmplayer.models.MusicBrainsObject.Artist;
-import com.dmplayer.models.MusicBrainsObject.JSONMusicbrains;
 import com.dmplayer.manager.MediaController;
 import com.dmplayer.manager.MusicPreference;
 import com.dmplayer.manager.NotificationManager;
 import com.dmplayer.models.DrawerItem;
+import com.dmplayer.models.GeocodeObject.JSONGeocode;
+import com.dmplayer.models.MusicBrainsObject.Artist;
+import com.dmplayer.models.MusicBrainsObject.JSONMusicbrains;
 import com.dmplayer.models.SongDetail;
 import com.dmplayer.recyclerviewutils.ItemClickSupport;
 import com.dmplayer.slidinguppanelhelper.SlidingUpPanelLayout;
@@ -89,33 +87,23 @@ public class DMPlayerBaseActivity extends BaseAppCompatActivity implements View.
         SensorEventListener {
 
     private static final String TAG = DMPlayerBaseActivity.class.getSimpleName();
-    private Context context;
-    private SharedPreferences sharedPreferences;
-    private ActionBarDrawerToggle mDrawerToggle;
-
+    private static final int SHAKE_THRESHOLD = 600;
     @BindView(R.id.toolbar_actionbar)
     Toolbar toolbar;
     @BindView(R.id.drawerLayout)
     DrawerLayout mDrawerLayout;
-
     @BindView(R.id.recyclerViewDrawer)
     RecyclerView recyclerViewDrawer;
-
     RecyclerView.Adapter adapterDrawer;
-
     @BindView(R.id.sliding_layout)
     SlidingUpPanelLayout mLayout;
-
     @BindView(R.id.slidepanelchildtwo_topviewone)
     RelativeLayout slidepanelchildtwo_topviewone;
     @BindView(R.id.slidepanelchildtwo_topviewtwo)
     RelativeLayout slidepanelchildtwo_topviewtwo;
-    private boolean isExpand = false;
-
     DisplayImageOptions options;
     ImageLoader imageLoader = ImageLoader.getInstance();
     ImageLoadingListener animateFirstListener = new AnimateFirstDisplayListener();
-
     @BindView(R.id.image_songsAlbum)
     ImageView songBackground;
     @BindView(R.id.img_bottom_slideone)
@@ -142,7 +130,6 @@ public class DMPlayerBaseActivity extends BaseAppCompatActivity implements View.
     ImageView imgbtn_toggle;
     @BindView(R.id.btn_suffel)
     ImageView imgbtn_suffel;
-
     @BindView(R.id.bottombar_img_Favorite)
     ImageView img_Favorite;
     @BindView(R.id.bottombar_map_icon)
@@ -153,19 +140,17 @@ public class DMPlayerBaseActivity extends BaseAppCompatActivity implements View.
     PlayPauseView btn_playpausePanel;
     @BindView(R.id.audio_progress_control)
     Slider audio_progress;
-
-
+    String MIXING_MODE = "mixing_mode";
+    private Context context;
+    private SharedPreferences sharedPreferences;
+    private ActionBarDrawerToggle mDrawerToggle;
+    private boolean isExpand = false;
     private boolean isDraggingStart = false;
     private int TAG_Observer;
-
     private SensorManager senSensorManager;
     private Sensor senAccelerometer;
-
     private long lastUpdate = 0;
     private float last_x, last_y, last_z;
-    private static final int SHAKE_THRESHOLD = 600;
-
-    String MIXING_MODE = "mixing_mode";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -182,7 +167,7 @@ public class DMPlayerBaseActivity extends BaseAppCompatActivity implements View.
 
         senSensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
         senAccelerometer = senSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
-        senSensorManager.registerListener(this, senAccelerometer , SensorManager.SENSOR_DELAY_NORMAL);
+        senSensorManager.registerListener(this, senAccelerometer, SensorManager.SENSOR_DELAY_NORMAL);
 
         toolbarStatusBar();
         navigationDrawer();
@@ -204,8 +189,7 @@ public class DMPlayerBaseActivity extends BaseAppCompatActivity implements View.
         addObserver();
         try {
             loadAlreadyPlaying();
-        }
-        catch (Exception ex){
+        } catch (Exception ex) {
             ex.printStackTrace();
         }
     }
@@ -243,8 +227,8 @@ public class DMPlayerBaseActivity extends BaseAppCompatActivity implements View.
 
 
     @Override
-    @OnClick({R.id.btn_backward,R.id.btn_forward,R.id.btn_suffel,R.id.btn_toggle,R.id.bottombar_img_Favorite,
-            R.id.bottombar_map_icon,R.id.bottombar_play,R.id.btn_play})
+    @OnClick({R.id.btn_backward, R.id.btn_forward, R.id.btn_suffel, R.id.btn_toggle, R.id.bottombar_img_Favorite,
+            R.id.bottombar_map_icon, R.id.bottombar_play, R.id.btn_play})
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.bottombar_play:
@@ -274,8 +258,8 @@ public class DMPlayerBaseActivity extends BaseAppCompatActivity implements View.
                     MediaController.getInstance().storeFavoritePlay(context, MediaController.getInstance().getPlayingSongDetail(), v.isSelected() ? 0 : 1);
                     v.setSelected(!v.isSelected());
                     DMPlayerUtility.animateHeartButton(v);
-                    ButterKnife.findById(this,R.id.like).setSelected(!v.isSelected());
-                    DMPlayerUtility.animatePhotoLike(ButterKnife.findById(this,R.id.big_like), ButterKnife.findById(this,R.id.like));
+                    ButterKnife.findById(this, R.id.like).setSelected(!v.isSelected());
+                    DMPlayerUtility.animatePhotoLike(ButterKnife.findById(this, R.id.big_like), ButterKnife.findById(this, R.id.like));
                 }
                 break;
             case R.id.bottombar_map_icon:
@@ -383,7 +367,7 @@ public class DMPlayerBaseActivity extends BaseAppCompatActivity implements View.
                 for (int i = 0; i < drawerTitles.length; i++) {
                     if (i == sharedPreferences.getInt("FRAGMENT", 0)) {
                         ImageView imageViewDrawerIcon = ButterKnife.findById(recyclerViewDrawer, R.id.imageViewDrawerIcon);
-                        TextView textViewDrawerTitle = ButterKnife.findById(recyclerViewDrawer,R.id.textViewDrawerItemTitle);
+                        TextView textViewDrawerTitle = ButterKnife.findById(recyclerViewDrawer, R.id.textViewDrawerItemTitle);
                         imageViewDrawerIcon.setColorFilter(color);
                         imageViewDrawerIcon.setImageAlpha(255);
                         textViewDrawerTitle.setTextColor(color);
@@ -394,8 +378,8 @@ public class DMPlayerBaseActivity extends BaseAppCompatActivity implements View.
                         colorDrawerItemSelected = (colorDrawerItemSelected & 0x00FFFFFF) | 0x30000000;
                         relativeLayoutDrawerItem.setBackgroundColor(colorDrawerItemSelected);
                     } else {
-                        ImageView imageViewDrawerIcon = ButterKnife.findById(recyclerViewDrawer,R.id.imageViewDrawerIcon);
-                        TextView textViewDrawerTitle = ButterKnife.findById(recyclerViewDrawer,R.id.textViewDrawerItemTitle);
+                        ImageView imageViewDrawerIcon = ButterKnife.findById(recyclerViewDrawer, R.id.imageViewDrawerIcon);
+                        TextView textViewDrawerTitle = ButterKnife.findById(recyclerViewDrawer, R.id.textViewDrawerItemTitle);
                         imageViewDrawerIcon.setColorFilter(getResources().getColor(R.color.md_text));
                         imageViewDrawerIcon.setImageAlpha(138);
 
@@ -418,12 +402,12 @@ public class DMPlayerBaseActivity extends BaseAppCompatActivity implements View.
 
                 for (int i = 0; i < drawerTitles.length; i++) {
                     if (i == position) {
-                        ImageView imageViewDrawerIcon = ButterKnife.findById(recyclerViewDrawer,R.id.imageViewDrawerIcon);
-                        TextView textViewDrawerTitle = ButterKnife.findById(recyclerViewDrawer,R.id.textViewDrawerItemTitle);
+                        ImageView imageViewDrawerIcon = ButterKnife.findById(recyclerViewDrawer, R.id.imageViewDrawerIcon);
+                        TextView textViewDrawerTitle = ButterKnife.findById(recyclerViewDrawer, R.id.textViewDrawerItemTitle);
                         imageViewDrawerIcon.setColorFilter(color);
                         imageViewDrawerIcon.setImageAlpha(255);
                         textViewDrawerTitle.setTextColor(color);
-                        RelativeLayout relativeLayoutDrawerItem = ButterKnife.findById(recyclerViewDrawer,R.id.relativeLayoutDrawerItem);
+                        RelativeLayout relativeLayoutDrawerItem = ButterKnife.findById(recyclerViewDrawer, R.id.relativeLayoutDrawerItem);
                         TypedValue typedValueDrawerSelected = new TypedValue();
                         getTheme().resolveAttribute(R.attr.colorPrimary, typedValueDrawerSelected, true);
                         int colorDrawerItemSelected = typedValueDrawerSelected.data;
@@ -431,12 +415,12 @@ public class DMPlayerBaseActivity extends BaseAppCompatActivity implements View.
                         relativeLayoutDrawerItem.setBackgroundColor(colorDrawerItemSelected);
 
                     } else {
-                        ImageView imageViewDrawerIcon = ButterKnife.findById(recyclerViewDrawer,R.id.imageViewDrawerIcon);
-                        TextView textViewDrawerTitle = ButterKnife.findById(recyclerViewDrawer,R.id.textViewDrawerItemTitle);
+                        ImageView imageViewDrawerIcon = ButterKnife.findById(recyclerViewDrawer, R.id.imageViewDrawerIcon);
+                        TextView textViewDrawerTitle = ButterKnife.findById(recyclerViewDrawer, R.id.textViewDrawerItemTitle);
                         imageViewDrawerIcon.setColorFilter(getResources().getColor(R.color.md_text));
                         imageViewDrawerIcon.setImageAlpha(138);
                         textViewDrawerTitle.setTextColor(getResources().getColor(R.color.md_text));
-                        RelativeLayout relativeLayoutDrawerItem = ButterKnife.findById(recyclerViewDrawer,R.id.relativeLayoutDrawerItem);
+                        RelativeLayout relativeLayoutDrawerItem = ButterKnife.findById(recyclerViewDrawer, R.id.relativeLayoutDrawerItem);
                         relativeLayoutDrawerItem.setBackgroundColor(getResources().getColor(R.color.md_white_1000));
                     }
                 }
@@ -553,7 +537,7 @@ public class DMPlayerBaseActivity extends BaseAppCompatActivity implements View.
                 FragmentLibrary testfragmentlibrary = new FragmentLibrary();
                 fragmentTransaction.replace(R.id.fragment, testfragmentlibrary);
                 fragmentTransaction.commit();
-                toolbar.setTitle("My Library");
+                toolbar.setTitle("Library");
                 break;
 
             case 1:
@@ -575,7 +559,7 @@ public class DMPlayerBaseActivity extends BaseAppCompatActivity implements View.
             case 3:
                 sharedPreferences.edit().putInt("FRAGMENT", position).apply();
                 FragmentChat fragmentChat = new FragmentChat();
-                fragmentTransaction.replace(R.id.fragment,fragmentChat);
+                fragmentTransaction.replace(R.id.fragment, fragmentChat);
                 fragmentTransaction.commit();
                 toolbar.setTitle("Chat");
                 break;
@@ -585,7 +569,7 @@ public class DMPlayerBaseActivity extends BaseAppCompatActivity implements View.
                 FragmentEqualizer fragmentequalizer = new FragmentEqualizer();
                 fragmentTransaction.replace(R.id.fragment, fragmentequalizer);
                 fragmentTransaction.commit();
-                toolbar.setTitle("Equilizer");
+                toolbar.setTitle("Equalizer");
                 break;
 
             case 5:
@@ -598,48 +582,49 @@ public class DMPlayerBaseActivity extends BaseAppCompatActivity implements View.
             case 6:
                 sharedPreferences.edit().putInt("FRAGMENT", position).apply();
                 Bundle bundle = new Bundle();
-                Artist artistInfo=getArtist();
-                if(artistInfo==null){
-                    Toast.makeText(getApplicationContext(),"Group doesn't exist in base",Toast.LENGTH_LONG).show();
+                Artist artistInfo = getArtist();
+                if (artistInfo == null) {
+                    Toast.makeText(getApplicationContext(), "Group doesn't exist in base", Toast.LENGTH_LONG).show();
                     break;
                 }
-                String basecity=getBaseCity(artistInfo);
-                String creationdate=getCreationDate(artistInfo);
-                if(creationdate==null)
-                    creationdate="unknown";
+                String basecity = getBaseCity(artistInfo);
+                String creationdate = getCreationDate(artistInfo);
+                if (creationdate == null)
+                    creationdate = "unknown";
                 if (basecity != null) {
                     bundle.putString("city", basecity);
                     bundle.putString("date", creationdate);
-                    JSONGeocode geocode=getGeocode(basecity);
+                    JSONGeocode geocode = getGeocode(basecity);
                     bundle.putString("location_lat", String.valueOf(geocode.getResults().get(0).getGeometry().getLocation().getLat()));
-                    bundle.putString("location_lng",String.valueOf(geocode.getResults().get(0).getGeometry().getLocation().getLng()));
+                    bundle.putString("location_lng", String.valueOf(geocode.getResults().get(0).getGeometry().getLocation().getLng()));
                     FragmentMap fragmentmap = new FragmentMap();
                     fragmentmap.setArguments(bundle);
                     fragmentTransaction.commit();
-                    fragmentTransaction.replace(R.id.fragment,fragmentmap);
-                }else{
-                    Toast.makeText(getApplicationContext(),"Group doesn't exist in base",Toast.LENGTH_LONG).show();
+                    fragmentTransaction.replace(R.id.fragment, fragmentmap);
+                } else {
+                    Toast.makeText(getApplicationContext(), "Group doesn't exist in base", Toast.LENGTH_LONG).show();
                 }
 
                 toolbar.setTitle("Artists Map");
                 break;
         }
     }
-    public Artist getArtist(){
-        URLConnectionRequest request =new URLConnectionRequest();
-        Artist artist=null;
+
+    public Artist getArtist() {
+        URLConnectionRequest request = new URLConnectionRequest();
+        Artist artist = null;
 
 
         try {
             //  String str= task.execute("http://musicbrainz.org/ws/2/artist?query=skillet&limit=1").get();
-            String currentArtist=MediaController.getInstance().getPlayingSongDetail().getArtist();
-            String url="http://musicbrainz.org/ws/2/artist?query="+ URLEncoder.encode(currentArtist, "UTF-8")+"&limit=1&fmt=json";
-            String str =request.execute(url).get();
-            Gson gson=new Gson();
-            JSONMusicbrains artists =gson.fromJson(str,JSONMusicbrains.class);
-            if(artists.getCount()==0)
+            String currentArtist = MediaController.getInstance().getPlayingSongDetail().getArtist();
+            String url = "http://musicbrainz.org/ws/2/artist?query=" + URLEncoder.encode(currentArtist, "UTF-8") + "&limit=1&fmt=json";
+            String str = request.execute(url).get();
+            Gson gson = new Gson();
+            JSONMusicbrains artists = gson.fromJson(str, JSONMusicbrains.class);
+            if (artists.getCount() == 0)
                 return null;
-            artist=artists.getArtists().get(0);
+            artist = artists.getArtists().get(0);
 
 
         } catch (InterruptedException e) {
@@ -648,33 +633,33 @@ public class DMPlayerBaseActivity extends BaseAppCompatActivity implements View.
             e.printStackTrace();
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
-        } catch (NullPointerException e){
+        } catch (NullPointerException e) {
             e.printStackTrace();
         }
         return artist;
     }
 
-    public  String getBaseCity(Artist artist){
-        String str="";
-        str=artist.getBeginArea().getName();
+    public String getBaseCity(Artist artist) {
+        String str = "";
+        str = artist.getBeginArea().getName();
         return str;
     }
 
-    public  String getCreationDate(Artist artist){
-        String str="";
-        str=artist.getLifeSpan().getBegin();
+    public String getCreationDate(Artist artist) {
+        String str = "";
+        str = artist.getLifeSpan().getBegin();
         return str;
     }
 
-    public JSONGeocode getGeocode(String city){
-        URLConnectionRequest request =new URLConnectionRequest();
+    public JSONGeocode getGeocode(String city) {
+        URLConnectionRequest request = new URLConnectionRequest();
         String url;
-        JSONGeocode jsonGeocode=null;
+        JSONGeocode jsonGeocode = null;
         try {
-            url="https://maps.googleapis.com/maps/api/geocode/json?address="+ URLEncoder.encode(city, "UTF-8");
-            String str=request.execute(url).get();
-            Gson gson=new Gson();
-            jsonGeocode =gson.fromJson(str,JSONGeocode.class);
+            url = "https://maps.googleapis.com/maps/api/geocode/json?address=" + URLEncoder.encode(city, "UTF-8");
+            String str = request.execute(url).get();
+            Gson gson = new Gson();
+            jsonGeocode = gson.fromJson(str, JSONGeocode.class);
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
         } catch (InterruptedException e) {
@@ -682,7 +667,7 @@ public class DMPlayerBaseActivity extends BaseAppCompatActivity implements View.
         } catch (ExecutionException e) {
             e.printStackTrace();
         }
-        return  jsonGeocode;
+        return jsonGeocode;
     }
 
     public void theme() {
@@ -698,7 +683,7 @@ public class DMPlayerBaseActivity extends BaseAppCompatActivity implements View.
     }
 
     private void setBackgroundImage() {
-        ImageView headerBackgroundImage = ButterKnife.findById(this,R.id.imageViewCover);
+        ImageView headerBackgroundImage = ButterKnife.findById(this, R.id.imageViewCover);
 
         String headerBackground = sharedPreferences.getString(FragmentSettings.HEADER_BACKGROUND, "");
         Uri headerBackgroundUri = Uri.parse(headerBackground);
@@ -864,17 +849,16 @@ public class DMPlayerBaseActivity extends BaseAppCompatActivity implements View.
     }
 
 
-
-
     @Override
     public void onAccuracyChanged(Sensor sensor, int i) {
 
     }
+
     @Override
     public void onSensorChanged(SensorEvent sensorEvent) {
         Sensor mySensor = sensorEvent.sensor;
 
-        if(getMixingMode().equals("ON")){
+        if (getMixingMode().equals("ON")) {
             if (mySensor.getType() == Sensor.TYPE_ACCELEROMETER) {
                 float x = sensorEvent.values[0];
                 float y = sensorEvent.values[1];
@@ -883,7 +867,7 @@ public class DMPlayerBaseActivity extends BaseAppCompatActivity implements View.
                 if ((curTime - lastUpdate) > 100) {
                     long diffTime = (curTime - lastUpdate);
                     lastUpdate = curTime;
-                    float speed = Math.abs(x + y + z - last_x - last_y - last_z)/ diffTime * 10000;
+                    float speed = Math.abs(x + y + z - last_x - last_y - last_z) / diffTime * 10000;
                     if (speed > SHAKE_THRESHOLD) {
                         //  getRandomNumber();
 
@@ -898,9 +882,11 @@ public class DMPlayerBaseActivity extends BaseAppCompatActivity implements View.
         }
 
     }
+
     private String getMixingMode() {
         return sharedPreferences.getString(MIXING_MODE, "");
     }
+
     private static class AnimateFirstDisplayListener extends SimpleImageLoadingListener {
         static final List<String> displayedImages = Collections.synchronizedList(new LinkedList<String>());
 
@@ -915,7 +901,5 @@ public class DMPlayerBaseActivity extends BaseAppCompatActivity implements View.
                 }
             }
         }
-
     }
-
 }

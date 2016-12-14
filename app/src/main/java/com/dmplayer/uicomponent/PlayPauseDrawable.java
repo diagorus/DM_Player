@@ -82,13 +82,13 @@ public class PlayPauseDrawable extends Drawable {
 		final float barDist = lerp(mPauseBarDistance, 0, mProgress);
 		// The current width of each pause bar.
 		final float barWidth = lerp(mPauseBarWidth, mPauseBarHeight / 2f, mProgress);
-		// The current position of the left pause bar's top left coordinate.
+		// The current contentPosition of the left pause bar's top left coordinate.
 		final float firstBarTopLeft = lerp(0, barWidth, mProgress);
-		// The current position of the right pause bar's top right coordinate.
+		// The current contentPosition of the right pause bar's top right coordinate.
 		final float secondBarTopRight = lerp(2 * barWidth + barDist, barWidth + barDist, mProgress);
 
 		// Draw the left pause bar. The left pause bar transforms into the
-		// top half of the play button triangle by animating the position of the
+		// top half of the play button triangle by animating the contentPosition of the
 		// rectangle's top left coordinate and expanding its bottom width.
 		mLeftPauseBar.moveTo(0, 0);
 		mLeftPauseBar.lineTo(firstBarTopLeft, -mPauseBarHeight);
@@ -97,7 +97,7 @@ public class PlayPauseDrawable extends Drawable {
 		mLeftPauseBar.close();
 
 		// Draw the right pause bar. The right pause bar transforms into the
-		// bottom half of the play button triangle by animating the position of
+		// bottom half of the play button triangle by animating the contentPosition of
 		// the
 		// rectangle's top right coordinate and expanding its bottom width.
 		mRightPauseBar.moveTo(barWidth + barDist, 0);

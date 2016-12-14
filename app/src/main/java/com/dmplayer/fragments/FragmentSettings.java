@@ -6,35 +6,26 @@
 package com.dmplayer.fragments;
 
 import android.app.Activity;
-import android.app.Fragment;
 import android.app.FragmentManager;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Environment;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.dmplayer.R;
 import com.dmplayer.activities.DMPlayerBaseActivity;
-import com.dmplayer.activities.MusicChooserActivity;
 import com.dmplayer.butterknifeabstraction.BaseFragment;
 import com.dmplayer.dialogs.OnWorkDone;
 import com.dmplayer.dialogs.ProfileDialog;
 import com.dmplayer.dialogs.ThemeDialog;
-import com.dmplayer.models.Playlist;
 import com.dmplayer.models.SongDetail;
 import com.dmplayer.utility.DMPlayerUtility;
-import com.dmplayer.utility.LogWriter;
 
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 
 import butterknife.ButterKnife;
@@ -105,8 +96,8 @@ public class FragmentSettings extends BaseFragment implements View.OnClickListen
                 break;
 
             case R.id.relativeLayoutCreatePlaylist:
-                try {
-                    final Playlist a = new Playlist();
+//                try {
+//                    final Playlist a = new Playlist();
 //                    if(mSongUri!=null) {
 //                        PhoneMediaControl mPhoneMediaControl = PhoneMediaControl.getInstance();
 //                        PhoneMediaControl.setPhoneMediaControlInterface(new PhoneMediaControl.PhoneMediaControlInterface() {
@@ -125,36 +116,36 @@ public class FragmentSettings extends BaseFragment implements View.OnClickListen
 //
 //                        }
 //                    }
-
-                    if (songList!=null) {
-                        for (SongDetail song:
-                             songList) {
-                            a.addSong(song);
-                        }
-
-                        try {
-                            File b = new File(Environment
-                                    .getExternalStorageDirectory() + "/DMPlayer/DMPlayer_playlists");
-                            if (!b.exists())
-                                b.mkdirs();
-                            ObjectOutputStream os = new ObjectOutputStream(new FileOutputStream(Environment
-                                    .getExternalStorageDirectory() + "/DMPlayer/DMPlayer_playlists/a.dpl"));
-                            os.writeObject(a);
-                            os.close();
-                        } catch (Exception ex) {
-                            ex.printStackTrace();
-                        }
-
-                        LogWriter.info(TAG, "OK");
-                    }
-                } catch (Exception ex) {
-                    ex.printStackTrace();
-                }
+//
+//                    if (songList!=null) {
+//                        for (SongDetail song:
+//                             songList) {
+//                            a.addSong(song);
+//                        }
+//
+//                        try {
+//                            File b = new File(Environment
+//                                    .getExternalStorageDirectory() + "/DMPlayer/DMPlayer_playlists");
+//                            if (!b.exists())
+//                                b.mkdirs();
+//                            ObjectOutputStream os = new ObjectOutputStream(new FileOutputStream(Environment
+//                                    .getExternalStorageDirectory() + "/DMPlayer/DMPlayer_playlists/a.dpl"));
+//                            os.writeObject(a);
+//                            os.close();
+//                        } catch (Exception ex) {
+//                            ex.printStackTrace();
+//                        }
+//
+//                        LogWriter.info(TAG, "OK");
+//                    }
+//                } catch (Exception ex) {
+//                    ex.printStackTrace();
+//                }
                 break;
 
             case R.id.relativeLayoutMusicChooser:
-                Intent picker = new Intent(getActivity(), MusicChooserActivity.class);
-                startActivityForResult(picker,PICKER_REQUEST);
+//                Intent picker = new Intent(getActivity(), MusicChooserActivity.class);
+//                startActivityForResult(picker,PICKER_REQUEST);
                 break;
             case R.id.relativeLayoutMusicMixEnabled:
                 setMixingMode();
@@ -206,17 +197,17 @@ public class FragmentSettings extends BaseFragment implements View.OnClickListen
                 break;
 
             case PICKER_REQUEST:
-                if(resultCode == Activity.RESULT_OK){
-                    try {
-                        songList = (ArrayList<SongDetail>) returnedIntent.getExtras()
-                                .getSerializable("songs");
-                        LogWriter.info(TAG, "Got songs " + mSongUri.get(mSongUri.size()));
-                    }
-                    catch (Exception ex){
-                        ex.printStackTrace();
-                        LogWriter.info(TAG,ex.toString());
-                    }
-                }
+//                if(resultCode == Activity.RESULT_OK){
+//                    try {
+//                        songList = (ArrayList<SongDetail>) returnedIntent.getExtras()
+//                                .getSerializable("songs");
+//                        LogWriter.info(TAG, "Got songs " + mSongUri.get(mSongUri.size()));
+//                    }
+//                    catch (Exception ex){
+//                        ex.printStackTrace();
+//                        LogWriter.info(TAG,ex.toString());
+//                    }
+//                }
                 break;
         }
     }
@@ -256,8 +247,7 @@ public class FragmentSettings extends BaseFragment implements View.OnClickListen
             }
 
             @Override
-            public void onRefuse() {
-            }
+            public void onRefuse() {}
         });
         dialog.setCancelable(false);
         dialog.show(fragmentManager, "fragment_profile");
@@ -273,8 +263,8 @@ public class FragmentSettings extends BaseFragment implements View.OnClickListen
                                 .lastIndexOf(".")));
         try {
             DMPlayerUtility.copyFile(backgroundSource, backgroundDest);
-        } catch (IOException ioex) {
-            Log.e(TAG, "Error occurred while coping background");
+        } catch (IOException e) {
+            Log.e(TAG, Log.getStackTraceString(e));
         }
         return backgroundDest.toURI().toString();
     }

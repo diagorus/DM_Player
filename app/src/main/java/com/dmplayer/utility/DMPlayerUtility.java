@@ -51,7 +51,7 @@ import java.util.Locale;
 
 public final class DMPlayerUtility {
 
-    private static final String TAG = "MusicUtils";
+    private static final String TAG = DMPlayerUtility.class.getSimpleName();
 
     private static StringBuilder sFormatBuilder = new StringBuilder();
     private static Formatter sFormatter = new Formatter(sFormatBuilder, Locale.getDefault());
@@ -498,6 +498,22 @@ public final class DMPlayerUtility {
         InputMethodManager imm = (InputMethodManager) context.getSystemService(Context.INPUT_METHOD_SERVICE);
         imm.hideSoftInputFromWindow(textView.getWindowToken(),
                 InputMethodManager.HIDE_NOT_ALWAYS);
+    }
+
+    public static void showKeys(Context context, TextView textView) {
+        InputMethodManager imm = (InputMethodManager)
+                context.getSystemService(Context.INPUT_METHOD_SERVICE);
+        imm.showSoftInput(textView, InputMethodManager.SHOW_IMPLICIT);
+    }
+
+    public static void closeCursor(Cursor cursor) {
+        if (cursor != null) {
+            try {
+                cursor.close();
+            } catch (Exception e) {
+                Log.e(TAG, Log.getStackTraceString(e));
+            }
+        }
     }
 
     public static int dp(float value) {

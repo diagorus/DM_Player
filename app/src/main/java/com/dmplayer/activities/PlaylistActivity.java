@@ -398,7 +398,7 @@ public class PlaylistActivity extends AppCompatActivity implements View.OnClickL
         @Override
         protected List<SongDetail> doInBackground(Void... params) {
 //            return vkMusicHelper.loadMusicList(vkType, vkAlbumId, vkPlaylistName)
-//                    .getSongs();
+//                    .getSongsList();
             return null;
         }
 
