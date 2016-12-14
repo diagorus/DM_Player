@@ -86,34 +86,7 @@ public class FragmentMap extends Fragment implements OnMapReadyCallback, View.On
                 .position(baseCity)
                 .title("Begin-area: "+city)
                 .snippet("Year: " +date));
-       // melbourne.showInfoWindow();
         myAdapter.getInfoWindow(marker);
-
-       // mMap.setOnMarkerClickListener(markerListener);
-
-       // mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(baseCity,5));
-
         mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(baseCity,5));
-
-        //melbourne.showInfoWindow();
-
-
     }
-//    GoogleMap.OnMarkerClickListener markerListener=new GoogleMap.OnMarkerClickListener() {
-//        @Override
-//        public boolean onMarkerClick(Marker marker) {
-//            if(marker.isInfoWindowShown()) {
-//
-//                marker.hideInfoWindow();
-//
-//
-//            }else {
-//                marker.showInfoWindow();
-//            }
-//
-//
-//            return true;
-//        }
-//    };
-
 }
