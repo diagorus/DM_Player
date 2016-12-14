@@ -21,7 +21,7 @@
             android:layout_marginTop="25dp"
             app:border_width="1dp"
             app:border_color="@color/md_black_1000"
-            android:src="@drawable/avatar_default_another" />
+            android:src="@drawable/profile_default_avatar" />
 
         <TextView
             android:id="@+id/profileName"

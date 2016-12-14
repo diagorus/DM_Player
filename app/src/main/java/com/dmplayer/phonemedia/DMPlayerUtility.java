@@ -3,7 +3,7 @@
  * You should have received a copy of the license in this archive (see LICENSE).
  * Copyright @Dibakar_Mistry, 2015.
  */
-package com.dmplayer.utility;
+package com.dmplayer.phonemedia;
 
 import android.app.Activity;
 import android.content.ContentResolver;
@@ -65,7 +65,7 @@ public final class DMPlayerUtility {
     public static String makeAlbumsLabel(Context context, int numalbums, int numsongs, boolean isUnknown) {
         // There are two formats for the albums/songs information:
         // "N Song(s)" - used for unknown artist/album
-        // "N ALBUM(s)" - used for known albums
+        // "N Album(s)" - used for known albums
 
         StringBuilder songs_albums = new StringBuilder();
 
@@ -217,8 +217,7 @@ public final class DMPlayerUtility {
         long minutes = (totalSecs % 3600) / 60;
         long seconds = totalSecs % 60;
 
-        //TODO: resolve this using string resource
-        String duration;
+        String duration = "";
         if (hours != 0) {
             duration = String.format("%02d:%02d:%02d", hours, minutes, seconds);
         } else {
@@ -276,37 +275,37 @@ public final class DMPlayerUtility {
     public static void settingTheme(Context context, int theme) {
         switch (theme) {
             case 1:
-                context.setTheme(R.style.AppThemeBlue);
+                context.setTheme(R.style.AppTheme);
                 break;
             case 2:
-                context.setTheme(R.style.AppThemeRed);
+                context.setTheme(R.style.AppTheme2);
                 break;
             case 3:
-                context.setTheme(R.style.AppThemeGreen);
+                context.setTheme(R.style.AppTheme3);
                 break;
             case 4:
-                context.setTheme(R.style.AppThemeOrange);
+                context.setTheme(R.style.AppTheme4);
                 break;
             case 5:
-                context.setTheme(R.style.AppThemePink);
+                context.setTheme(R.style.AppTheme5);
                 break;
             case 6:
-                context.setTheme(R.style.AppThemeIndigo);
+                context.setTheme(R.style.AppTheme6);
                 break;
             case 7:
-                context.setTheme(R.style.AppThemeBrown);
+                context.setTheme(R.style.AppTheme7);
                 break;
             case 8:
-                context.setTheme(R.style.AppThemeBluegrey);
+                context.setTheme(R.style.AppTheme8);
                 break;
             case 9:
-                context.setTheme(R.style.AppThemeFalcon);
+                context.setTheme(R.style.AppTheme9);
                 break;
             case 10:
-                context.setTheme(R.style.AppThemeLightblue);
+                context.setTheme(R.style.AppTheme10);
                 break;
             default:
-                context.setTheme(R.style.AppThemeBlue);
+                context.setTheme(R.style.AppTheme);
                 break;
         }
     }

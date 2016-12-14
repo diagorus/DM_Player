@@ -26,8 +26,8 @@ import com.dmplayer.R;
 import com.dmplayer.activities.DMPlayerBaseActivity;
 import com.dmplayer.manager.MediaController;
 import com.dmplayer.models.SongDetail;
+import com.dmplayer.phonemedia.DMPlayerUtility;
 import com.dmplayer.phonemedia.PhoneMediaControl;
-import com.dmplayer.utility.DMPlayerUtility;
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.ImageLoader;
 
@@ -74,7 +74,7 @@ public class ChildFragmentMostPlayed extends Fragment {
                 mAllSongsListAdapter.notifyDataSetChanged();
             }
         });
-        mPhoneMediaControl.loadMusicListAsync(getActivity(), -1, PhoneMediaControl.SongsLoadFor.MOST_PLAY, "");
+        mPhoneMediaControl.loadMusicListAsync(getActivity(), -1, PhoneMediaControl.SongsLoadFor.MostPlay, "");
     }
 
     public class AllSongsListAdapter extends BaseAdapter {
@@ -108,11 +108,11 @@ public class ChildFragmentMostPlayed extends Fragment {
             if (convertView == null) {
                 mViewHolder = new ViewHolder();
                 convertView = layoutInflater.inflate(R.layout.item_song, null);
-                mViewHolder.song_row = (LinearLayout) convertView.findViewById(R.id.song_row);
-                mViewHolder.textViewSongName = (TextView) convertView.findViewById(R.id.song_name);
-                mViewHolder.textViewSongArtisNameAndDuration = (TextView) convertView.findViewById(R.id.song_details);
-                mViewHolder.imageSongThm = (ImageView) convertView.findViewById(R.id.song_icon_art);
-                mViewHolder.imagemore = (ImageView) convertView.findViewById(R.id.song_icon_option_more);
+                mViewHolder.song_row = (LinearLayout) convertView.findViewById(R.id.inflate_allsong_row);
+                mViewHolder.textViewSongName = (TextView) convertView.findViewById(R.id.inflate_allsong_textsongname);
+                mViewHolder.textViewSongArtisNameAndDuration = (TextView) convertView.findViewById(R.id.inflate_allsong_textsongArtisName_duration);
+                mViewHolder.imageSongThm = (ImageView) convertView.findViewById(R.id.inflate_allsong_imgSongThumb);
+                mViewHolder.imagemore = (ImageView) convertView.findViewById(R.id.img_moreicon);
                 convertView.setTag(mViewHolder);
             } else {
                 mViewHolder = (ViewHolder) convertView.getTag();
@@ -144,7 +144,7 @@ public class ChildFragmentMostPlayed extends Fragment {
                         if (MediaController.getInstance().isPlayingAudio(mDetail) && !MediaController.getInstance().isAudioPaused()) {
                             MediaController.getInstance().pauseAudio(mDetail);
                         } else {
-                            MediaController.getInstance().setPlaylist(songList, mDetail, PhoneMediaControl.SongsLoadFor.MOST_PLAY.ordinal(), -1);
+                            MediaController.getInstance().setPlaylist(songList, mDetail, PhoneMediaControl.SongsLoadFor.MostPlay.ordinal(), -1);
                         }
                     }
 

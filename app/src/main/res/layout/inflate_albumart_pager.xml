@@ -4,7 +4,7 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
     <ImageView
-        android:id="@+id/image_songsAlbum"
+        android:id="@+id/image_songAlbumbg_mid"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:scaleType="centerCrop"

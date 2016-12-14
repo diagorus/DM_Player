@@ -9,12 +9,11 @@ import com.dmplayer.phonemedia.PhoneMediaControl;
 import com.google.gson.Gson;
 
 import java.util.ArrayList;
-import java.util.List;
 
-public class MusicPreference {
+public class MusicPreferance {
 
-    public static List<SongDetail> playlist = new ArrayList<>();
-    public static List<SongDetail> shuffledPlaylist = new ArrayList<>();
+    public static ArrayList<SongDetail> playlist = new ArrayList<SongDetail>();
+    public static ArrayList<SongDetail> shuffledPlaylist = new ArrayList<SongDetail>();
     public static SongDetail playingSongDetail;
 
     public static SharedPreferences getPreferanse(Context context) {
@@ -84,7 +83,7 @@ public class MusicPreference {
     }
 
 
-    public static List<SongDetail> getPlaylist(Context context) {
+    public static ArrayList<SongDetail> getPlaylist(Context context) {
         if (playlist == null || playlist.isEmpty()) {
             int type = getLastSongListType(context);
             int id = getLastAlbID(context);
@@ -98,17 +97,14 @@ public class MusicPreference {
         return playlist;
     }
 
-    public static List<SongDetail> getPlaylist(Context context, String path) {
-        MediaController.getInstance().type = PhoneMediaControl.SongsLoadFor.MUSIC_INTENT.ordinal();
+    public static ArrayList<SongDetail> getPlaylist(Context context, String path) {
+        MediaController.getInstance().type = PhoneMediaControl.SongsLoadFor.MusicIntent.ordinal();
         MediaController.getInstance().id = -1;
         MediaController.getInstance().currentPlaylistNum = 0;
         MediaController.getInstance().path = path;
-
-        playlist = PhoneMediaControl.getInstance().getList(context, -1, PhoneMediaControl.SongsLoadFor.MUSIC_INTENT, path);
-        if (playlist != null && !playlist.isEmpty()) {
+        playlist = PhoneMediaControl.getInstance().getList(context, -1, PhoneMediaControl.SongsLoadFor.MusicIntent, path);
+        if (playlist != null && !playlist.isEmpty())
             playingSongDetail = playlist.get(0);
-        }
-
         return playlist;
     }
 }
