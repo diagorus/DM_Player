@@ -146,6 +146,10 @@
           <option name="url" value="https://github.com/bees4honey/mobile_vin_scanner.git" />
           <option name="userName" value="" />
         </UrlAndUserName>
+        <UrlAndUserName>
+          <option name="url" value="https://github.com/dlazaro66/QRCodeReaderView.git" />
+          <option name="userName" value="" />
+        </UrlAndUserName>
       </list>
     </option>
     <option name="cloneParentDir" value="D:\ReserveCopyAndroidsStudioProjects" />
