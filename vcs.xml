@@ -166,6 +166,10 @@
           <option name="url" value="https://github.com/twotoasters/HorizontalImageScroller-Android.git" />
           <option name="userName" value="" />
         </UrlAndUserName>
+        <UrlAndUserName>
+          <option name="url" value="https://github.com/H07000223/FlycoBanner_Master.git" />
+          <option name="userName" value="" />
+        </UrlAndUserName>
       </list>
     </option>
     <option name="cloneParentDir" value="D:\ReserveCopyAndroidsStudioProjects" />
