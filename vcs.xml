@@ -178,6 +178,10 @@
           <option name="url" value="https://github.com/saeedsh92/Banner-Slider.git" />
           <option name="userName" value="" />
         </UrlAndUserName>
+        <UrlAndUserName>
+          <option name="url" value="https://github.com/wunderlist/android-sliding-layer-lib" />
+          <option name="userName" value="" />
+        </UrlAndUserName>
       </list>
     </option>
     <option name="cloneParentDir" value="D:\ReserveCopyAndroidsStudioProjects" />
