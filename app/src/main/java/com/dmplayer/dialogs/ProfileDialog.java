@@ -2,12 +2,14 @@ package com.dmplayer.dialogs;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.DialogFragment;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnClickListener;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
@@ -25,12 +27,11 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.dmplayer.R;
-import com.dmplayer.butterknifeabstraction.BaseDialogFragment;
 import com.dmplayer.externalprofilelayout.ExternalProfileLayout;
 import com.dmplayer.fragments.FragmentSettings;
+import com.dmplayer.phonemedia.DMPlayerUtility;
 import com.dmplayer.presenters.VkProfilePresenter;
 import com.dmplayer.uicomponent.CircleImageView;
-import com.dmplayer.utility.DMPlayerUtility;
 import com.vk.sdk.VKAccessToken;
 import com.vk.sdk.VKCallback;
 import com.vk.sdk.VKSdk;
@@ -39,32 +40,23 @@ import com.vk.sdk.api.VKError;
 import java.io.File;
 import java.io.IOException;
 
-import butterknife.BindView;
-import butterknife.OnClick;
-import butterknife.OnEditorAction;
+public class ProfileDialog extends DialogFragment {
+    public final static String PHOTO_DIR_PATH = Environment.getExternalStorageDirectory() + "/.DM_Player/DM_Player_photos";
+    public final static String AVATAR_FILE_PATH = PHOTO_DIR_PATH + "/photo_avatar.jpg";
+    public final static String AVATAR_TEMP_FILE_PATH = PHOTO_DIR_PATH + "/photo_avatar_temp.jpg";
+    public final static String AVATAR_VK_FILE_PATH = PHOTO_DIR_PATH + "/vk_photo.jpg";
 
-public class ProfileDialog extends BaseDialogFragment {
-    public static final String PHOTO_DIR_PATH = Environment.getExternalStorageDirectory() + "/.DM_Player/DM_Player_photos";
-    public static final String AVATAR_FILE_PATH = PHOTO_DIR_PATH + "/photo_avatar.jpg";
-    public static final String AVATAR_TEMP_FILE_PATH = PHOTO_DIR_PATH + "/photo_avatar_temp.jpg";
-    public static final String AVATAR_VK_FILE_PATH = PHOTO_DIR_PATH + "/vk_photo.jpg";
+    private String TAG = "ProfileDialog_Error";
 
-    private static final String TAG = ProfileDialog.class.getSimpleName();
+    private Button buttonOK, buttonCancel;
+    private EditText nickName;
+    private CircleImageView avatar;
 
-    @BindView(R.id.button_ok)
-    Button buttonOk;
-    @BindView(R.id.button_cancel)
-    Button buttonCancel;
-    @BindView(R.id.user_local_name)
-    EditText nickName;
-    @BindView(R.id.user_local_avatar)
-    CircleImageView avatar;
-    @BindView(R.id.vk_profile_view)
+    VkProfilePresenter vkProfilePresenter;
     ExternalProfileLayout vkProfileView;
 
-    private VkProfilePresenter vkProfilePresenter;
-
     private SharedPreferences sharedPreferences;
+    private SharedPreferences.Editor editor;
     private Uri photoFromGallery;
 
     private int where;
@@ -73,19 +65,15 @@ public class ProfileDialog extends BaseDialogFragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        sharedPreferences = getActivity().getSharedPreferences("VALUES", Context.MODE_PRIVATE);
+
+        View v = inflater.inflate(R.layout.dialog_profile, null);
+
         getDialog().requestWindowFeature(Window.FEATURE_NO_TITLE);
-        return super.onCreateView(inflater, container, savedInstanceState);
-    }
 
-    @Override
-    public void onViewCreated(View view, Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
-        init();
-    }
+        init(v);
 
-    @Override
-    protected int getLayoutId() {
-        return R.layout.dialog_profile;
+        return v;
     }
 
     @Override
@@ -130,12 +118,65 @@ public class ProfileDialog extends BaseDialogFragment {
         }
     }
 
-    private void init() {
-        sharedPreferences = getActivity().getSharedPreferences("VALUES", Context.MODE_PRIVATE);
+    void init(View v) {
+        buttonOK = (Button) v.findViewById(R.id.buttonOK);
+        buttonCancel = (Button) v.findViewById(R.id.buttonCancel);
+        nickName = (EditText) v.findViewById(R.id.profile_dialog_name);
+        avatar = (CircleImageView) v.findViewById(R.id.profile_dialog_avatar);
+
+        buttonOK.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                new SaveDataTask(getActivity()).execute();
+
+                if (getOnWorkDone() != null) {
+                    getOnWorkDone().onPositiveAnswer();
+                }
+            }
+        });
+
+        buttonCancel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                DMPlayerUtility.deleteFile(DMPlayerUtility.getUriFromPath(AVATAR_TEMP_FILE_PATH).getPath());
+
+                if (getOnWorkDone() != null)
+                    getOnWorkDone().onNegativeAnswer();
+
+                getDialog().dismiss();
+            }
+        });
+
+        nickName.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                nickName.setCursorVisible(true);
+                nickName.setInputType(InputType.TYPE_CLASS_TEXT);
+            }
+        });
+
+        nickName.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+            @Override
+            public boolean onEditorAction(TextView textView, int i, KeyEvent keyEvent) {
+                if (i == EditorInfo.IME_ACTION_DONE) {
+                    DMPlayerUtility.hideKeys(ProfileDialog.this.getActivity(), nickName);
+
+                    return true;
+                }
+                return false;
+            }
+        });
+
+        avatar.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                showAvatarDialog();
+            }
+        });
 
         setDefaultSettings();
 
-        setVkProfile();
+        setVkProfile(v);
     }
 
     private void setDefaultSettings() {
@@ -144,71 +185,40 @@ public class ProfileDialog extends BaseDialogFragment {
         setName();
     }
 
-    private void setVkProfile() {
+    private  void setVkProfile(View v) {
+        vkProfileView = (ExternalProfileLayout) v.findViewById(R.id.vk_profile_view);
+
         vkProfilePresenter = new VkProfilePresenter(vkProfileView);
         vkProfilePresenter.onCreate(this);
     }
 
     private void setAvatar() {
-        String avatarPhoto = sharedPreferences.getString(FragmentSettings.AVATAR, "");
+        String avatarPhoto =  sharedPreferences.getString(FragmentSettings.AVATAR, "");
         Uri avatarPhotoUri = Uri.parse(avatarPhoto);
 
         if (DMPlayerUtility.isURIExists(avatarPhotoUri)) {
             DMPlayerUtility.settingPicture(avatar, avatarPhotoUri);
         } else {
-            DMPlayerUtility.settingPicture(avatar, R.drawable.avatar_default);
+            DMPlayerUtility.settingPicture(avatar, R.drawable.profile_default_avatar);
         }
     }
 
     private void setName() {
-        initialName = sharedPreferences.getString(FragmentSettings.NAME,
-                getResources().getString(R.string.profile_defult_name));
+        String nameText = sharedPreferences.getString(FragmentSettings.NAME, "");
 
-        nickName.setText(initialName);
+        if (!nameText.equals(""))
+            nickName.setText(nameText);
+        else
+            nickName.setText(R.string.profile_defult_name);
+
+        initialName = nickName.getText().toString();
     }
 
-    @OnClick(R.id.button_cancel)
-    public void finishRefuse(Button v) {
-        DMPlayerUtility.deleteFile(DMPlayerUtility.getUriFromPath(AVATAR_TEMP_FILE_PATH).getPath());
-
-        if (getOnWorkDone() != null) {
-            getOnWorkDone().onRefuse();
-        }
-        dismiss();
-    }
-    
-    @OnClick(R.id.button_ok)
-    public void finishAgree(Button v) {
-        saveData();
-
-        if (getOnWorkDone() != null) {
-            getOnWorkDone().onAgree();
-        }
-        dismiss();
-    }
-
-    @OnClick(R.id.user_local_name)
-    public void setEditMode(EditText v) {
-        v.setCursorVisible(true);
-        v.setInputType(InputType.TYPE_CLASS_TEXT);
-    }
-
-    @OnEditorAction(R.id.user_local_name)
-    public boolean checkIfHideKeyboard(TextView textView, int i, KeyEvent keyEvent) {
-        if (i == EditorInfo.IME_ACTION_DONE) {
-            DMPlayerUtility.hideKeys(getActivity(), textView);
-
-            return true;
-        }
-        return false;
-    }
-
-    @OnClick(R.id.user_local_avatar)
-    public void showAvatarDialog() {
+    void showAvatarDialog() {
         AlertDialog.Builder adb = new AlertDialog.Builder(getActivity());
         adb.setTitle("Photo");
         String[] titles = {"Take photo from camera", "Choose from gallery"};
-        OnClickListener l = new OnClickListener() {
+        OnClickListener ocl = new OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
                 switch (i) {
@@ -229,51 +239,82 @@ public class ProfileDialog extends BaseDialogFragment {
                 }
             }
         };
-        adb.setItems(titles, l);
+        adb.setItems(titles, ocl);
         adb.show();
     }
 
-    private void saveData() {
-        String currentName = nickName.getText().toString();
-        boolean isNameChanged = !initialName.equals(currentName);
+    private class SaveDataTask extends AsyncTask<Void, Void, Void> {
+        boolean isNameChanged;
+        String currentName;
 
-        if (isNameChanged) {
-            sharedPreferences.edit()
-                    .putString(FragmentSettings.NAME, currentName)
-                    .apply();
+        Context context;
+
+        private SaveDataTask(Context context) {
+            this.context = context;
         }
 
-        if (isAvatarChanged) {
-            File avatarPhoto = new File(DMPlayerUtility.getUriFromPath(AVATAR_FILE_PATH).getPath());
-            switch (where) {
-                case FragmentSettings.GALLERY_REQUEST:
-                    File pictureToCopy = new File(
-                            DMPlayerUtility.getRealPathFromURI(getActivity(), photoFromGallery));
-                    try {
-                        DMPlayerUtility.copyFile(pictureToCopy, avatarPhoto);
-                    } catch (IOException e) {
-                        Log.e(TAG, e.getMessage());
-                    }
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
 
-                    DMPlayerUtility.deleteFile(DMPlayerUtility.getUriFromPath(AVATAR_TEMP_FILE_PATH).getPath());
-                    break;
+            editor = sharedPreferences.edit();
+            isNameChanged = !initialName.equals(nickName.getText().toString());
+            currentName = nickName.getText().toString();
+        }
 
-                case FragmentSettings.CAMERA_REQUEST:
-                    File photoTaken = new File(DMPlayerUtility.getUriFromPath(AVATAR_TEMP_FILE_PATH).getPath());
-                    photoTaken.renameTo(avatarPhoto);
-                    break;
+        @Override
+        protected Void doInBackground(Void... voids) {
+            if (isAvatarChanged) {
+                File avatarPhoto = new File(DMPlayerUtility.getUriFromPath(AVATAR_FILE_PATH).getPath());
+                switch (where) {
+                    case FragmentSettings.GALLERY_REQUEST:
+                        File pictureToCopy = new File(
+                                DMPlayerUtility.getRealPathFromURI(context, photoFromGallery));
+                        try {
+                            DMPlayerUtility.copyFile(pictureToCopy, avatarPhoto);
+                        } catch (IOException e) {
+                            Log.e(TAG, e.getMessage());
+                        }
+
+                        DMPlayerUtility.deleteFile(DMPlayerUtility.getUriFromPath(AVATAR_TEMP_FILE_PATH).getPath());
+                        break;
+                    case FragmentSettings.CAMERA_REQUEST:
+                        File photoTaken = new File(DMPlayerUtility.getUriFromPath(AVATAR_TEMP_FILE_PATH).getPath());
+                        photoTaken.renameTo(avatarPhoto);
+
+                        break;
+                }
+
+                editor.putString(FragmentSettings.AVATAR, avatarPhoto.toURI().toString());
             }
+            if (isNameChanged) {
+                editor.putString(FragmentSettings.NAME, currentName);
+            }
+            return null;
+        }
 
-            sharedPreferences.edit()
-                    .putString(FragmentSettings.AVATAR, avatarPhoto.toURI().toString())
-                    .apply();
+        @Override
+        protected void onPostExecute(Void aVoid) {
+            super.onPostExecute(aVoid);
+
+            if (isDataChanged()) {
+                editor.apply();
+            }
+        }
+
+        private boolean isDataChanged() {
+            return (!initialName.equals(nickName.getText().toString()))
+                    || isAvatarChanged;
         }
     }
 
+
     private OnWorkDone OnWorkDone;
+
     public OnWorkDone getOnWorkDone() {
         return OnWorkDone;
     }
+
     public void setOnWorkDone(OnWorkDone OnWorkDone) {
         this.OnWorkDone = OnWorkDone;
     }

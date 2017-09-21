@@ -1,5 +1,7 @@
 package com.dmplayer.dialogs;
 
+import android.app.ActivityOptions;
+import android.app.DialogFragment;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -11,137 +13,145 @@ import android.view.Window;
 import android.widget.Button;
 
 import com.dmplayer.R;
-import com.dmplayer.butterknifeabstraction.BaseDialogFragment;
-
-import butterknife.BindView;
-import butterknife.OnClick;
 
 
-public class ThemeDialog extends BaseDialogFragment {
-    @BindView(R.id.theme_card_blue)
-    CardView themeBlue;
-    @BindView(R.id.theme_card_red)
-    CardView themeRed;
-    @BindView(R.id.theme_card_green)
-    CardView themeGreen;
-    @BindView(R.id.theme_card_orange)
-    CardView themeOrange;
-    @BindView(R.id.theme_card_pink)
-    CardView themePink;
-    @BindView(R.id.theme_card_indigo)
-    CardView themeIndigo;
-    @BindView(R.id.theme_card_brown)
-    CardView themeBrown;
-    @BindView(R.id.theme_card_blue_grey)
-    CardView themeBlueGray;
-    @BindView(R.id.theme_card_falcon)
-    CardView themeFalcon;
-    @BindView(R.id.theme_card_light_blue)
-    CardView themeLightBlue;
-
-    @BindView(R.id.button_agree)
-    Button buttonAgree;
-    @BindView(R.id.button_disagree)
-    Button buttonDisagree;
-
-    private SharedPreferences sharedPreferences;
-    private int currentTheme;
+public class ThemeDialog extends DialogFragment implements View.OnClickListener {
+    private   CardView cardView1, cardView2, cardView3, cardView4, cardView5, cardView6, cardView7, cardView8, cardView9, cardView10;
+    private    Button buttonDisagree, buttonAgree;
+    private View view;
+    private  int currentTheme;
+    private  SharedPreferences sharedPreferences;
+    private  SharedPreferences.Editor editor;
+    private ActivityOptions options;
+    private  Boolean themeChanged = false;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        getDialog().requestWindowFeature(Window.FEATURE_NO_TITLE);
-        return super.onCreateView(inflater, container, savedInstanceState);
-    }
 
-    @Override
-    public void onViewCreated(View view, Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
-        init();
-    }
-
-    @Override
-    protected int getLayoutId() {
-        return R.layout.dialog_theme;
-    }
-
-    private void init() {
+        // Save current theme to use when user press dismiss inside dialog
         sharedPreferences = getActivity().getSharedPreferences("VALUES", Context.MODE_PRIVATE);
         currentTheme = sharedPreferences.getInt("THEME", 0);
+
+        //inflate dialog_theme.xml
+        view = inflater.inflate(R.layout.dialog_theme, container);
+
+        // remove title (already defined in dialog_theme.xml)
+        getDialog().requestWindowFeature(Window.FEATURE_NO_TITLE);
+
+        // Declare buttons and onClick methods
+        dialogButtons();
+
+        return view;
     }
 
-    @OnClick(R.id.theme_card_blue)
-    public void setThemeBlue() {
-        currentTheme = 1;
+    private void dialogButtons() {
+        cardView1 = (CardView) view.findViewById(R.id.card_view1);
+        cardView2 = (CardView) view.findViewById(R.id.card_view2);
+        cardView3 = (CardView) view.findViewById(R.id.card_view3);
+        cardView4 = (CardView) view.findViewById(R.id.card_view4);
+        cardView5 = (CardView) view.findViewById(R.id.card_view5);
+        cardView6 = (CardView) view.findViewById(R.id.card_view6);
+        cardView7 = (CardView) view.findViewById(R.id.card_view7);
+        cardView8 = (CardView) view.findViewById(R.id.card_view8);
+        cardView9 = (CardView) view.findViewById(R.id.card_view9);
+        cardView10 = (CardView) view.findViewById(R.id.card_view10);
+        buttonDisagree = (Button) view.findViewById(R.id.buttonDisagree);
+        buttonAgree = (Button) view.findViewById(R.id.buttonAgree);
+
+
+        cardView1.setOnClickListener(this);
+        cardView2.setOnClickListener(this);
+        cardView3.setOnClickListener(this);
+        cardView4.setOnClickListener(this);
+        cardView5.setOnClickListener(this);
+        cardView6.setOnClickListener(this);
+        cardView7.setOnClickListener(this);
+        cardView8.setOnClickListener(this);
+        cardView9.setOnClickListener(this);
+        cardView10.setOnClickListener(this);
+        buttonDisagree.setOnClickListener(this);
+        buttonAgree.setOnClickListener(this);
     }
 
-    @OnClick(R.id.theme_card_red)
-    public void setThemeRed() {
-        currentTheme = 2;
-    }
-
-    @OnClick(R.id.theme_card_green)
-    public void setThemeGreen() {
-        currentTheme = 3;
-    }
-
-    @OnClick(R.id.theme_card_orange)
-    public void setThemeOrange() {
-        currentTheme = 4;
-    }
-
-    @OnClick(R.id.theme_card_pink)
-    public void setThemePink() {
-        currentTheme = 5;
-    }
-
-    @OnClick(R.id.theme_card_indigo)
-    public void setThemeIndigo() {
-        currentTheme = 6;
-    }
-
-    @OnClick(R.id.theme_card_brown)
-    public void setThemeBrown() {
-        currentTheme = 7;
-    }
-
-    @OnClick(R.id.theme_card_blue_grey)
-    public void setThemeBlueGray() {
-        currentTheme = 8;
-    }
-
-    @OnClick(R.id.theme_card_falcon)
-    public void setThemeFalcon() {
-        currentTheme = 9;
-    }
-
-    @OnClick(R.id.theme_card_light_blue)
-    public void setThemeLightBlue() {
-        currentTheme = 10;
-    }
-
-    @OnClick(R.id.button_agree)
-    public void agree() {
-        sharedPreferences.edit()
-                .putInt("THEME", currentTheme)
-                .apply();
-
-        if (onWorkDone != null) {
-            onWorkDone.onAgree();
+    public void onClick(View v) {
+        switch (v.getId()) {
+            case R.id.card_view1:
+                sharedPreferences.edit().putBoolean("THEMECHANGED", true).apply();
+                if (onItemChoose != null)
+                    onItemChoose.onClick(1);
+                break;
+            case R.id.card_view2:
+                sharedPreferences.edit().putBoolean("THEMECHANGED", true).apply();
+                if (onItemChoose != null)
+                    onItemChoose.onClick(2);
+                break;
+            case R.id.card_view3:
+                sharedPreferences.edit().putBoolean("THEMECHANGED", true).apply();
+                if (onItemChoose != null)
+                    onItemChoose.onClick(3);
+                break;
+            case R.id.card_view4:
+                sharedPreferences.edit().putBoolean("THEMECHANGED", true).apply();
+                if (onItemChoose != null)
+                    onItemChoose.onClick(4);
+                break;
+            case R.id.card_view5:
+                sharedPreferences.edit().putBoolean("THEMECHANGED", true).apply();
+                if (onItemChoose != null)
+                    onItemChoose.onClick(5);
+                break;
+            case R.id.card_view6:
+                sharedPreferences.edit().putBoolean("THEMECHANGED", true).apply();
+                if (onItemChoose != null)
+                    onItemChoose.onClick(6);
+                break;
+            case R.id.card_view7:
+                sharedPreferences.edit().putBoolean("THEMECHANGED", true).apply();
+                if (onItemChoose != null)
+                    onItemChoose.onClick(7);
+                break;
+            case R.id.card_view8:
+                sharedPreferences.edit().putBoolean("THEMECHANGED", true).apply();
+                if (onItemChoose != null)
+                    onItemChoose.onClick(8);
+                break;
+            case R.id.card_view9:
+                sharedPreferences.edit().putBoolean("THEMECHANGED", true).apply();
+                if (onItemChoose != null)
+                    onItemChoose.onClick(9);
+                break;
+            case R.id.card_view10:
+                sharedPreferences.edit().putBoolean("THEMECHANGED", true).apply();
+                if (onItemChoose != null)
+                    onItemChoose.onClick(10);
+                break;
+            case R.id.buttonDisagree:
+                sharedPreferences.edit().putBoolean("THEMECHANGED", false).apply();
+                if (onItemChoose != null)
+                    onItemChoose.onClick(currentTheme);
+                getDialog().dismiss();
+                break;
+            case R.id.buttonAgree:
+                sharedPreferences.edit().putBoolean("THEMECHANGED", true).apply();
+                getDialog().dismiss();
+                if (onItemChoose != null)
+                    onItemChoose.onSaveChange();
+                break;
         }
-        dismiss();
     }
 
-    @OnClick(R.id.button_disagree)
-    public void disagree() {
-        if (onWorkDone != null) {
-            onWorkDone.onRefuse();
-        }
-        dismiss();
+    private OnItemChoose onItemChoose;
+
+    public OnItemChoose getOnItemChoose() {
+        return onItemChoose;
     }
 
+    public void setOnItemChoose(OnItemChoose onItemChoose) {
+        this.onItemChoose = onItemChoose;
+    }
 
-    private OnWorkDone onWorkDone;
-    public void setOnItemChoose(OnWorkDone onWorkDone) {
-        this.onWorkDone = onWorkDone;
+    public interface OnItemChoose {
+        void onClick(int position);
+        void onSaveChange();
     }
 }

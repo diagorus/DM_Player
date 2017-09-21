@@ -5,15 +5,6 @@
  */
 package com.dmplayer.models;
 
-import android.content.Context;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.net.Uri;
-import android.os.ParcelFileDescriptor;
-import android.support.annotation.Nullable;
-import android.text.TextUtils;
-import android.util.Log;
-
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.FileDescriptor;
@@ -24,12 +15,21 @@ import java.io.ObjectOutput;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
 
+import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.net.Uri;
+import android.os.ParcelFileDescriptor;
+import android.support.annotation.Nullable;
+import android.text.TextUtils;
+import android.util.Log;
+
 public class SongDetail implements Serializable {
 	private int id;
-	private int albumId;
+	private int album_id;
 	private String artist;
 	private String title;
-	private String displayName;
+	private String display_name;
 	private String duration;
 	private String path;
 
@@ -40,11 +40,11 @@ public class SongDetail implements Serializable {
 
 	public SongDetail(int _id, int _album_id, String _artist, String _title, String _path, String _display_name, String _duration) {
 		this.id = _id;
-		this.albumId = _album_id;
+		this.album_id = _album_id;
 		this.artist = _artist;
 		this.title = _title;
 		this.path = _path;
-		this.displayName = _display_name;
+		this.display_name = _display_name;
 		this.duration = TextUtils.isEmpty(_duration) ? "0" : String.valueOf((Long.valueOf(_duration) / 1000));
 	}
 
@@ -56,12 +56,12 @@ public class SongDetail implements Serializable {
 		this.id = id;
 	}
 
-	public int getAlbumId() {
-		return albumId;
+	public int getAlbum_id() {
+		return album_id;
 	}
 
-	public void setAlbumId(int albumId) {
-		this.albumId = albumId;
+	public void setAlbum_id(int album_id) {
+		this.album_id = album_id;
 	}
 
 	public String getArtist() {
@@ -80,12 +80,12 @@ public class SongDetail implements Serializable {
 		this.title = title;
 	}
 
-	public String getDisplayName() {
-		return displayName;
+	public String getDisplay_name() {
+		return display_name;
 	}
 
-	public void setDisplayName(String displayName) {
-		this.displayName = displayName;
+	public void setDisplay_name(String display_name) {
+		this.display_name = display_name;
 	}
 
 	public String getDuration() {

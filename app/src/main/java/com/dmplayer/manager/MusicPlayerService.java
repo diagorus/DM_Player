@@ -28,7 +28,7 @@ import com.dmplayer.DMPlayerApplication;
 import com.dmplayer.R;
 import com.dmplayer.activities.DMPlayerBaseActivity;
 import com.dmplayer.models.SongDetail;
-import com.dmplayer.utility.DMPlayerUtility;
+import com.dmplayer.phonemedia.DMPlayerUtility;
 
 public class MusicPlayerService extends Service implements AudioManager.OnAudioFocusChangeListener, NotificationManager.NotificationCenterDelegate {
 

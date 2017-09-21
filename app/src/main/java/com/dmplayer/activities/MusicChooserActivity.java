@@ -23,8 +23,8 @@ import android.widget.TextView;
 
 import com.dmplayer.R;
 import com.dmplayer.models.SongDetail;
+import com.dmplayer.phonemedia.DMPlayerUtility;
 import com.dmplayer.phonemedia.PhoneMediaControl;
-import com.dmplayer.utility.DMPlayerUtility;
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.ImageLoader;
 
@@ -73,7 +73,7 @@ public class MusicChooserActivity extends AppCompatActivity {
     }
 
     private void initialize() {
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar_actionbar);
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowTitleEnabled(true);
@@ -97,11 +97,11 @@ public class MusicChooserActivity extends AppCompatActivity {
                 mAllSongsListAdapter.notifyDataSetChanged();
             }
         });
-        mPhoneMediaControl.loadMusicListAsync(context, -1, PhoneMediaControl.SongsLoadFor.ALL,"");
+        mPhoneMediaControl.loadMusicListAsync(context, -1, PhoneMediaControl.SongsLoadFor.All,"");
     }
 
     public class AllSongsListAdapter extends BaseAdapter {
-        private Context context;
+        private Context context = null;
         private LayoutInflater layoutInflater;
         private DisplayImageOptions options;
         private ImageLoader imageLoader = ImageLoader.getInstance();
@@ -109,15 +109,9 @@ public class MusicChooserActivity extends AppCompatActivity {
         public AllSongsListAdapter(Context mContext) {
             this.context = mContext;
             this.layoutInflater = LayoutInflater.from(mContext);
-            this.options = new DisplayImageOptions.Builder()
-                    .showImageOnLoading(R.drawable.bg_default_album_art)
-                    .showImageForEmptyUri(R.drawable.bg_default_album_art)
-                    .showImageOnFail(R.drawable.bg_default_album_art)
-                    .cacheInMemory(true)
-                    .cacheOnDisk(true)
-                    .considerExifParams(true)
-                    .bitmapConfig(Bitmap.Config.RGB_565)
-                    .build();
+            this.options = new DisplayImageOptions.Builder().showImageOnLoading(R.drawable.bg_default_album_art)
+                    .showImageForEmptyUri(R.drawable.bg_default_album_art).showImageOnFail(R.drawable.bg_default_album_art).cacheInMemory(true)
+                    .cacheOnDisk(true).considerExifParams(true).bitmapConfig(Bitmap.Config.RGB_565).build();
         }
 
         @Override
@@ -132,14 +126,15 @@ public class MusicChooserActivity extends AppCompatActivity {
 
         @Override
         public View getView(final int position, View convertView, ViewGroup parent) {
+
             ViewHolder mViewHolder;
             if (convertView == null) {
                 mViewHolder = new ViewHolder();
                 convertView = layoutInflater.inflate(R.layout.item_song, null);
-                mViewHolder.song_row = (LinearLayout) convertView.findViewById(R.id.song_row);
-                mViewHolder.textViewSongName = (TextView) convertView.findViewById(R.id.song_name);
-                mViewHolder.textViewSongArtistNameAndDuration = (TextView) convertView.findViewById(R.id.song_details);
-                mViewHolder.imageSongThm = (ImageView) convertView.findViewById(R.id.song_icon_art);
+                mViewHolder.song_row = (LinearLayout) convertView.findViewById(R.id.inflate_allsong_row);
+                mViewHolder.textViewSongName = (TextView) convertView.findViewById(R.id.inflate_allsong_textsongname);
+                mViewHolder.textViewSongArtistNameAndDuration = (TextView) convertView.findViewById(R.id.inflate_allsong_textsongArtisName_duration);
+                mViewHolder.imageSongThm = (ImageView) convertView.findViewById(R.id.inflate_allsong_imgSongThumb);
                 convertView.setTag(mViewHolder);
             } else {
                 mViewHolder = (ViewHolder) convertView.getTag();
@@ -157,6 +152,21 @@ public class MusicChooserActivity extends AppCompatActivity {
             mViewHolder.textViewSongName.setText(mDetail.getTitle());
             String contentURI = "content://media/external/audio/media/" + mDetail.getId() + "/albumart";
             imageLoader.displayImage(contentURI, mViewHolder.imageSongThm, options);
+
+
+//            convertView.setOnClickListener(new View.OnClickListener() {
+////
+//                @Override
+//                public void onClick(View v) {
+//
+//
+////
+////                    setResult(RESULT_OK, (new Intent()).setData(Uri.parse(songList.get(position).getPath())));
+//////                    setResult(RESULT_OK,(new Intent()).putExtra("songInfo",mDetail.getBytes()));
+////                    overridePendingTransition(0, 0);
+////                    finish();
+//                }
+//            });
 
             return convertView;
         }
@@ -202,8 +212,8 @@ public class MusicChooserActivity extends AppCompatActivity {
         public boolean onActionItemClicked(ActionMode actionMode, MenuItem menuItem) {
             if (menuItem.getItemId() == R.id.cab_add){
                 SparseBooleanArray selectedSongs = listView.getCheckedItemPositions();
-                for(int i = 0; i < selectedSongs.size(); i++) {
-                    if(selectedSongs.valueAt(i)) {
+                for(int i=0;i<selectedSongs.size();i++){
+                    if(selectedSongs.valueAt(i)){
                         arrayOut.add((SongDetail) listView.getItemAtPosition(i));
                     }
                 }
@@ -220,4 +230,5 @@ public class MusicChooserActivity extends AppCompatActivity {
             finish();
         }
     }
+
 }

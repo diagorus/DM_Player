@@ -8,7 +8,7 @@
     android:orientation="vertical"
     android:weightSum="1">
     <TextView
-        android:id="@+id/title"
+        android:id="@+id/textViewThemeDialogTitle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="16dp"
@@ -18,11 +18,14 @@
         android:text="Choose Theme Color"
         android:textAppearance="@style/TextAppearance.AppCompat.Title"
         android:textColor="@color/md_text" />
+
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="1dp"
         android:background="@color/md_divider" />
+
     <ScrollView
+        android:id="@+id/scrollView1"
         android:layout_width="wrap_content"
         android:layout_height="0dip"
         android:layout_weight="1"
@@ -30,17 +33,20 @@
         android:scrollbarThumbVertical="@drawable/scrollbar"
         android:scrollbars="vertical">
         <RelativeLayout
+            android:id="@+id/relativeLayoutCardViews"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content">
             <GridLayout
+                android:id="@+id/gridLayout"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_centerHorizontal="true"
                 android:columnCount="2"
                 android:rowCount="5">
+
                 <!--Everywhere in cardview was android:stateListAnimator="@anim/raise"-->
                 <android.support.v7.widget.CardView
-                    android:id="@+id/theme_card_blue"
+                    android:id="@+id/card_view1"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_column="0"
@@ -54,15 +60,17 @@
                     card_view:cardCornerRadius="2dp"
                     card_view:cardElevation="2dp">
                     <TextView
+                        android:id="@+id/textView1"
                         android:layout_width="80dp"
                         android:layout_height="48dp"
                         android:layout_gravity="center"
                         android:gravity="center"
-                        android:text="@string/theme_card_text_blue"
+                        android:text="Blue"
                         android:textColor="@color/md_text_white" />
                 </android.support.v7.widget.CardView>
+
                 <android.support.v7.widget.CardView
-                    android:id="@+id/theme_card_red"
+                    android:id="@+id/card_view2"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_column="1"
@@ -75,16 +83,19 @@
                     card_view:cardBackgroundColor="@color/md_red_400"
                     card_view:cardCornerRadius="2dp"
                     card_view:cardElevation="2dp">
+
                     <TextView
+                        android:id="@+id/textView2"
                         android:layout_width="80dp"
                         android:layout_height="48dp"
                         android:layout_gravity="center"
                         android:gravity="center"
-                        android:text="@string/theme_card_text_red"
+                        android:text="Red"
                         android:textColor="@color/md_text_white" />
                 </android.support.v7.widget.CardView>
+
                 <android.support.v7.widget.CardView
-                    android:id="@+id/theme_card_green"
+                    android:id="@+id/card_view3"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_column="0"
@@ -98,15 +109,17 @@
                     card_view:cardCornerRadius="2dp"
                     card_view:cardElevation="2dp">
                     <TextView
+                        android:id="@+id/textView3"
                         android:layout_width="80dp"
                         android:layout_height="48dp"
                         android:layout_gravity="center"
                         android:gravity="center"
-                        android:text="@string/theme_card_text_green"
+                        android:text="Green"
                         android:textColor="@color/md_text_white" />
                 </android.support.v7.widget.CardView>
+
                 <android.support.v7.widget.CardView
-                    android:id="@+id/theme_card_orange"
+                    android:id="@+id/card_view4"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_column="1"
@@ -120,15 +133,17 @@
                     card_view:cardCornerRadius="2dp"
                     card_view:cardElevation="2dp">
                     <TextView
+                        android:id="@+id/textView4"
                         android:layout_width="80dp"
                         android:layout_height="48dp"
                         android:layout_gravity="center"
                         android:gravity="center"
-                        android:text="@string/theme_card_text_orange"
+                        android:text="Orange"
                         android:textColor="@color/md_text_white" />
                 </android.support.v7.widget.CardView>
+
                 <android.support.v7.widget.CardView
-                    android:id="@+id/theme_card_pink"
+                    android:id="@+id/card_view5"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_column="0"
@@ -142,15 +157,17 @@
                     card_view:cardCornerRadius="2dp"
                     card_view:cardElevation="2dp">
                     <TextView
+                        android:id="@+id/textView5"
                         android:layout_width="80dp"
                         android:layout_height="48dp"
                         android:layout_gravity="center"
                         android:gravity="center"
-                        android:text="@string/theme_card_text_pink"
+                        android:text="Pink"
                         android:textColor="@color/md_text_white" />
                 </android.support.v7.widget.CardView>
+
                 <android.support.v7.widget.CardView
-                    android:id="@+id/theme_card_indigo"
+                    android:id="@+id/card_view6"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_column="1"
@@ -164,15 +181,17 @@
                     card_view:cardCornerRadius="2dp"
                     card_view:cardElevation="2dp">
                     <TextView
+                        android:id="@+id/textView6"
                         android:layout_width="80dp"
                         android:layout_height="48dp"
                         android:layout_gravity="center"
                         android:gravity="center"
-                        android:text="@string/theme_card_text_indigo"
+                        android:text="Indigo"
                         android:textColor="@color/md_text_white" />
                 </android.support.v7.widget.CardView>
+
                 <android.support.v7.widget.CardView
-                    android:id="@+id/theme_card_brown"
+                    android:id="@+id/card_view7"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_column="0"
@@ -187,15 +206,17 @@
                     card_view:cardCornerRadius="2dp"
                     card_view:cardElevation="2dp">
                     <TextView
+                        android:id="@+id/textView7"
                         android:layout_width="80dp"
                         android:layout_height="48dp"
                         android:layout_gravity="center"
                         android:gravity="center"
-                        android:text="@string/theme_card_text_brown"
+                        android:text="Brown"
                         android:textColor="@color/md_text_white" />
                 </android.support.v7.widget.CardView>
+
                 <android.support.v7.widget.CardView
-                    android:id="@+id/theme_card_blue_grey"
+                    android:id="@+id/card_view8"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_column="1"
@@ -210,15 +231,17 @@
                     card_view:cardCornerRadius="2dp"
                     card_view:cardElevation="2dp">
                     <TextView
+                        android:id="@+id/textView8"
                         android:layout_width="80dp"
                         android:layout_height="48dp"
                         android:layout_gravity="center"
                         android:gravity="center"
-                        android:text="@string/theme_card_text_blue_grey"
+                        android:text="Blue grey"
                         android:textColor="@color/md_text_white" />
                 </android.support.v7.widget.CardView>
+
                 <android.support.v7.widget.CardView
-                    android:id="@+id/theme_card_falcon"
+                    android:id="@+id/card_view9"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_column="0"
@@ -233,15 +256,17 @@
                     card_view:cardCornerRadius="2dp"
                     card_view:cardElevation="2dp">
                     <TextView
+                        android:id="@+id/textView9"
                         android:layout_width="80dp"
                         android:layout_height="48dp"
                         android:layout_gravity="center"
                         android:gravity="center"
-                        android:text="@string/theme_card_text_falcon"
+                        android:text="Falcon"
                         android:textColor="@color/md_text_white" />
                 </android.support.v7.widget.CardView>
+
                 <android.support.v7.widget.CardView
-                    android:id="@+id/theme_card_light_blue"
+                    android:id="@+id/card_view10"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_column="1"
@@ -256,42 +281,48 @@
                     card_view:cardCornerRadius="2dp"
                     card_view:cardElevation="2dp">
                     <TextView
+                        android:id="@+id/textView10"
                         android:layout_width="80dp"
                         android:layout_height="48dp"
                         android:layout_gravity="center"
                         android:gravity="center"
-                        android:text="@string/theme_card_text_light_blue"
+                        android:text="Light Blue"
                         android:textColor="@color/md_text_white" />
                 </android.support.v7.widget.CardView>
             </GridLayout>
         </RelativeLayout>
     </ScrollView>
+
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="1dp"
         android:background="@color/md_divider" />
+
     <LinearLayout
+        android:id="@+id/linearLayoutButtons"
         android:layout_width="wrap_content"
         android:layout_height="48dp"
         android:layout_gravity="right"
         android:layout_weight="1"
         android:orientation="horizontal">
         <Button
-            android:id="@+id/button_disagree"
+            android:id="@+id/buttonDisagree"
             style="?android:attr/borderlessButtonStyle"
             android:layout_width="wrap_content"
             android:layout_height="36dp"
             android:layout_gravity="center"
             android:background="@drawable/dialog_button"
             android:clickable="true"
-            android:text="@string/disagree"
+            android:text="DISAGREE"
             android:textAppearance="@style/TextAppearance.AppCompat.Button"
             android:textColor="?attr/colorAccent" />
+
         <Space
             android:layout_width="8dp"
             android:layout_height="match_parent" />
+
         <Button
-            android:id="@+id/button_agree"
+            android:id="@+id/buttonAgree"
             style="?android:attr/borderlessButtonStyle"
             android:layout_width="wrap_content"
             android:layout_height="36dp"
@@ -299,10 +330,11 @@
             android:background="@drawable/dialog_button"
             android:clickable="true"
             android:paddingRight="16dp"
-            android:text="@string/agree"
+            android:text="AGREE"
             android:textAppearance="@style/TextAppearance.AppCompat.Button"
             android:textColor="?attr/colorAccent" />
     </LinearLayout>
+
     <Space
         android:layout_width="match_parent"
         android:layout_height="8dp" />
