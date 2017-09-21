@@ -19,6 +19,8 @@
             android:orientation="vertical"
             app:text_title="Local playlists"
             app:src_image="@drawable/ic_plus">
+
+            <include layout="@layout/expandable_add_local" />
         </com.dmplayer.uicomponent.ExpandableLayout>
 
         <com.dmplayer.uicomponent.ExpandableLayoutExternalAccount

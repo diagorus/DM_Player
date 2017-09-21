@@ -566,7 +566,7 @@ public class MediaController implements NotificationManager.NotificationCenterDe
             @Override
             protected Void doInBackground(Void... voids) {
                 try {
-                    FavoritePlayTableHelper.getInstance(context).insertSong(mDetail, isFav);
+                    FavoritePlayTableHelper.getInstance(context).inserSong(mDetail, isFav);
                 } catch (Exception e) {
                     Log.e(TAG, Log.getStackTraceString(e));
                 }
@@ -582,7 +582,7 @@ public class MediaController implements NotificationManager.NotificationCenterDe
             @Override
             protected Void doInBackground(Void... voids) {
                 try {
-                    isFavorite = FavoritePlayTableHelper.getInstance(context).isSongFavorite(mDetail);
+                    isFavorite = FavoritePlayTableHelper.getInstance(context).getIsFavorite(mDetail);
                 } catch (Exception e) {
                     Log.e(TAG, Log.getStackTraceString(e));
                 }

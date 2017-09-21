@@ -52,12 +52,16 @@ public class TestFragmentLibrary extends Fragment {
         expandableDefault.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                expandableDefault.changeExpandState();
+                if (expandableDefault.isExpanded()) {
+                    expandableDefault.collapse();
+                } else {
+                    expandableDefault.expand();
+                }
             }
         });
         expandableDefault.setOnExpandListener(new ExpandableLayout.OnExpandListener() {
             @Override
-            public void OnExpand() {
+            public void OnExpand(ExpandableLayout v) {
                 setupDefaultPlaylists();
             }
         });
@@ -66,12 +70,16 @@ public class TestFragmentLibrary extends Fragment {
         expandableVk.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                expandableVk.changeExpandState();
+                if (expandableVk.isExpanded()) {
+                    expandableVk.collapse();
+                } else {
+                    expandableVk.expand();
+                }
             }
         });
         expandableVk.setOnExpandListener(new ExpandableLayout.OnExpandListener() {
             @Override
-            public void OnExpand() {
+            public void OnExpand(ExpandableLayout v) {
                 setupVkPlaylists();
             }
         });
@@ -112,7 +120,7 @@ public class TestFragmentLibrary extends Fragment {
             defaultPlaylists = PlaylistProvider.getDefaultPlaylists();
         }
 
-        if (expandableDefault.getContent().getChildCount() == 0) {
+        if (expandableDefault.getChildCount() == 0) {
             for (final PlaylistItem playlistItem : defaultPlaylists) {
                 PlaylistItemView itemView = new PlaylistItemView(getActivity(), playlistItem);
 
@@ -141,7 +149,7 @@ public class TestFragmentLibrary extends Fragment {
                     });
                 }
 
-                expandableDefault.getContent().addView(itemView);
+                expandableDefault.addView(itemView);
             }
         }
     }
@@ -151,7 +159,7 @@ public class TestFragmentLibrary extends Fragment {
             vkPlaylists = PlaylistProvider.getVkPlaylists();
         }
 
-        if (expandableVk.getContent().getChildCount() == 0) {
+        if (expandableVk.getChildCount() == 0) {
             for (final PlaylistItem playlistItem : vkPlaylists) {
                 PlaylistItemView itemView = new PlaylistItemView(getActivity(), playlistItem);
 
@@ -180,7 +188,7 @@ public class TestFragmentLibrary extends Fragment {
                     });
                 }
 
-                expandableVk.getContent().addView(itemView);
+                expandableVk.addView(itemView);
             }
         }
     }

@@ -199,7 +199,7 @@ public class ProfileDialog extends DialogFragment {
         if (DMPlayerUtility.isURIExists(avatarPhotoUri)) {
             DMPlayerUtility.settingPicture(avatar, avatarPhotoUri);
         } else {
-            DMPlayerUtility.settingPicture(avatar, R.drawable.profile_default_avatar);
+            DMPlayerUtility.settingPicture(avatar, R.drawable.avatar_default);
         }
     }
 

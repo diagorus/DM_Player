@@ -9,7 +9,7 @@ public class Playlist implements Serializable {
     private String name;
     private List<SongDetail> songs;
 
-    private Playlist(long id, String name, List<SongDetail> songs) {
+    public Playlist(long id, String name, List<SongDetail> songs) {
         this.id = id;
         this.name = name;
         this.songs = songs;

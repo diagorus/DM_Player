@@ -263,10 +263,10 @@ public class LocalPlaylistTablesHelper {
                 if (song != null) {
                     insert.clearBindings();
                     insert.bindLong(1, song.getId());
-                    insert.bindLong(2, song.getAlbumId());
+                    insert.bindLong(2, song.getAlbum_id());
                     insert.bindString(3, song.getArtist());
                     insert.bindString(4, song.getTitle());
-                    insert.bindString(5, song.getDisplayName());
+                    insert.bindString(5, song.getDisplay_name());
                     insert.bindString(6, song.getDuration());
                     insert.bindString(7, song.getPath());
 

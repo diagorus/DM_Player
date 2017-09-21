@@ -4,6 +4,7 @@ import android.app.FragmentManager;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -60,7 +61,7 @@ public class FragmentLibrary extends BaseFragment {
 
     @Override
     protected int getLayoutId() {
-        return R.layout.fragment_library;
+        return R.layout.library_new;
     }
 
     private void init() {
@@ -103,10 +104,10 @@ public class FragmentLibrary extends BaseFragment {
         if (!vkHelper.isLogged()) {
             expandableVk.setMessageLayout();
 
-            TextView infoText = (TextView) expandableVk.findViewById(R.id.title_not_logged);
+            TextView infoText = (TextView) expandableVk.findViewById(R.id.not_logged_info);
             infoText.setText(getString(R.string.not_logged, "Vk"));
 
-            ImageView toProfile = (ImageView) expandableVk.findViewById(R.id.button_to_profile);
+            Button toProfile = (Button) expandableVk.findViewById(R.id.button_to_profile);
             toProfile.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -115,12 +116,14 @@ public class FragmentLibrary extends BaseFragment {
                     final ProfileDialog dialog = new ProfileDialog();
                     dialog.setOnWorkDone(new OnWorkDone() {
                         @Override
-                        public void onAgree() {
+                        public void onPositiveAnswer() {
                             checkVkLogged();
                         }
 
                         @Override
-                        public void onRefuse() {}
+                        public void onNegativeAnswer() {
+
+                        }
                     });
                     dialog.show(fragmentManager, "fragment_profile");
                 }

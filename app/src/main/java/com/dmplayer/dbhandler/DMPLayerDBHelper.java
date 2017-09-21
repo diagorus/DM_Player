@@ -42,7 +42,7 @@ public class DMPLayerDBHelper extends SQLiteOpenHelper {
     }
 
     private static String sqlForCreateFavoritePlay() {
-        return "CREATE TABLE " + FavoritePlayTableHelper.TABLE_NAME + " ("
+        return "CREATE TABLE " + FavoritePlayTableHelper.TABLENAME + " ("
                 + FavoritePlayTableHelper.ID + " INTEGER NOT NULL PRIMARY KEY,"
                 + FavoritePlayTableHelper.ALBUM_ID + " INTEGER NOT NULL,"
                 + FavoritePlayTableHelper.ARTIST + " TEXT NOT NULL,"
@@ -50,7 +50,7 @@ public class DMPLayerDBHelper extends SQLiteOpenHelper {
                 + FavoritePlayTableHelper.DISPLAY_NAME + " TEXT NOT NULL,"
                 + FavoritePlayTableHelper.DURATION + " TEXT NOT NULL,"
                 + FavoritePlayTableHelper.PATH + " TEXT NOT NULL,"
-                + FavoritePlayTableHelper.IS_FAVORITE + " INTEGER NOT NULL);";
+                + FavoritePlayTableHelper.ISFAVORITE + " INTEGER NOT NULL);";
     }
 
     private static String sqlForCreatePlaylistTable() {
@@ -104,7 +104,7 @@ public class DMPLayerDBHelper extends SQLiteOpenHelper {
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         try {
             db.execSQL("DROP TABLE IF EXISTS " + MostAndRecentPlayTableHelper.TABLE_NAME);
-            db.execSQL("DROP TABLE IF EXISTS " + FavoritePlayTableHelper.TABLE_NAME);
+            db.execSQL("DROP TABLE IF EXISTS " + FavoritePlayTableHelper.TABLENAME);
             db.execSQL("DROP TABLE IF EXISTS " + PlaylistTableHelper.TABLE_NAME);
             db.execSQL("DROP TABLE IF EXISTS " + PlaylistSongsTableHelper.TABLE_NAME);
             db.execSQL("DROP TABLE IF EXISTS " + SongsTableHelper.TABLE_NAME);

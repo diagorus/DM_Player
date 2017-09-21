@@ -74,7 +74,7 @@ public class ChildFragmentMostPlayed extends Fragment {
                 mAllSongsListAdapter.notifyDataSetChanged();
             }
         });
-        mPhoneMediaControl.loadMusicListAsync(getActivity(), -1, PhoneMediaControl.SongsLoadFor.MostPlay, "");
+        mPhoneMediaControl.loadMusicListAsync(getActivity(), -1, PhoneMediaControl.SongsLoadFor.MOST_PLAY, "");
     }
 
     public class AllSongsListAdapter extends BaseAdapter {
@@ -108,11 +108,11 @@ public class ChildFragmentMostPlayed extends Fragment {
             if (convertView == null) {
                 mViewHolder = new ViewHolder();
                 convertView = layoutInflater.inflate(R.layout.item_song, null);
-                mViewHolder.song_row = (LinearLayout) convertView.findViewById(R.id.inflate_allsong_row);
-                mViewHolder.textViewSongName = (TextView) convertView.findViewById(R.id.inflate_allsong_textsongname);
-                mViewHolder.textViewSongArtisNameAndDuration = (TextView) convertView.findViewById(R.id.inflate_allsong_textsongArtisName_duration);
-                mViewHolder.imageSongThm = (ImageView) convertView.findViewById(R.id.inflate_allsong_imgSongThumb);
-                mViewHolder.imagemore = (ImageView) convertView.findViewById(R.id.img_moreicon);
+                mViewHolder.song_row = (LinearLayout) convertView.findViewById(R.id.song_row);
+                mViewHolder.textViewSongName = (TextView) convertView.findViewById(R.id.song_name);
+                mViewHolder.textViewSongArtisNameAndDuration = (TextView) convertView.findViewById(R.id.song_details);
+                mViewHolder.imageSongThm = (ImageView) convertView.findViewById(R.id.song_icon_art);
+                mViewHolder.imagemore = (ImageView) convertView.findViewById(R.id.song_icon_option_more);
                 convertView.setTag(mViewHolder);
             } else {
                 mViewHolder = (ViewHolder) convertView.getTag();
@@ -144,7 +144,7 @@ public class ChildFragmentMostPlayed extends Fragment {
                         if (MediaController.getInstance().isPlayingAudio(mDetail) && !MediaController.getInstance().isAudioPaused()) {
                             MediaController.getInstance().pauseAudio(mDetail);
                         } else {
-                            MediaController.getInstance().setPlaylist(songList, mDetail, PhoneMediaControl.SongsLoadFor.MostPlay.ordinal(), -1);
+                            MediaController.getInstance().setPlaylist(songList, mDetail, PhoneMediaControl.SongsLoadFor.MOST_PLAY.ordinal(), -1);
                         }
                     }
 

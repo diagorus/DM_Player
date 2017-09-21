@@ -30,7 +30,7 @@ public class PhoneMediaControl {
     private static final String TAG = "PhoneMediaControl";
 
     public enum SongsLoadFor {
-        ALL, GENRE, ARTIST, ALBUM, MUSIC_INTENT, MOST_PLAY, FAVORITE, LOCAL_PLAYLIST
+        ALL, GENRE, ARTIST, ALBUM, MUSIC_INTENT, MOST_PLAY, FAVORITE, VkPlaylist, LOCAL_PLAYLIST
     }
 
     public static PhoneMediaControl getInstance() {

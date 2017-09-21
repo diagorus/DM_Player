@@ -221,16 +221,18 @@ public class FragmentSettings extends BaseFragment implements View.OnClickListen
     private void showThemeDialog() {
         FragmentManager fragmentManager = getActivity().getFragmentManager();
         ThemeDialog dialog = new ThemeDialog();
-        dialog.setOnItemChoose(new OnWorkDone() {
+        dialog.setOnItemChoose(new ThemeDialog.OnItemChoose() {
             @Override
-            public void onAgree() {
+            public void onClick(int position) {
                 startActivity(new Intent(getActivity(), DMPlayerBaseActivity.class));
                 getActivity().finish();
                 getActivity().overridePendingTransition(0, 0);
             }
 
             @Override
-            public void onRefuse() {}
+            public void onSaveChange() {
+
+            }
         });
         dialog.show(fragmentManager, "fragment_theme");
     }
@@ -239,15 +241,18 @@ public class FragmentSettings extends BaseFragment implements View.OnClickListen
         FragmentManager fragmentManager = getActivity().getFragmentManager();
         ProfileDialog dialog = new ProfileDialog();
         dialog.setOnWorkDone(new OnWorkDone() {
+
             @Override
-            public void onAgree() {
+            public void onPositiveAnswer() {
                 startActivity(new Intent(getActivity(), DMPlayerBaseActivity.class));
                 getActivity().finish();
                 getActivity().overridePendingTransition(0, 0);
             }
 
             @Override
-            public void onRefuse() {}
+            public void onNegativeAnswer() {
+
+            }
         });
         dialog.setCancelable(false);
         dialog.show(fragmentManager, "fragment_profile");

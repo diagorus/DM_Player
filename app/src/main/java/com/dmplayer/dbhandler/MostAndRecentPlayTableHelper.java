@@ -59,10 +59,10 @@ public class MostAndRecentPlayTableHelper {
             try {
                 insert.clearBindings();
                 insert.bindLong(1, songDetail.getId());
-                insert.bindLong(2, songDetail.getAlbumId());
+                insert.bindLong(2, songDetail.getAlbum_id());
                 insert.bindString(3, songDetail.getArtist());
                 insert.bindString(4, songDetail.getTitle());
-                insert.bindString(5, songDetail.getDisplayName());
+                insert.bindString(5, songDetail.getDisplay_name());
                 insert.bindString(6, songDetail.getDuration());
                 insert.bindString(7, songDetail.getPath());
                 insert.bindLong(8, 1); //play count for the first time
